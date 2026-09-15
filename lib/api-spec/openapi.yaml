@@ -11,6 +11,29 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /waitlist:
+    post:
+      operationId: joinWaitlist
+      summary: Join the Remembrance early-access waitlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WaitlistInput"
+      responses:
+        "200":
+          description: Signup saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitlistResult"
+        "400":
+          description: Invalid email
+        "429":
+          description: Please wait before retrying
+        "503":
+          description: Temporarily unavailable
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +49,20 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    WaitlistInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+    WaitlistResult:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
     HealthStatus:
       type: object
       properties:

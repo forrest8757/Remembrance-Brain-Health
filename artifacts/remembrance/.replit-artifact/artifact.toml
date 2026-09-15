@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Remembrance"
+description = "A warm brain-health wellness demo with five interactive assessment domains, weekly check-ins, personalized wellness goals, and an email waitlist."
+version = "1.0.0"
+id = "artifacts/remembrance"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20882
+
+[services.development]
+run = "pnpm --filter @workspace/remembrance run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/remembrance", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/remembrance/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20882"
+BASE_PATH = "/"

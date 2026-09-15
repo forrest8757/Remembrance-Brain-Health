@@ -1,0 +1,187 @@
+# Remembrance — Product Requirements Document (PRD)
+
+**Version:** 1.0 (Demo / MVP)
+**Owner:** Drew — Founder & CEO, Remembrance Health LLC
+**Status:** Draft for build
+**Last updated:** September 2026
+
+---
+
+## 1. Overview
+
+Remembrance is a direct-to-consumer brain-health platform. It helps people **track, understand, and support** their cognitive health over time through short weekly assessments, a single easy-to-read score, and personalized, AI-generated guidance.
+
+This PRD covers the **consumer product**. It is a separate product line from the B2B beta and from Boost (the DSA-channel app).
+
+**Positioning:** Wellness and monitoring. Remembrance is **not** a medical device and does **not** detect, diagnose, or screen for Alzheimer's, dementia, or any disease. All copy and features stay in the wellness lane.
+
+---
+
+## 2. Problem & audience
+
+### Primary user
+An adult (often 45–70) who is **worried about their own brain health** — typically because they watched a parent or loved one go through cognitive decline. They feel a mix of fear born from experience and a desire for control. They want to get ahead of it, not be blindsided.
+
+### What they want
+- Reassurance and a sense of agency ("I'm doing something about this")
+- A simple, non-clinical way to keep an eye on how their brain is doing
+- Clear, doable steps that might actually help
+- To see progress over time
+
+### What they don't want
+- To be told they might have dementia
+- A cold, clinical, alarming experience
+- A 40-minute test or a giant intake form
+
+---
+
+## 3. Goals & non-goals
+
+### Product goals
+1. Give the user one clear number (the **Remembrance Score, /100**) that reflects their brain health and moves over time.
+2. Make weekly engagement light, interesting, and habit-forming.
+3. Deliver personalized guidance the user actually follows.
+4. Show visible progress so the user feels the product is working.
+
+### v1 (Demo) goal
+Ship a **polished clickable demo** that looks and feels like the real product — enough to record a demo video and put in front of as many people as possible. Scoring and plans may be simulated under the hood; the experience must feel real.
+
+### Non-goals for v1
+- Live automated phone calls (voice test is in-app only for the demo)
+- Real biomarker analysis / real scoring engine
+- Real LLM plan generation (scripted/templated for demo is fine)
+- Payments / subscription billing
+- Clinician dashboards, caregiver accounts, B2B features
+
+---
+
+## 4. Core concepts
+
+### 4.1 The five brain domains
+Each domain is scored **/20**. The five composite to the /100 score.
+
+| Domain | What it covers |
+|---|---|
+| Complex Attention | Sustained focus, processing speed, working attention |
+| Executive Function | Planning, sequencing, mental flexibility, problem-solving |
+| Learning & Memory | Encoding and recalling new information |
+| Language | Naming, comprehension, verbal fluency |
+| Perceptual-Motor | Visuospatial processing, coordination, construction |
+
+*(Social Cognition — the sixth DSM-5 domain — is intentionally excluded from v1.)*
+
+### 4.2 The Remembrance Score
+- **Composite /100** = sum of the five domain scores (/20 each).
+- The composite is the **headline number** on the dashboard.
+- Per-domain **/20 scores + analysis** live **one level deeper** — visible only when the user clicks into a specific domain. They are not shown on the main dashboard.
+- The score is **live**: completing any weekly domain test updates that domain's /20 and recalculates the composite immediately.
+
+### 4.3 The testing cycle (5-week loop)
+- **Week 0 — Baseline:** an all-domain assessment that touches all five domains and sets the first Remembrance Score.
+- **Weeks 1–5 — Weekly domain tests:** one domain deep-tested per week, rotating through all five.
+- **End of cycle:** once all five domains have been re-tested, the user gets a **cycle-over-cycle comparison** — "Since your last completed round of domain testing, here's how you've changed."
+- Two views coexist: the **always-current score**, and the **full-cycle progress report** every 5 weeks.
+
+### 4.4 Test modalities
+- **Voice tests:** automated AI voice assessment. *Production:* Twilio + ElevenLabs. *Demo:* in-app voice prompt (mic UI, no telephony).
+- **Interactive tests:** domain-targeted digital tasks taken in the web app (draw, match, tap, build, recall).
+- Not every weekly test is voice — modality varies by domain and week.
+
+> **Clinical-instrument licensing flag:** Interactive tests are modeled on validated instruments (MoCA, Mini-Cog, SLUMS). MoCA requires training/certification and SLUMS/Mini-Cog carry their own commercial-use terms. For production, use validated-but-open items or original adaptations of public-domain paradigms (same approach used to avoid Posit Science IP in Boost). **Legal review required before production launch.** Demo may use original, non-branded adaptations.
+
+### 4.5 The AI care engine
+- **v1 production:** LLM-generated personalized plans, with **rules-based guardrails** on top (safety limits, clinical no-go phrasing, dosage/claim constraints).
+- **Six advice categories:** Diet · Aerobic/Exercise · Health Checkups · Sleep · Social Engagement · Cognitive Training.
+- **Inputs to the engine:** domain scores + trends · intake (age, sex, education) · health context (existing conditions, medications, family history) · lifestyle (self-reported diet/exercise/sleep) · goal accept-decline history.
+- **Onboarding is progressive:** collect only what's needed to generate the first plan up front; drip the rest across the first week to protect completion rates.
+- *Demo:* plans are templated/scripted but presented as if freshly generated.
+
+### 4.6 Goals & plans loop
+- The engine issues **goals** and **plans** the user can **accept or decline**.
+- **Decline behavior:** offer **one swap** (an alternative). If declined again, **log it and move on**.
+- Accept/decline history feeds back into the engine so recommendations adapt to what the user will actually do.
+
+### 4.7 Daily engagement loop
+- **Daily check-in:** a quick, low-friction log (mood / sleep / how they're feeling).
+- **Goals progress dashboard:** the user watches their goal progress move day to day.
+- No streaks or forced gamification in v1.
+
+---
+
+## 5. User journey
+
+1. **Land** → hero, worry-driven hook, 3-step explainer → join waitlist (email only) *(marketing site; see Landing Page Spec)*.
+2. **Onboard** → account, essential intake, first plan generated.
+3. **Baseline test** → all-domain assessment → first Remembrance Score reveal.
+4. **Home dashboard** → composite score, today's check-in, today's goals, next test.
+5. **Weekly domain test** → one domain, interactive or voice → ~30s processing sequence → score update + domain analysis.
+6. **Care plan** → personalized guidance across the six categories → accept/decline goals.
+7. **Daily return** → check-in + goal tracking.
+8. **End of 5-week cycle** → full-cycle progress comparison report.
+
+---
+
+## 6. Feature requirements
+
+### 6.1 Onboarding & intake
+- Account creation (demo: can be a name + email, no real auth needed).
+- Progressive intake: essentials first (age, sex, education, top concern), rest dripped over week 1.
+- Health-context capture (conditions, meds, family history) framed gently and optional-friendly.
+
+### 6.2 Assessment engine (demo-simulated)
+- Baseline (all-domain) flow.
+- Five weekly domain flows (see Product/Demo Build Spec for each test).
+- In-app voice-prompt test with mic capture UI.
+- **~30-second rich processing sequence** after each test: waveform/metrics animation + the relevant domain lighting up on the five-sector brain visualization → dramatic reveal. **Must be skippable** (skip tap or demo-mode timing control) so live demos aren't stuck watching it every time.
+
+### 6.3 Scoring & dashboard
+- Composite /100 as headline, with the five-sector brain viz.
+- Click into a domain → /20 + written analysis + trend.
+- Live recalculation on each completed test.
+- Cycle-over-cycle comparison report at end of cycle.
+
+### 6.4 Care engine & plans
+- Plan presentation across six categories.
+- Goal cards with accept / decline → swap-once logic.
+- Plan feels freshly generated per user (demo: templated).
+
+### 6.5 Daily loop
+- Daily check-in widget.
+- Goals progress dashboard.
+
+---
+
+## 7. Data model (core entities)
+
+- **User** — profile, intake, health context, lifestyle.
+- **DomainScore** — user, domain, score /20, timestamp, test reference.
+- **RemembranceScore** — user, composite /100, timestamp (derived/snapshotted).
+- **TestSession** — user, domain(s), modality (voice/interactive), raw result, computed score, timestamp.
+- **Cycle** — user, cycle number, start/end, per-domain scores, comparison summary.
+- **Plan** — user, category, content, generated_at, status.
+- **Goal** — user, plan, description, status (accepted/declined/swapped), history.
+- **CheckIn** — user, date, mood/sleep/notes.
+
+---
+
+## 8. Non-functional requirements
+
+- **Accessibility:** large touch targets, high contrast, legible type, senior-friendly. WCAG-minded (the audience skews older).
+- **Tone:** warm, reassuring, empowering — never alarming or clinical.
+- **Brand:** Navy `#1E3A5F`, Cyan `#1BCEDF`, Cream `#F5F1EA`; existing gradient wordmark.
+- **Performance:** processing animations feel intentional, not laggy.
+- **Compliance (production):** HIPAA-compliant data handling; wellness disclaimers present throughout; "not a medical device / not a substitute for professional care" language on assessments and plans.
+
+---
+
+## 9. Success metrics
+
+**Demo phase:** demo completes cleanly on video; positive reactions from viewers; waitlist signups from the marketing page.
+
+**Post-launch (future):** activation (baseline completed), weekly test completion rate, daily check-in rate, goal acceptance rate, 5-week cycle completion, month-2 retention, free→paid conversion.
+
+---
+
+## 10. Out of scope for v1 (parking lot)
+
+Live Twilio/ElevenLabs calls · real biomarker analysis · real LLM engine + guardrail system · real scoring algorithm & normative data · Social Cognition domain · payments/subscription · caregiver/family accounts · clinician view · licensed clinical instruments (pending legal) · push/SMS notifications · streaks/gamification.

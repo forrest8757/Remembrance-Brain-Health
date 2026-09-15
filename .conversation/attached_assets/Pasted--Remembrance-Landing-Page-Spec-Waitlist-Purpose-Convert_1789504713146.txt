@@ -1,0 +1,116 @@
+# Remembrance — Landing Page Spec (Waitlist)
+
+**Purpose:** Convert a worried visitor into a waitlist signup (email only).
+**Audience:** A person worried about *their own* brain health — usually someone who watched a parent or loved one go through cognitive decline. Emotion to speak to: fear born from experience + a desire for control. Tone: warm, reassuring, empowering. Never alarming or clinical.
+**Positioning guardrail:** Wellness & monitoring only. No "detect," "diagnose," "screen," or "dementia test" language. Speak to *brain health*, *staying ahead of it*, *understanding how your brain is doing*.
+**Brand:** Navy `#1E3A5F`, Cyan `#1BCEDF`, Cream `#F5F1EA`; existing gradient wordmark. Clean, spacious, senior-friendly (large type, high contrast, generous spacing).
+**CTA everywhere:** Join the waitlist — **email capture only, no price shown.**
+
+---
+
+## Section 1 — Hero
+
+**Eyebrow:** For anyone who's watched someone they love slip away.
+
+**Headline:**
+# You couldn't do anything for them. You can do something for you.
+
+**Subhead:**
+Remembrance helps you understand how your brain is doing, keep an eye on it over time, and take real steps to support it — all from home, a few minutes a week.
+
+**Primary CTA:** [ Join the waitlist ] → email field + button
+**Microcopy under CTA:** Be first in line when we open. No spam, ever.
+
+**Visual:** The five-sector brain visualization (existing asset), calm and softly pulsing. Cream background, navy type, cyan accents.
+
+---
+
+## Section 2 — The emotional hook (empathy)
+
+**Headline:** If you have a family history, you already know the fear.
+
+**Body:**
+Maybe it was a parent. A grandparent. Someone you loved who changed in ways no one could stop. You've wondered, quietly, whether you're next — and whether you'd even notice in time.
+
+You don't have to sit with that uncertainty. Remembrance gives you a simple way to stay close to your own brain health, so you're informed and in control — not waiting and worrying.
+
+*(Keep this section spacious and human. One calm image or the brain viz. No statistics, no scare tactics.)*
+
+---
+
+## Section 3 — How it works (the 3-step process)
+
+**Headline:** Three simple steps to peace of mind.
+
+**Step 1 — Take your baseline**
+One easy assessment across five key areas of brain health gives you your starting point: your **Remembrance Score**.
+
+**Step 2 — Check in weekly**
+A few minutes a week. Each week focuses on one area of your brain, through quick, interactive activities and a short voice check.
+
+**Step 3 — Get your plan & track progress**
+Personalized guidance built around you — and a full re-score every five weeks so you can actually *see* your progress.
+
+*(Visual: three clean cards or a horizontal stepper, each with a simple cyan icon. Numbered 1–2–3.)*
+
+---
+
+## Section 4 — What you get / value props
+
+**Headline:** One clear picture of your brain health.
+
+- **Your Remembrance Score** — one simple number, tracked over time, so you always know where you stand.
+- **Five areas, understood** — attention, thinking, memory, language, and coordination, each explained in plain language.
+- **A plan that fits your life** — guidance across diet, exercise, sleep, social connection, checkups, and brain training.
+- **Progress you can see** — watch your score move as you build better habits.
+
+*(Grid of four. Icons in cyan. Short, benefit-led.)*
+
+---
+
+## Section 5 — Why Remembrance / trust
+
+**Headline:** Built by people who've been where you are.
+
+**Body:**
+Remembrance was created out of a personal loss — and a belief that people shouldn't have to wait, powerless, for something they might be able to get ahead of. We partner with respected voices in brain health, including the **Dementia Society of America**, to keep what we build grounded and responsible.
+
+**Trust signals:** DSA partnership badge/logo (with permission), brief note on the science-informed approach.
+
+**Disclaimer (small, honest, present):**
+Remembrance is a wellness and brain-health tool. It is not a medical device and does not diagnose, treat, or detect any disease. It's not a substitute for care from a qualified professional.
+
+---
+
+## Section 6 — Final CTA
+
+**Headline:** Get ahead of it. Starting now.
+
+**Subhead:** Join the waitlist and be first to know when Remembrance opens.
+
+**CTA:** email field + [ Join the waitlist ]
+**Microcopy:** No cost to join. No spam. Just early access when we're ready.
+
+---
+
+## Footer
+- Remembrance Health LLC · © 2026
+- Links: Privacy · Terms · Contact
+- Repeat wellness disclaimer (one line).
+
+---
+
+## Waitlist form — behavior
+- **Fields:** email only.
+- **On submit:** validate email → store → success state ("You're on the list. We'll be in touch.").
+- **No price, no plan selection, no extra questions** at this stage.
+- Store signups somewhere retrievable (demo: simple table / sheet / form backend).
+
+## Copy variants to A/B later (note, don't build yet)
+- Hero headline alt: "The best time to pay attention to your brain was 20 years ago. The second best time is today."
+- Hero headline alt: "Know how your brain is doing. Before you have to wonder."
+
+## Design notes
+- Mobile-first; large tap targets; readable at arm's length.
+- Cyan reserved for CTAs and accents so the "Join the waitlist" button always pops.
+- Keep it calm and premium — closer to a trusted health brand than a clinical tool.
