@@ -16,6 +16,8 @@ Every assessment must have an uncounted guided warm-up, plain one-sentence instr
 
 Implement baseline across five domains, composite /100, domain detail /20, five weekly domain tests and occasional in-app voice variant, shared ~30-second skippable processing, score reveal, dashboard, six-category care plans with accept/decline/swap-once, daily check-in, cycle comparison, and demo controls (reset, screen jumps, sample history, speed, score overrides).
 
+Assessments must contain substantive multi-minute activity, not a few sample taps followed by processing. The user found the abbreviated tests too short. Extend real trials, varied rounds, and meaningful delayed recall rather than padding waiting animations. Self-paced tasks should retain user control; advertised times are estimates. Demo processing speed must not shorten assessment content.
+
 ## Honesty and safety
 This release is the demo/MVP specified in the documents. Scores, voice analysis, and plans are simulated; clearly but discreetly label the demo and simulated results. Never present a simulated score as validated cognitive-health measurement or pretend actual biomarker analysis occurs.
 

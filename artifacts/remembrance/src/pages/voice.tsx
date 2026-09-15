@@ -33,9 +33,25 @@ type CaptureMode = 'microphone' | 'simulated' | 'reflection' | null;
 type MicStatus = 'available' | 'granted' | 'denied' | 'unsupported' | 'error';
 
 const MAX_RECORDING_SECONDS = 60;
+const MIN_CORE_RECORDING_SECONDS = 20;
+const MIN_TEXT_RESPONSE_CHARACTERS = 20;
 const DEFAULT_WAVEFORM: number[] = Array.from({ length: 18 }, (_, index) =>
   index % 3 === 0 ? 0.2 : 0.08,
 );
+const CORE_ROUNDS = [
+  {
+    prompt: 'Tell me about a place you love.',
+    support:
+      'Share a memory, a few familiar details, or what makes that place feel special to you.',
+    placeholder: 'Write about a place you love and what makes it meaningful...',
+  },
+  {
+    prompt: 'Take a minute and tell me about your morning.',
+    support:
+      'Walk through the parts of a familiar morning that you would like to remember.',
+    placeholder: 'Write about your morning and the details you remember...',
+  },
+] as const;
 
 function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -82,6 +98,7 @@ export default function VoiceTest() {
   const [micStatus, setMicStatus] = useState<MicStatus>('available');
   const [captureMode, setCaptureMode] = useState<CaptureMode>(null);
   const [warmupComplete, setWarmupComplete] = useState(false);
+  const [currentRound, setCurrentRound] = useState(0);
   const [isRequesting, setIsRequesting] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -98,6 +115,8 @@ export default function VoiceTest() {
   const animationFrameRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
   const captureAttemptRef = useRef(0);
+  const currentRoundRef = useRef(0);
+  const elapsedSecondsRef = useRef(0);
   const isPausedRef = useRef(false);
   const isCapturingRef = useRef(false);
   const capturePurposeRef = useRef<CapturePurpose>('task');
@@ -190,7 +209,11 @@ export default function VoiceTest() {
     if (!isCapturing || isPaused || captureMode === 'reflection') return;
 
     timerRef.current = window.setInterval(() => {
-      setElapsedSeconds((previous) => Math.min(MAX_RECORDING_SECONDS, previous + 1));
+      setElapsedSeconds((previous) => {
+        const next = Math.min(MAX_RECORDING_SECONDS, previous + 1);
+        elapsedSecondsRef.current = next;
+        return next;
+      });
     }, 1000);
 
     return stopTimer;
@@ -254,6 +277,7 @@ export default function VoiceTest() {
         setCaptureMode('microphone');
         setMicStatus('granted');
         setIsCapturing(true);
+        elapsedSecondsRef.current = 0;
         setElapsedSeconds(0);
         setVolume(0);
         setWaveform(DEFAULT_WAVEFORM);
@@ -286,6 +310,7 @@ export default function VoiceTest() {
       disposeCurrentAudio();
       isCapturingRef.current = true;
       setIsCapturing(true);
+      elapsedSecondsRef.current = 0;
       setElapsedSeconds(0);
       setVolume(0.2);
       setWaveform(DEFAULT_WAVEFORM);
@@ -297,6 +322,19 @@ export default function VoiceTest() {
     if (!isCapturingRef.current) return;
 
     const purpose = capturePurposeRef.current;
+    const completedRound = currentRoundRef.current;
+    const elapsed = elapsedSecondsRef.current;
+
+    if (purpose === 'task' && elapsed < MIN_CORE_RECORDING_SECONDS) {
+      const remaining = MIN_CORE_RECORDING_SECONDS - elapsed;
+      setAudioNotice(
+        `Take a little more time with this response. You can finish after ${formatTime(
+          remaining,
+        )} more, whenever you feel ready.`,
+      );
+      return;
+    }
+
     captureAttemptRef.current += 1;
     isCapturingRef.current = false;
     disposeCurrentAudio();
@@ -305,17 +343,33 @@ export default function VoiceTest() {
     isPausedRef.current = false;
     setVolume(0);
     setWaveform(DEFAULT_WAVEFORM);
+    elapsedSecondsRef.current = 0;
+    setElapsedSeconds(0);
 
     if (purpose === 'warmup') {
       setWarmupComplete(true);
-      setElapsedSeconds(0);
+      currentRoundRef.current = 0;
+      setCurrentRound(0);
       setPhase('task');
+      setAudioNotice(null);
+    } else if (completedRound < CORE_ROUNDS.length - 1) {
+      currentRoundRef.current = completedRound + 1;
+      setCurrentRound(completedRound + 1);
+      setPhase('task');
+      setAudioNotice('Lovely. That is one of two responses. Take a breath, then continue.');
     } else {
+      setAudioNotice(null);
       setPhase('processing');
     }
   }, [disposeCurrentAudio]);
 
   const beginWarmup = useCallback(() => {
+    currentRoundRef.current = 0;
+    elapsedSecondsRef.current = 0;
+    setCurrentRound(0);
+    setWarmupComplete(false);
+    setCaptureMode(null);
+    setReflection('');
     setPhase('warmup');
     setAudioNotice(null);
     capturePurposeRef.current = 'warmup';
@@ -326,16 +380,24 @@ export default function VoiceTest() {
       captureAttemptRef.current += 1;
       disposeCurrentAudio();
       isCapturingRef.current = false;
+      isPausedRef.current = false;
       setIsCapturing(false);
+      setIsPaused(false);
       setCaptureMode(mode);
-      setWarmupComplete(true);
+      setIsRequesting(false);
+      elapsedSecondsRef.current = 0;
       setElapsedSeconds(0);
       setVolume(0);
       setWaveform(DEFAULT_WAVEFORM);
-      setPhase('task');
+      if (phase === 'warmup' && mode === 'simulated') {
+        setWarmupComplete(true);
+        currentRoundRef.current = 0;
+        setCurrentRound(0);
+        setPhase('task');
+      }
       setAudioNotice(null);
     },
-    [disposeCurrentAudio],
+    [disposeCurrentAudio, phase],
   );
 
   const retryMicrophone = useCallback(() => {
@@ -363,6 +425,7 @@ export default function VoiceTest() {
         void audioSessionRef.current.context.suspend().catch(() => undefined);
       }
     } else {
+      setAudioNotice(null);
       if (audioSessionRef.current?.context.state === 'suspended') {
         void audioSessionRef.current.context.resume().catch(() => undefined);
       }
@@ -428,9 +491,42 @@ export default function VoiceTest() {
   }, [disposeCurrentAudio]);
 
   const handleReflectionSubmit = useCallback(() => {
-    if (reflection.trim().length < 3) return;
+    const responseLength = reflection.trim().length;
+
+    if (phase === 'warmup') {
+      if (responseLength < 3) {
+        setAudioNotice('A few words are enough for practice. Add a little more, then continue.');
+        return;
+      }
+
+      setWarmupComplete(true);
+      currentRoundRef.current = 0;
+      setCurrentRound(0);
+      setReflection('');
+      setAudioNotice(null);
+      setPhase('task');
+      return;
+    }
+
+    if (responseLength < MIN_TEXT_RESPONSE_CHARACTERS) {
+      setAudioNotice(
+        `Please add a little more detail so this is a meaningful response (at least ${MIN_TEXT_RESPONSE_CHARACTERS} characters).`,
+      );
+      return;
+    }
+
+    if (currentRoundRef.current < CORE_ROUNDS.length - 1) {
+      currentRoundRef.current += 1;
+      setCurrentRound(currentRoundRef.current);
+      setReflection('');
+      setAudioNotice('Thank you. That is one of two responses. The next prompt is ready when you are.');
+      return;
+    }
+
+    setReflection('');
+    setAudioNotice(null);
     setPhase('processing');
-  }, [reflection]);
+  }, [phase, reflection]);
 
   const handleProcessingComplete = useCallback(() => {
     if (!mountedRef.current) return;
@@ -438,10 +534,21 @@ export default function VoiceTest() {
     setLocation('/domain/language');
   }, [setLocation, updateDomainScore]);
 
+  const currentPrompt = CORE_ROUNDS[currentRound];
   const prompt =
     phase === 'warmup'
       ? 'Tap the microphone, say a few words, and tap it again when you are ready.'
-      : 'Tell me about a place you love, in as much detail as you would like.';
+      : currentPrompt.prompt;
+  const promptSupport =
+    phase === 'warmup'
+      ? 'A quick practice makes the real reflection feel easy.'
+      : currentPrompt.support;
+  const textPlaceholder =
+    phase === 'warmup'
+      ? 'A few practice words are enough...'
+      : currentPrompt.placeholder;
+  const minimumTextCharacters =
+    phase === 'warmup' ? 3 : MIN_TEXT_RESPONSE_CHARACTERS;
   const microphoneFallback =
     !micAvailability?.supported ||
     micStatus === 'denied' ||
@@ -449,6 +556,8 @@ export default function VoiceTest() {
     micStatus === 'error';
   const orbScale = 1 + Math.min(0.32, volume * 0.32);
   const demoCapture = captureMode === 'simulated';
+  const coreMinimumReached =
+    phase === 'task' && elapsedSeconds >= MIN_CORE_RECORDING_SECONDS;
 
   return (
     <div className="min-h-screen bg-navy text-white flex flex-col relative overflow-hidden">
@@ -507,8 +616,8 @@ export default function VoiceTest() {
               <div className="rounded-2xl border border-white/15 bg-white/5 p-4 flex gap-3 items-start">
                 <Clock3 className="text-cyan mt-0.5 shrink-0" size={21} />
                 <div>
-                  <p className="font-semibold">About 2 minutes</p>
-                  <p className="text-sm text-white/60 mt-1">Up to 60 seconds of speaking</p>
+                  <p className="font-semibold">About 3 minutes</p>
+                  <p className="text-sm text-white/60 mt-1">Setup + two rounds, up to 60 sec each</p>
                 </div>
               </div>
               <div className="rounded-2xl border border-white/15 bg-white/5 p-4 flex gap-3 items-start">
@@ -537,7 +646,10 @@ export default function VoiceTest() {
       {(phase === 'warmup' || phase === 'task') && (
         <main className="flex-1 w-full max-w-3xl mx-auto px-5 pt-28 pb-10 flex flex-col items-center animate-in fade-in duration-500">
           <div className="w-full max-w-2xl text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-cyan">
+            <div
+              aria-live="polite"
+              className="flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-cyan"
+            >
               {phase === 'warmup' ? (
                 <>
                   <span className="rounded-full bg-cyan/15 px-3 py-1">Practice round</span>
@@ -545,18 +657,18 @@ export default function VoiceTest() {
                 </>
               ) : (
                 <>
-                  <span className="rounded-full bg-cyan/15 px-3 py-1">Part 1 of 1</span>
+                  <span className="rounded-full bg-cyan/15 px-3 py-1">
+                    Round {currentRound + 1} of {CORE_ROUNDS.length}
+                  </span>
                   {warmupComplete && <span className="text-white/45">Warm-up complete</span>}
                 </>
               )}
             </div>
             <h1 className="text-3xl sm:text-5xl font-semibold leading-tight tracking-tight">
-              {phase === 'warmup' ? "Let's try it once together." : 'Tell me about a place you love.'}
+              {phase === 'warmup' ? "Let's try it once together." : prompt}
             </h1>
             <p className="text-lg sm:text-xl leading-relaxed text-white/70 max-w-xl mx-auto">
-              {phase === 'warmup'
-                ? 'A quick practice makes the real reflection feel easy.'
-                : 'Share as much detail as you would like. No right answers here. Just talk.'}
+              {promptSupport}
             </p>
           </div>
 
@@ -587,23 +699,40 @@ export default function VoiceTest() {
             <section className="w-full max-w-2xl mt-8 rounded-3xl border border-white/15 bg-white/5 p-5 sm:p-7">
               <div className="flex items-center gap-3 text-cyan mb-4">
                 <Type size={22} />
-                <h2 className="text-lg font-semibold text-white">Type your reflection instead</h2>
+                <h2 className="text-lg font-semibold text-white">
+                  Type your response instead
+                </h2>
               </div>
+              <p className="mb-4 text-sm leading-relaxed text-white/65">
+                Accessibility alternative: respond in writing to the prompt above. This demo does
+                not recognize speech or words.
+              </p>
               <textarea
                 value={reflection}
                 onChange={(event) => setReflection(event.target.value.slice(0, 1200))}
-                aria-label="Your reflection"
-                placeholder="A few words about a place you love..."
+                aria-label={`Written response for ${prompt}`}
+                placeholder={textPlaceholder}
                 className="w-full min-h-40 rounded-2xl border border-white/20 bg-navy/50 p-4 text-base leading-relaxed text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan resize-y"
               />
               <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-sm text-white/55">Your text stays in this demo session.</p>
+                <p className="text-sm text-white/55">
+                  {phase === 'warmup'
+                    ? 'A few words are enough for practice.'
+                    : `Share at least ${MIN_TEXT_RESPONSE_CHARACTERS} characters so your response has some detail.`}
+                  <span className="block mt-1 text-white/40">
+                    {reflection.trim().length} characters
+                  </span>
+                </p>
                 <Button
                   onClick={handleReflectionSubmit}
-                  disabled={reflection.trim().length < 3}
+                  disabled={reflection.trim().length < minimumTextCharacters}
                   className="w-full sm:w-auto min-h-14 px-7 rounded-2xl bg-cyan text-navy hover:bg-cyan/90 font-bold"
                 >
-                  Continue
+                  {phase === 'warmup'
+                    ? 'Continue to round 1'
+                    : currentRound === CORE_ROUNDS.length - 1
+                      ? 'Finish this reflection'
+                      : 'Continue to round 2'}
                 </Button>
               </div>
             </section>
@@ -623,8 +752,8 @@ export default function VoiceTest() {
                   </p>
                   {phase === 'warmup' && (
                     <p className="text-sm leading-relaxed text-cyan/90">
-                      Choose an option below for your uncounted practice round. The reflection
-                      comes next.
+                      Choose an option below for your uncounted practice round. The two prompt
+                      rounds come next.
                     </p>
                   )}
                 </div>
@@ -643,14 +772,14 @@ export default function VoiceTest() {
                   className="min-h-14 rounded-2xl border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white font-semibold"
                 >
                   <Type size={19} />
-                  Type a reflection instead
+                  Type a response instead (accessibility)
                 </Button>
                 <button
                   type="button"
                   onClick={() => chooseAlternative('simulated')}
                   className="min-h-11 rounded-xl text-sm font-semibold text-cyan/90 underline underline-offset-4 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
                 >
-                  Use a simulated demo (no recording)
+                  Use simulated demo alternative (no recording)
                 </button>
               </div>
             </section>
@@ -675,7 +804,9 @@ export default function VoiceTest() {
                   disabled={isRequesting || isPaused}
                   aria-label={
                     isCapturing
-                      ? 'Stop speaking'
+                      ? phase === 'task' && !coreMinimumReached
+                        ? `Keep speaking; finish is available after ${MIN_CORE_RECORDING_SECONDS} seconds`
+                        : 'Finish this response'
                       : phase === 'warmup'
                         ? 'Start practice recording'
                         : 'Start voice reflection'
@@ -701,7 +832,9 @@ export default function VoiceTest() {
                           ))}
                         </span>
                         <span className="text-xs font-bold uppercase tracking-[0.16em]">
-                          Tap to finish
+                          {phase === 'task' && !coreMinimumReached
+                            ? 'Keep speaking'
+                            : 'Tap to finish'}
                         </span>
                       </>
                     ) : (
@@ -725,10 +858,17 @@ export default function VoiceTest() {
                     : 'There is plenty of time. Start whenever you feel ready.'}
                 </p>
                 {isCapturing && (
-                  <p className="text-sm text-white/50 tabular-nums">
-                    {isPaused ? 'Paused at ' : 'Elapsed · '}
-                    {formatTime(elapsedSeconds)} <span className="text-white/35">/ 1:00</span>
-                  </p>
+                  <>
+                    <p className="text-sm text-white/50 tabular-nums">
+                      {isPaused ? 'Paused at ' : 'Elapsed · '}
+                      {formatTime(elapsedSeconds)} <span className="text-white/35">/ 1:00</span>
+                    </p>
+                    {phase === 'task' && !coreMinimumReached && !isPaused && (
+                      <p className="text-sm text-cyan/80">
+                        Take your time; you can finish after 0:20.
+                      </p>
+                    )}
+                  </>
                 )}
                 {demoCapture && (
                   <p className="text-xs text-cyan/90">
@@ -736,6 +876,27 @@ export default function VoiceTest() {
                   </p>
                 )}
               </div>
+              {!isCapturing && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => chooseAlternative('reflection')}
+                    className="mt-6 min-h-12 rounded-2xl border-white/20 bg-transparent px-5 text-white hover:bg-white/10 hover:text-white font-semibold"
+                  >
+                    <Type size={18} />
+                    Type a response instead (accessibility)
+                  </Button>
+                  {captureMode !== 'simulated' && (
+                    <button
+                      type="button"
+                      onClick={() => chooseAlternative('simulated')}
+                      className="mt-3 min-h-11 rounded-xl text-sm font-semibold text-cyan/90 underline underline-offset-4 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+                    >
+                      Use simulated demo alternative (no recording)
+                    </button>
+                  )}
+                </>
+              )}
             </section>
           )}
 

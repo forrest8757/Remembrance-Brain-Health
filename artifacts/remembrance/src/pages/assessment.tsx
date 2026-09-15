@@ -8,9 +8,9 @@ import { ArrowLeft, Clock } from 'lucide-react';
 const DOMAIN_TASKS: Record<string, { component: any, name: string, desc: string, time: string }> = {
   attention: { component: FocusField, name: "Attention", desc: "Staying focused and processing quickly.", time: "2 min" },
   executive: { component: ConnectPath, name: "Executive Function", desc: "Planning and mental flexibility.", time: "3 min" },
-  memory: { component: RecallChain, name: "Memory", desc: "Encoding and recalling information.", time: "4 min" },
-  language: { component: NameMatch, name: "Language", desc: "Word finding and comprehension.", time: "2 min" },
-  motor: { component: DrawCopy, name: "Coordination", desc: "Visuospatial processing and drawing.", time: "3 min" },
+  memory: { component: RecallChain, name: "Memory", desc: "Encoding and recalling information.", time: "3–4 min" },
+  language: { component: NameMatch, name: "Language", desc: "Word finding and comprehension.", time: "3 min" },
+  motor: { component: DrawCopy, name: "Coordination", desc: "Visuospatial processing and drawing.", time: "3–5 min" },
 };
 
 export default function Assessment() {

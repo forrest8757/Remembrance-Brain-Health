@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 const DOMAINS: { id: DomainKey; name: string; duration: string }[] = [
   { id: 'attention', name: 'Attention', duration: '2 min' },
   { id: 'executive', name: 'Executive Function', duration: '3 min' },
-  { id: 'memory', name: 'Memory', duration: '4 min' },
-  { id: 'language', name: 'Language', duration: '2 min' },
-  { id: 'motor', name: 'Coordination', duration: '3 min' },
+  { id: 'memory', name: 'Memory', duration: '3–4 min' },
+  { id: 'language', name: 'Language', duration: '3 min' },
+  { id: 'motor', name: 'Coordination', duration: '3–5 min' },
 ];
 
 export default function Dashboard() {

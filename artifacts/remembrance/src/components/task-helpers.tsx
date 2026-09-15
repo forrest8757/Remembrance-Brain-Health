@@ -139,6 +139,7 @@ export function usePausableTimeout(
   delay: number,
   paused: boolean,
   enabled = true,
+  resetKey?: string | number,
 ) {
   const callbackRef = useRef(callback);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -151,9 +152,17 @@ export function usePausableTimeout(
   }, [callback]);
 
   useEffect(() => {
+    // A task can keep the same enabled state while advancing through several
+    // timed cards (for example, each word in the memory encoding pass). The
+    // reset key makes each card a fresh, pause-aware timeout instead of
+    // allowing the previous card's timer to carry on.
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     remainingRef.current = delay;
     completedRef.current = false;
-  }, [delay, enabled]);
+  }, [delay, enabled, resetKey]);
 
   useEffect(() => {
     if (!enabled || paused || completedRef.current) return;
@@ -174,7 +183,7 @@ export function usePausableTimeout(
         timerRef.current = null;
       }
     };
-  }, [delay, enabled, paused]);
+  }, [delay, enabled, paused, resetKey]);
 
   useEffect(
     () => () => {

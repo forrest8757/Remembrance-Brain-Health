@@ -159,10 +159,11 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
   );
   const [shapeId, setShapeId] = useState(1);
   const [hits, setHits] = useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [finishPending, setFinishPending] = useState(false);
   const { feedback } = useTaskFeedback();
-  const rule: 'circle' | 'square' = isWarmup || hits < 4 ? 'circle' : 'square';
-  const requiredHits = isWarmup ? 1 : 7;
+  const assessmentSeconds = 120;
+  const rule: 'circle' | 'square' = isWarmup || Math.floor(elapsedSeconds / 30) % 2 === 0 ? 'circle' : 'square';
 
   useEffect(() => {
     setShape(isWarmup ? { id: 1, type: 'circle', color: 'cyan', x: 50, y: 50 } : nextShape(1, rule));
@@ -178,9 +179,24 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
     },
     1450,
     isPaused,
-    !finishPending,
+    !isWarmup && !finishPending,
   );
 
+  usePausableTicker(
+    () => setElapsedSeconds((value) => Math.min(assessmentSeconds, value + 1)),
+    1000,
+    isPaused,
+    !isWarmup && !finishPending,
+  );
+
+  // Attention is a sustained, timed activity. A high hit count never ends it
+  // early; the changing rule phases are part of the assessment.
+  usePausableTimeout(
+    () => setFinishPending(true),
+    assessmentSeconds * 1000,
+    isPaused,
+    !isWarmup && !finishPending,
+  );
   usePausableTimeout(onComplete, 700, isPaused, finishPending);
 
   const handleShape = () => {
@@ -198,10 +214,6 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
       feedback('neutral');
     }
   };
-
-  useEffect(() => {
-    if (!isWarmup && hits >= requiredHits) setFinishPending(true);
-  }, [hits, isWarmup, requiredHits]);
 
   const instruction = isWarmup
     ? 'Tap the blue circle.'
@@ -251,8 +263,14 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
           )}
         </div>
         {!isWarmup && <div className="h-2 w-full overflow-hidden rounded-full bg-navy/5" aria-label="Quiet progress">
-          <div className="h-full rounded-full bg-cyan transition-all duration-500" style={{ width: `${Math.min(100, (hits / requiredHits) * 100)}%` }} />
+           <div className="h-full rounded-full bg-cyan transition-all duration-500" style={{ width: `${Math.min(100, (elapsedSeconds / assessmentSeconds) * 100)}%` }} />
         </div>}
+        {!isWarmup && (
+          <div className="flex w-full items-center justify-between text-xs font-bold uppercase tracking-wider text-navy/45">
+            <span>{Math.floor(elapsedSeconds / 30) + 1} of 4 rule phases</span>
+            <span>{Math.max(0, assessmentSeconds - elapsedSeconds)}s remaining · {hits} caught</span>
+          </div>
+        )}
       </div>
     </TaskShell>
   );
@@ -260,30 +278,63 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
 
 type PathNode = { id: string; label: string; x: number; y: number };
 
-const PATH_POSITIONS = [
-  { x: 16, y: 20 },
-  { x: 78, y: 17 },
-  { x: 42, y: 47 },
-  { x: 82, y: 72 },
-  { x: 19, y: 78 },
-  { x: 64, y: 88 },
+const PATH_LABELS = ['1', 'A', '2', 'B', '3', 'C', '4', 'D', '5', 'E'];
+// Two generous rows keep 10 targets comfortably separated even on a phone.
+// The anchor order is shuffled for every board, while the labels remain in
+// their alternating sequence.
+const PATH_ANCHORS = [
+  { x: 10, y: 24 },
+  { x: 30, y: 24 },
+  { x: 50, y: 24 },
+  { x: 70, y: 24 },
+  { x: 90, y: 24 },
+  { x: 10, y: 76 },
+  { x: 30, y: 76 },
+  { x: 50, y: 76 },
+  { x: 70, y: 76 },
+  { x: 90, y: 76 },
 ];
+
+function shuffledAnchors(board: number) {
+  // Use a fresh shuffle per board. The board number also makes it extremely
+  // unlikely that a rerender accidentally gives a completed board the same
+  // spatial arrangement.
+  const values = [...PATH_ANCHORS];
+  for (let index = values.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [values[index], values[swapIndex]] = [values[swapIndex], values[index]];
+  }
+  return values;
+}
 
 export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
   const [isPaused, setIsPaused] = useState(false);
+  const [boardIndex, setBoardIndex] = useState(0);
   const nodes = useMemo(
-    () =>
-      (isWarmup ? ['1', 'A', '2'] : ['1', 'A', '2', 'B', '3', 'C']).map((label, index) => ({
-        id: label,
-        label,
-        ...PATH_POSITIONS[index],
-      })),
-    [isWarmup],
+    () => {
+      if (isWarmup) {
+        return ['1', 'A', '2'].map((label, index) => ({
+          id: label,
+          label,
+          ...[
+            { x: 18, y: 50 },
+            { x: 50, y: 28 },
+            { x: 82, y: 68 },
+          ][index],
+        }));
+      }
+      return shuffledAnchors(boardIndex).map((position, index) => ({
+        id: `${boardIndex}-${PATH_LABELS[index]}`,
+        label: PATH_LABELS[index],
+        ...position,
+      }));
+    },
+    [boardIndex, isWarmup],
   );
   const [path, setPath] = useState<number[]>([0]);
   const pathRef = useRef(path);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragPos, setDragPos] = useState(PATH_POSITIONS[0]);
+  const [dragPos, setDragPos] = useState({ x: 50, y: 50 });
   const [finishPending, setFinishPending] = useState(false);
   const pointerMovedRef = useRef(false);
   const captureTargetRef = useRef<HTMLElement | null>(null);
@@ -293,6 +344,12 @@ export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
   useEffect(() => {
     pathRef.current = path;
   }, [path]);
+
+  useEffect(() => {
+    pathRef.current = [0];
+    setPath([0]);
+    setDragPos(nodes[0] ?? { x: 50, y: 50 });
+  }, [boardIndex, nodes]);
 
   usePausableTimeout(onComplete, 700, isPaused, finishPending);
 
@@ -313,7 +370,15 @@ export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
     pathRef.current = next;
     setPath(next);
     feedback('success');
-    if (next.length === nodes.length) setFinishPending(true);
+    if (next.length === nodes.length) {
+      if (isWarmup || boardIndex >= 3) {
+        setFinishPending(true);
+      } else {
+        // Move straight into the next board. There is no artificial wait:
+        // natural tracing time is the timing measure.
+        setBoardIndex((value) => value + 1);
+      }
+    }
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLElement>, nodeIndex: number) => {
@@ -333,7 +398,7 @@ export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
     const nextNode = nodes[pathRef.current.length];
     if (nextNode) {
       const distance = Math.hypot(position.x - nextNode.x, position.y - nextNode.y);
-      if (distance <= 21) lockNext();
+        if (distance <= 26) lockNext();
     }
   };
 
@@ -420,7 +485,7 @@ export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
                   }
                 }}
                 aria-label={`Node ${node.label}${next ? ', next' : ''}`}
-                className={`absolute z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-xl font-bold shadow-sm transition-all sm:h-[4.5rem] sm:w-[4.5rem] ${
+                className={`absolute z-10 flex h-[3.25rem] w-[3.25rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-lg font-bold shadow-sm transition-all sm:h-16 sm:w-16 ${
                   reached
                     ? 'border-cyan bg-cyan text-navy'
                     : next
@@ -442,7 +507,8 @@ export function ConnectPath({ onComplete, isWarmup = false }: TaskProps) {
           )}
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-navy/55">
-          <span className="h-2 w-2 rounded-full bg-cyan" /> {Math.min(path.length - 1, nodes.length - 1)} of {nodes.length - 1} connections
+          <span className="h-2 w-2 rounded-full bg-cyan" />
+          {isWarmup ? 'Practice · 2 connections' : `Board ${Math.min(boardIndex + 1, 4)} of 4 · ${Math.min(path.length - 1, nodes.length - 1)} of ${nodes.length - 1} connections`}
         </div>
       </div>
     </TaskShell>
@@ -494,9 +560,11 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
   const [phase, setPhase] = useState<'warmup' | 'learn' | 'distractor' | 'recall' | 'intervening' | 'delayed-recall' | 'complete'>(
     isWarmup ? 'warmup' : 'learn',
   );
+  const [learnPass, setLearnPass] = useState(1);
   const [learnIndex, setLearnIndex] = useState(0);
   const [distractorSeconds, setDistractorSeconds] = useState(20);
-  const [interveningSeconds, setInterveningSeconds] = useState(6);
+  const [interveningSeconds, setInterveningSeconds] = useState(60);
+  const [interveningHits, setInterveningHits] = useState(0);
   const [miniShape, setMiniShape] = useState<Shape | null>(null);
   const [options, setOptions] = useState<string[]>([]);
   const [recalled, setRecalled] = useState<string[]>([]);
@@ -506,16 +574,22 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
 
   useEffect(() => {
     if (phase === 'learn' && learnIndex < RECALL_WORDS.length) speak(RECALL_WORDS[learnIndex].word);
-  }, [learnIndex, phase, speak]);
+  }, [learnIndex, learnPass, phase, speak]);
 
   usePausableTimeout(
     () => {
       if (learnIndex + 1 < RECALL_WORDS.length) setLearnIndex((value) => value + 1);
-      else setPhase('distractor');
+      else if (learnPass === 1) {
+        setLearnPass(2);
+        setLearnIndex(0);
+      } else {
+        setPhase('distractor');
+      }
     },
-    1900,
+    5000,
     isPaused,
     phase === 'learn',
+    `${learnPass}-${learnIndex}`,
   );
 
   useEffect(() => {
@@ -582,14 +656,18 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
   const tapMiniShape = (value: Shape) => {
     if (isPaused) return;
     setMiniShape(null);
-    feedback(isShapeTarget(value, 'circle') ? 'success' : 'neutral');
+    if (isShapeTarget(value, 'circle')) {
+      setInterveningHits((count) => count + 1);
+      feedback('success');
+    } else feedback('neutral');
   };
 
   const continueFromRecall = () => {
     if (isPaused) return;
     if (phase === 'recall') {
       setRecalled([]);
-      setInterveningSeconds(6);
+      setInterveningSeconds(60);
+      setInterveningHits(0);
       setPhase('intervening');
     } else if (phase === 'delayed-recall') {
       setFinishPending(true);
@@ -599,7 +677,8 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
 
   let instruction = 'Just take these in. No need to do anything yet.';
   if (phase === 'warmup') instruction = 'Look at the picture, then tap the word you remember.';
-  if (phase === 'distractor' || phase === 'intervening') instruction = 'Let’s do something else for a moment.';
+  if (phase === 'distractor') instruction = 'Let’s do something else for a moment.';
+  if (phase === 'intervening') instruction = 'Keep catching the blue circles for one minute.';
   if (phase === 'recall') instruction = 'Which of these do you remember? Tap or type them.';
   if (phase === 'delayed-recall') instruction = 'Earlier we looked at five words; any come back to you now?';
   if (phase === 'complete') instruction = 'All done, nicely done.';
@@ -634,10 +713,12 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
 
         {phase === 'learn' && (
           <div className="flex w-full flex-col items-center gap-4 rounded-[2rem] bg-white p-7 text-center shadow-sm">
-            <div className="text-sm font-bold uppercase tracking-wider text-navy/45">Word {learnIndex + 1} of {RECALL_WORDS.length}</div>
+            <div className="text-sm font-bold uppercase tracking-wider text-navy/45">
+              Look {learnPass} of 2 · Word {learnIndex + 1} of {RECALL_WORDS.length}
+            </div>
             <PictureIllustration kind={RECALL_WORDS[learnIndex].picture} className="h-40 w-40" />
             <div className="text-4xl font-extrabold text-navy">{RECALL_WORDS[learnIndex].word}</div>
-            <p className="text-sm font-medium text-navy/55">The word is read aloud when it appears.</p>
+            <p className="text-sm font-medium text-navy/55">Take about five seconds with each word; it will be read aloud.</p>
           </div>
         )}
 
@@ -650,6 +731,16 @@ export function RecallChain({ onComplete, isWarmup = false }: TaskProps) {
             <div className="rounded-full bg-cyan/10 px-5 py-2 text-lg font-bold tabular-nums text-navy">
               {phase === 'distractor' ? distractorSeconds : interveningSeconds}s
             </div>
+            {phase === 'intervening' && (
+              <div className="w-full space-y-2">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-navy/5">
+                  <div className="h-full rounded-full bg-cyan transition-all duration-500" style={{ width: `${((60 - interveningSeconds) / 60) * 100}%` }} />
+                </div>
+                <div className="text-center text-xs font-bold uppercase tracking-wider text-navy/45">
+                  Active focus · {interveningHits} circles caught
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -799,14 +890,30 @@ const MATCH_OPTIONS: Array<{ name: string; picture: PictureKind }> = [
 ];
 
 const FRUITS = ['Apple', 'Banana', 'Orange', 'Grape', 'Pear', 'Peach'];
+const ANIMALS = ['Dog', 'Cat', 'Horse', 'Bird', 'Rabbit', 'Lion'];
+
+const NAMING_PROMPTS: Array<{ name: string; picture: PictureKind }> = [
+  { name: 'Apple', picture: 'apple' },
+  { name: 'Train', picture: 'train' },
+  { name: 'House', picture: 'house' },
+];
+
+const COMPREHENSION_PROMPTS: Array<{ word: string; answer: PictureKind }> = [
+  { word: 'TREE', answer: 'tree' },
+  { word: 'DOG', answer: 'dog' },
+  { word: 'RIVER', answer: 'river' },
+];
 
 export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
   const [isPaused, setIsPaused] = useState(false);
   const [phase, setPhase] = useState<'warmup' | 'name' | 'match' | 'fluency' | 'complete'>(isWarmup ? 'warmup' : 'name');
+  const [namingIndex, setNamingIndex] = useState(0);
+  const [comprehensionIndex, setComprehensionIndex] = useState(0);
+  const [fluencyCategory, setFluencyCategory] = useState(0);
   const [typedName, setTypedName] = useState('');
-  const [fluencySeconds, setFluencySeconds] = useState(30);
+  const [fluencySeconds, setFluencySeconds] = useState(45);
   const [userWords, setUserWords] = useState<string[]>([]);
-  const [typedFruit, setTypedFruit] = useState('');
+  const [typedFluencyWord, setTypedFluencyWord] = useState('');
   const [finishPending, setFinishPending] = useState(false);
   const { feedback } = useTaskFeedback();
 
@@ -814,9 +921,15 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
     () => {
       setFluencySeconds((value) => {
         if (value <= 1) {
-          setPhase('complete');
-          setFinishPending(true);
-          return 0;
+          if (fluencyCategory === 0) {
+            setFluencyCategory(1);
+            setUserWords([]);
+            return 45;
+          } else {
+            setPhase('complete');
+            setFinishPending(true);
+            return 0;
+          }
         }
         return value - 1;
       });
@@ -830,11 +943,14 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
   const moveFromName = (answer: string) => {
     if (isPaused) return;
     const namingTarget = isWarmup ? 'chair' : 'apple';
-    if (answer.toLowerCase() === namingTarget) {
+    const expected = isWarmup ? namingTarget : NAMING_PROMPTS[namingIndex].name.toLowerCase();
+    if (answer.toLowerCase() === expected) {
       feedback('success');
       if (isWarmup) {
         setFinishPending(true);
         setPhase('complete');
+      } else if (namingIndex + 1 < NAMING_PROMPTS.length) {
+        setNamingIndex((value) => value + 1);
       } else {
         setPhase('match');
       }
@@ -850,30 +966,51 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
     setTypedName('');
   };
 
-  const addFruit = (word: string) => {
+  const addFluencyWord = (word: string) => {
     if (isPaused || userWords.includes(word)) return;
     setUserWords((current) => [...current, word]);
     feedback('success');
   };
 
-  const submitFruit = () => {
-    const cleaned = typedFruit.trim();
+  const submitFluencyWord = () => {
+    const cleaned = typedFluencyWord.trim();
     if (!cleaned) return;
-    const matchingFruit = FRUITS.find((fruit) => fruit.toLowerCase() === cleaned.toLowerCase());
-    if (matchingFruit) addFruit(matchingFruit);
+    const words = fluencyCategory === 0 ? FRUITS : ANIMALS;
+    const matchingWord = words.find((word) => word.toLowerCase() === cleaned.toLowerCase());
+    if (matchingWord) addFluencyWord(matchingWord);
     else feedback('neutral');
-    setTypedFruit('');
+    setTypedFluencyWord('');
   };
+
+  const answerComprehension = (picture: PictureKind) => {
+    if (isPaused) return;
+    if (picture === COMPREHENSION_PROMPTS[comprehensionIndex].answer) {
+      feedback('success');
+      if (comprehensionIndex + 1 < COMPREHENSION_PROMPTS.length) {
+        setComprehensionIndex((value) => value + 1);
+      } else {
+        setFluencyCategory(0);
+        setFluencySeconds(45);
+        setUserWords([]);
+        setPhase('fluency');
+      }
+    } else {
+      feedback('neutral');
+    }
+  };
+
+  const fluencyWords = fluencyCategory === 0 ? FRUITS : ANIMALS;
+  const fluencyLabel = fluencyCategory === 0 ? 'fruits' : 'animals';
 
   const instruction =
     phase === 'warmup'
       ? 'What is this? Say it aloud, or tap the word.'
       : phase === 'name'
-        ? 'What is this? Say it aloud, or choose the word.'
+        ? `What is this? Say it aloud, or choose the word. (${namingIndex + 1} of ${NAMING_PROMPTS.length})`
         : phase === 'match'
-          ? 'Tap the picture that matches the word TREE.'
+          ? `Tap the picture that matches the word ${COMPREHENSION_PROMPTS[comprehensionIndex].word}.`
           : phase === 'fluency'
-            ? 'Name as many fruits as you can in thirty seconds.'
+            ? `Name as many ${fluencyLabel} as you can in forty-five seconds.`
             : 'All done, nicely done.';
 
   return (
@@ -889,7 +1026,10 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
         {(phase === 'warmup' || phase === 'name') && (
           <div className="w-full rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
             <div className="mx-auto flex max-w-xs flex-col items-center gap-4">
-              <PictureIllustration kind={phase === 'warmup' ? 'chair' : 'apple'} className="h-48 w-48" />
+              <PictureIllustration
+                kind={phase === 'warmup' ? 'chair' : NAMING_PROMPTS[namingIndex].picture}
+                className="h-48 w-48"
+              />
               <p className="text-center text-sm font-medium text-navy/55">Voice is optional; this demo does not transcribe audio.</p>
               <div className="grid w-full grid-cols-2 gap-3">
                 {(phase === 'warmup'
@@ -929,7 +1069,7 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
               </div>
               <button
                 type="button"
-                onClick={() => moveFromName(isWarmup ? 'chair' : 'apple')}
+                onClick={() => moveFromName(isWarmup ? 'chair' : NAMING_PROMPTS[namingIndex].name)}
                 disabled={isPaused}
                 className="min-h-11 rounded-full px-4 text-sm font-bold text-navy/65 underline decoration-cyan decoration-2 underline-offset-4"
               >
@@ -941,18 +1081,20 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
 
         {phase === 'match' && (
           <div className="w-full space-y-4">
-            <div className="rounded-2xl bg-white p-4 text-center text-2xl font-extrabold tracking-wide text-navy shadow-sm">TREE</div>
+            <div className="flex items-center justify-between rounded-2xl bg-white p-4 text-center shadow-sm">
+              <span className="text-2xl font-extrabold tracking-wide text-navy">
+                {COMPREHENSION_PROMPTS[comprehensionIndex].word}
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-navy/45">
+                Question {comprehensionIndex + 1} of {COMPREHENSION_PROMPTS.length}
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               {MATCH_OPTIONS.map((option) => (
                 <button
                   type="button"
                   key={option.name}
-                  onClick={() => {
-                    if (option.name === 'Tree') {
-                      feedback('success');
-                      setPhase('fluency');
-                    } else feedback('neutral');
-                  }}
+                  onClick={() => answerComprehension(option.picture)}
                   className="flex min-h-40 flex-col items-center justify-center gap-2 rounded-3xl border-2 border-border bg-white p-3 shadow-sm transition-all hover:border-cyan hover:bg-cyan/5"
                 >
                   <PictureIllustration kind={option.picture} className="h-24 w-24" />
@@ -966,8 +1108,14 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
 
         {phase === 'fluency' && (
           <div className="w-full space-y-5 rounded-[2rem] bg-white p-6 text-center shadow-sm">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-cyan/20">
-              <span className="text-2xl font-bold tabular-nums text-navy">{fluencySeconds}</span>
+            <div className="flex items-center justify-between rounded-2xl bg-cyan/5 px-4 py-3 text-left">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-wider text-navy/45">Fluency {fluencyCategory + 1} of 2</div>
+                <div className="mt-1 text-lg font-extrabold text-navy">Name {fluencyLabel}</div>
+              </div>
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-cyan/20">
+                <span className="text-2xl font-bold tabular-nums text-navy">{fluencySeconds}</span>
+              </div>
             </div>
             <div className="flex min-h-16 flex-wrap justify-center gap-2" aria-live="polite">
               {userWords.length === 0 ? (
@@ -977,22 +1125,22 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
               )}
             </div>
             <div className="flex flex-wrap justify-center gap-2">
-              {FRUITS.map((fruit) => (
+              {fluencyWords.map((word) => (
                 <button
                   type="button"
-                  key={fruit}
-                  disabled={userWords.includes(fruit) || isPaused}
-                  onClick={() => addFruit(fruit)}
+                  key={word}
+                  disabled={userWords.includes(word) || isPaused}
+                  onClick={() => addFluencyWord(word)}
                   className="min-h-11 rounded-full border border-cyan/35 px-4 text-sm font-bold text-navy transition-colors hover:bg-cyan/10 disabled:opacity-35"
                 >
-                  {fruit}
+                  {word}
                 </button>
               ))}
             </div>
             <div className="rounded-2xl border border-dashed border-cyan/35 bg-cyan/5 p-3 text-left">
               <div className="text-xs font-bold uppercase tracking-wider text-navy/50">Example bubbles · not a transcription</div>
               <div className="mt-2 flex flex-wrap gap-2">
-                {['Apple', 'Pear'].map((word) => (
+                {(fluencyCategory === 0 ? ['Apple', 'Pear'] : ['Dog', 'Horse']).map((word) => (
                   <span key={word} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-navy/55">
                     {word}
                   </span>
@@ -1001,21 +1149,21 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
             </div>
             <div className="flex w-full gap-2">
               <input
-                value={typedFruit}
-                onChange={(event) => setTypedFruit(event.target.value)}
+                value={typedFluencyWord}
+                onChange={(event) => setTypedFluencyWord(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter') submitFruit();
+                  if (event.key === 'Enter') submitFluencyWord();
                 }}
                 disabled={isPaused}
-                placeholder="Type a fruit (optional)"
-                aria-label="Type a fruit"
+                placeholder={`Type a ${fluencyLabel} (optional)`}
+                aria-label={`Type an answer from ${fluencyLabel}`}
                 className="min-h-12 min-w-0 flex-1 rounded-2xl border border-border px-4 text-navy outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/20"
               />
-              <Button type="button" onClick={submitFruit} disabled={!typedFruit.trim() || isPaused} className="min-h-12 rounded-2xl bg-navy px-5 font-bold text-white hover:bg-navy/90">
+              <Button type="button" onClick={submitFluencyWord} disabled={!typedFluencyWord.trim() || isPaused} className="min-h-12 rounded-2xl bg-navy px-5 font-bold text-white hover:bg-navy/90">
                 Add
               </Button>
             </div>
-            <p className="text-xs font-semibold text-navy/45">Tap a fruit or say it aloud; spoken audio is not transcribed in this demo.</p>
+            <p className="text-xs font-semibold text-navy/45">Tap a word or say it aloud; spoken audio is not transcribed in this demo.</p>
           </div>
         )}
 
@@ -1031,12 +1179,39 @@ export function NameMatch({ onComplete, isWarmup = false }: TaskProps) {
 
 type Point = { x: number; y: number };
 
+function FigureReference({ figureIndex }: { figureIndex: number }) {
+  return (
+    <svg viewBox="0 0 160 160" className="h-32 w-32 rounded-2xl border border-border bg-cream p-2 sm:h-40 sm:w-40">
+      {figureIndex === 0 ? (
+        <path
+          d="M35 46 80 27l45 19-45 19-45-19ZM35 46v57l45 30V65M125 46v57l-45 30"
+          fill="none"
+          stroke="#1E3A5F"
+          strokeWidth="5"
+          strokeLinejoin="round"
+        />
+      ) : (
+        <path
+          d="m80 24 25 14 25 43-25 43-50 0-25-43 25-43 25-14Zm0 0v43m0 0 25 14m-25-14-25 14m-25 0 25 43m25-43 25 43m25-43-25 43"
+          fill="none"
+          stroke="#1E3A5F"
+          strokeWidth="5"
+          strokeLinejoin="round"
+        />
+      )}
+    </svg>
+  );
+}
+
 export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
   const [isPaused, setIsPaused] = useState(false);
-  const [phase, setPhase] = useState<'warmup' | 'clock' | 'figure' | 'complete'>(isWarmup ? 'warmup' : 'clock');
+  const [phase, setPhase] = useState<'warmup' | 'clock' | 'figure-1' | 'figure-2' | 'complete'>(isWarmup ? 'warmup' : 'clock');
+  const [figureIndex, setFigureIndex] = useState(0);
   const [guideOn, setGuideOn] = useState(true);
   const [history, setHistory] = useState<ImageData[]>([]);
   const [strokeCount, setStrokeCount] = useState(0);
+  const [inkLength, setInkLength] = useState(0);
+  const [strokeLengths, setStrokeLengths] = useState<number[]>([]);
   const [warmupSuccessful, setWarmupSuccessful] = useState(false);
   const [finishPending, setFinishPending] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1061,6 +1236,9 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
     clearCanvas();
     setHistory([]);
     setStrokeCount(0);
+    setInkLength(0);
+    setStrokeLengths([]);
+    strokePointsRef.current = [];
   }, [phase]);
 
   usePausableTimeout(onComplete, 650, isPaused, finishPending);
@@ -1118,8 +1296,14 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
     }
     event.currentTarget.releasePointerCapture?.(event.pointerId);
     setStrokeCount((value) => value + 1);
+    const points = strokePointsRef.current;
+    const length = points.slice(1).reduce((total, point, index) => {
+      const previous = points[index];
+      return total + Math.hypot(point.x - previous.x, point.y - previous.y);
+    }, 0);
+    setInkLength((value) => value + length);
+    setStrokeLengths((values) => [...values, length]);
     if (phase === 'warmup') {
-      const points = strokePointsRef.current;
       const lineY = 190;
       const nearGuide = points.length >= 5 && points.every((point) => Math.abs(point.y - lineY) < 95);
       if (nearGuide) {
@@ -1143,18 +1327,39 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
     context.putImageData(history[history.length - 1], 0, 0);
     setHistory((current) => current.slice(0, -1));
     setStrokeCount((value) => Math.max(0, value - 1));
+    const removedLength = strokeLengths[strokeLengths.length - 1] ?? 0;
+    setStrokeLengths((values) => values.slice(0, -1));
+    setInkLength((value) => Math.max(0, value - removedLength));
     feedback('soft');
   };
 
   const doneDrawing = () => {
-    if (isPaused || finishPending || strokeCount === 0) return;
+    if (isPaused || finishPending) return;
     if (phase === 'warmup') {
       if (!warmupSuccessful) return;
       setFinishPending(true);
       setPhase('complete');
     } else if (phase === 'clock') {
-      setPhase('figure');
-    } else if (phase === 'figure') {
+      // A single dot should never count as a clock. The checklist is
+      // deliberately forgiving while still requiring a meaningful drawing.
+      if (strokeCount < 3 || inkLength < 260) {
+        feedback('neutral');
+        return;
+      }
+      setFigureIndex(0);
+      setPhase('figure-1');
+    } else if (phase === 'figure-1') {
+      if (strokeCount < 2 || inkLength < 160) {
+        feedback('neutral');
+        return;
+      }
+      setFigureIndex(1);
+      setPhase('figure-2');
+    } else if (phase === 'figure-2') {
+      if (strokeCount < 2 || inkLength < 160) {
+        feedback('neutral');
+        return;
+      }
       setFinishPending(true);
       setPhase('complete');
     }
@@ -1165,8 +1370,8 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
       ? 'Trace the guide line.'
       : phase === 'clock'
         ? 'Draw a clock, then set it to ten past eleven.'
-        : phase === 'figure'
-          ? 'Copy the figure on the left.'
+        : phase === 'figure-1' || phase === 'figure-2'
+          ? `Copy figure ${figureIndex + 1} of 2 on the canvas.`
           : 'All done, nicely done.';
 
   return (
@@ -1179,16 +1384,17 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
       onTogglePause={setIsPaused}
     >
       <div className="mx-auto flex w-full max-w-[700px] flex-col items-center gap-5">
-        {phase === 'figure' && (
+        {(phase === 'figure-1' || phase === 'figure-2') && (
           <div className="flex w-full items-center justify-center gap-4 rounded-3xl bg-white p-4 shadow-sm sm:gap-8 sm:p-6">
             <div className="flex shrink-0 flex-col items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-navy/45">Reference</span>
-              <svg viewBox="0 0 160 160" className="h-32 w-32 rounded-2xl border border-border bg-cream p-2 sm:h-40 sm:w-40">
-                <path d="M35 46 80 27l45 19-45 19-45-19ZM35 46v57l45 30V65M125 46v57l-45 30" fill="none" stroke="#1E3A5F" strokeWidth="5" strokeLinejoin="round" />
-              </svg>
+              <span className="text-xs font-bold uppercase tracking-wider text-navy/45">Reference {figureIndex + 1}</span>
+              <FigureReference figureIndex={figureIndex} />
             </div>
             <div className="h-20 w-px bg-border" />
-            <span className="text-sm font-semibold text-navy/55">Your canvas →</span>
+            <div className="text-sm font-semibold text-navy/55">
+              <div>Your canvas →</div>
+              <div className="mt-2 text-xs font-medium text-navy/45">{figureIndex === 0 ? 'A solid shape' : 'Crossing lines'}</div>
+            </div>
           </div>
         )}
         <div className="relative w-full">
@@ -1242,12 +1448,33 @@ export function DrawCopy({ onComplete, isWarmup = false }: TaskProps) {
           <Button
             type="button"
             onClick={doneDrawing}
-            disabled={isPaused || finishPending || strokeCount === 0 || (phase === 'warmup' && !warmupSuccessful)}
+            disabled={isPaused || finishPending || (phase === 'warmup' && !warmupSuccessful)}
             className="h-14 min-w-[220px] rounded-2xl bg-navy text-lg font-bold text-white hover:bg-navy/90"
           >
-            {phase === 'clock' ? 'Set clock & continue' : phase === 'figure' ? 'I’m done drawing' : 'Lovely, continue'}
+            {phase === 'clock' ? 'Set clock & continue' : phase === 'figure-1' ? 'Set figure & continue' : phase === 'figure-2' ? 'Finish drawings' : 'Lovely, continue'}
           </Button>
         </div>
+        {phase === 'clock' && (
+          <div className="w-full rounded-2xl border border-cyan/25 bg-cyan/5 p-4">
+            <div className="mb-2 text-xs font-bold uppercase tracking-wider text-navy/50">Clock readiness</div>
+            <div className="grid gap-2 text-sm font-semibold text-navy/70 sm:grid-cols-3">
+              <span className={inkLength >= 150 ? 'text-navy' : 'text-navy/45'}>{inkLength >= 150 ? '✓' : '○'} Face</span>
+              <span className={inkLength >= 220 && strokeCount >= 2 ? 'text-navy' : 'text-navy/45'}>
+                {inkLength >= 220 && strokeCount >= 2 ? '✓' : '○'} Numbers & marks
+              </span>
+              <span className={inkLength >= 260 && strokeCount >= 3 ? 'text-navy' : 'text-navy/45'}>
+                {inkLength >= 260 && strokeCount >= 3 ? '✓' : '○'} Hands at 11:10
+              </span>
+            </div>
+            <p className="mt-2 text-xs font-medium text-navy/50">A few meaningful strokes are needed before continuing; a dot is not a clock.</p>
+          </div>
+        )}
+        {(phase === 'figure-1' || phase === 'figure-2') && (
+          <div className="flex w-full items-center justify-between rounded-2xl border border-cyan/25 bg-cyan/5 px-4 py-3 text-sm font-semibold text-navy/65">
+            <span>Figure {figureIndex + 1} of 2</span>
+            <span>{strokeCount >= 2 && inkLength >= 160 ? 'Ready to set' : 'Use two or more meaningful strokes'}</span>
+          </div>
+        )}
         {phase === 'warmup' && (
           <p className="text-center text-sm font-medium text-navy/55">
             Follow the dotted line with one relaxed stroke; a little drift is okay.
