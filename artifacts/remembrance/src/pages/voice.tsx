@@ -1,196 +1,773 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'wouter';
+import {
+  ArrowLeft,
+  Clock3,
+  Mic,
+  Pause,
+  Play,
+  RotateCcw,
+  ShieldCheck,
+  Type,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { useDemoState } from '@/lib/store';
 import { ProcessingSequence } from '@/components/tasks';
-import { ArrowLeft, Mic, Pause, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  canReadTextAloud,
+  detectMicrophoneSupport,
+  disposeVoiceAudioSession,
+  openVoiceAudioSession,
+  readTextAloud,
+  readVoiceAudioFrame,
+  stopReadingTextAloud,
+  type MicrophoneSupport,
+  type VoiceAudioSession,
+} from '@/lib/voice-audio';
+
+type Phase = 'intro' | 'warmup' | 'task' | 'processing';
+type CapturePurpose = 'warmup' | 'task';
+type CaptureMode = 'microphone' | 'simulated' | 'reflection' | null;
+type MicStatus = 'available' | 'granted' | 'denied' | 'unsupported' | 'error';
+
+const MAX_RECORDING_SECONDS = 60;
+const DEFAULT_WAVEFORM: number[] = Array.from({ length: 18 }, (_, index) =>
+  index % 3 === 0 ? 0.2 : 0.08,
+);
+
+function formatTime(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+  return `${minutes}:${remainder.toString().padStart(2, '0')}`;
+}
+
+function getMicrophoneError(error: unknown): {
+  status: MicStatus;
+  message: string;
+} {
+  const name =
+    typeof DOMException !== 'undefined' && error instanceof DOMException ? error.name : '';
+
+  if (name === 'NotAllowedError' || name === 'SecurityError') {
+    return {
+      status: 'denied',
+      message:
+        'Microphone permission was not granted. You can try again, or continue without recording.',
+    };
+  }
+
+  if (name === 'NotFoundError' || name === 'NotSupportedError' || name === 'TypeError') {
+    return {
+      status: 'unsupported',
+      message:
+        'This browser cannot provide microphone audio here. Nothing was recorded or uploaded.',
+    };
+  }
+
+  return {
+    status: 'error',
+    message:
+      'We could not open the microphone right now. You can try again, or continue without recording.',
+  };
+}
 
 export default function VoiceTest() {
   const [, setLocation] = useLocation();
   const { updateDomainScore } = useDemoState();
-  
-  const [phase, setPhase] = useState<'intro' | 'prompt' | 'recording' | 'processing'>('intro');
+
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [micAvailability, setMicAvailability] = useState<MicrophoneSupport | null>(null);
+  const [micStatus, setMicStatus] = useState<MicStatus>('available');
+  const [captureMode, setCaptureMode] = useState<CaptureMode>(null);
+  const [warmupComplete, setWarmupComplete] = useState(false);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [volume, setVolume] = useState(0);
-  const [hasMic, setHasMic] = useState<boolean | null>(null);
+  const [waveform, setWaveform] = useState(DEFAULT_WAVEFORM);
+  const [reflection, setReflection] = useState('');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [speechAvailable, setSpeechAvailable] = useState(false);
+  const [audioNotice, setAudioNotice] = useState<string | null>(null);
 
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const mountedRef = useRef(true);
+  const audioSessionRef = useRef<VoiceAudioSession | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const timerRef = useRef<number | null>(null);
+  const captureAttemptRef = useRef(0);
+  const isPausedRef = useRef(false);
+  const isCapturingRef = useRef(false);
+  const capturePurposeRef = useRef<CapturePurpose>('task');
 
-  const startRecording = async () => {
-    if (isPaused) return;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      setHasMic(true);
-      
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioContextRef.current = audioCtx;
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyserRef.current = analyser;
-      
-      const source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
-      
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      
-      const updateVolume = () => {
-        if (!analyserRef.current) return;
-        analyserRef.current.getByteFrequencyData(dataArray);
-        const avg = dataArray.reduce((a, b) => a + b) / dataArray.length;
-        setVolume(avg);
-        rafRef.current = requestAnimationFrame(updateVolume);
-      };
-      
-      updateVolume();
-      setPhase('recording');
-    } catch (err) {
-      console.warn("Mic access denied or unsupported", err);
-      setHasMic(false);
-      setPhase('recording');
+  const stopAnimation = useCallback(() => {
+    if (animationFrameRef.current !== null) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
-  };
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (phase === 'recording' && hasMic === false && !isPaused) {
-      interval = setInterval(() => setVolume(Math.random() * 80 + 20), 150);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [phase, hasMic, isPaused]);
-
-  const stopRecording = () => {
-    if (isPaused) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
-    }
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-    }
-    setPhase('processing');
-  };
-
-  useEffect(() => {
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => t.stop());
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
   }, []);
 
-  const handleProcessingComplete = () => {
+  const stopTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  const disposeCurrentAudio = useCallback(() => {
+    stopAnimation();
+    stopTimer();
+    disposeVoiceAudioSession(audioSessionRef.current);
+    audioSessionRef.current = null;
+  }, [stopAnimation, stopTimer]);
+
+  const readMicrophoneFrame = useCallback(() => {
+    if (!mountedRef.current || isPausedRef.current || !audioSessionRef.current) return;
+
+    const frame = readVoiceAudioFrame(audioSessionRef.current);
+    setVolume(frame.level);
+    setWaveform(frame.waveform);
+    animationFrameRef.current = window.requestAnimationFrame(readMicrophoneFrame);
+  }, []);
+
+  const startMicrophoneAnalysis = useCallback(() => {
+    stopAnimation();
+    if (!isPausedRef.current && audioSessionRef.current) {
+      animationFrameRef.current = window.requestAnimationFrame(readMicrophoneFrame);
+    }
+  }, [readMicrophoneFrame, stopAnimation]);
+
+  const startSimulatedAnimation = useCallback(() => {
+    stopAnimation();
+
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setVolume(0.25);
+      setWaveform(DEFAULT_WAVEFORM);
+      return;
+    }
+
+    const updateSimulatedFrame = () => {
+      if (!mountedRef.current || isPausedRef.current || !isCapturingRef.current) return;
+
+      const time = performance.now() / 850;
+      const pulse = (Math.sin(time) + 1) / 2;
+      setVolume(0.16 + pulse * 0.3);
+      setWaveform(
+        DEFAULT_WAVEFORM.map((_, index) => {
+          const wave = (Math.sin(time * 1.4 + index * 0.65) + 1) / 2;
+          return 0.12 + wave * 0.45;
+        }),
+      );
+      animationFrameRef.current = window.requestAnimationFrame(updateSimulatedFrame);
+    };
+
+    animationFrameRef.current = window.requestAnimationFrame(updateSimulatedFrame);
+  }, [stopAnimation]);
+
+  useEffect(() => {
+    const support = detectMicrophoneSupport();
+    setMicAvailability(support);
+    setMicStatus(support.supported ? 'available' : 'unsupported');
+    setSpeechAvailable(canReadTextAloud());
+
+    return () => {
+      mountedRef.current = false;
+      captureAttemptRef.current += 1;
+      disposeCurrentAudio();
+      stopReadingTextAloud();
+    };
+  }, [disposeCurrentAudio]);
+
+  useEffect(() => {
+    if (phase !== 'task' && phase !== 'warmup') {
+      stopReadingTextAloud();
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (!isCapturing || isPaused || captureMode === 'reflection') return;
+
+    timerRef.current = window.setInterval(() => {
+      setElapsedSeconds((previous) => Math.min(MAX_RECORDING_SECONDS, previous + 1));
+    }, 1000);
+
+    return stopTimer;
+  }, [captureMode, isCapturing, isPaused, stopTimer]);
+
+  useEffect(() => {
+    if (isCapturing && elapsedSeconds >= MAX_RECORDING_SECONDS) {
+      finishCapture();
+    }
+    // finishCapture intentionally lives below and is kept stable with refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elapsedSeconds, isCapturing]);
+
+  useEffect(() => {
+    if (
+      !isCapturing ||
+      isPaused ||
+      captureMode !== 'simulated' ||
+      typeof window === 'undefined'
+    ) {
+      return;
+    }
+
+    startSimulatedAnimation();
+    return stopAnimation;
+  }, [captureMode, isCapturing, isPaused, startSimulatedAnimation, stopAnimation]);
+
+  const startMicrophoneCapture = useCallback(
+    async (purpose: CapturePurpose) => {
+      const support = detectMicrophoneSupport();
+      if (!support.supported) {
+        setMicAvailability(support);
+        setMicStatus('unsupported');
+        setAudioNotice(
+          'This browser cannot use a microphone here. Nothing was recorded or uploaded.',
+        );
+        return;
+      }
+
+      const attempt = captureAttemptRef.current + 1;
+      captureAttemptRef.current = attempt;
+      capturePurposeRef.current = purpose;
+      setAudioNotice(null);
+      setIsRequesting(true);
+      setIsPaused(false);
+      isPausedRef.current = false;
+      disposeCurrentAudio();
+
+      try {
+        const session = await openVoiceAudioSession();
+
+        // getUserMedia can resolve after the page has navigated away. Dispose
+        // the late stream rather than attaching it to an unmounted page.
+        if (!mountedRef.current || captureAttemptRef.current !== attempt) {
+          disposeVoiceAudioSession(session);
+          return;
+        }
+
+        audioSessionRef.current = session;
+        isCapturingRef.current = true;
+        setCaptureMode('microphone');
+        setMicStatus('granted');
+        setIsCapturing(true);
+        setElapsedSeconds(0);
+        setVolume(0);
+        setWaveform(DEFAULT_WAVEFORM);
+        startMicrophoneAnalysis();
+      } catch (error) {
+        if (!mountedRef.current || captureAttemptRef.current !== attempt) return;
+
+        disposeCurrentAudio();
+        const microphoneError = getMicrophoneError(error);
+        setMicStatus(microphoneError.status);
+        setAudioNotice(microphoneError.message);
+        setIsCapturing(false);
+        isCapturingRef.current = false;
+      } finally {
+        if (mountedRef.current && captureAttemptRef.current === attempt) {
+          setIsRequesting(false);
+        }
+      }
+    },
+    [disposeCurrentAudio, startMicrophoneAnalysis],
+  );
+
+  const startSimulatedCapture = useCallback(
+    (purpose: CapturePurpose) => {
+      captureAttemptRef.current += 1;
+      capturePurposeRef.current = purpose;
+      setAudioNotice(null);
+      setIsPaused(false);
+      isPausedRef.current = false;
+      disposeCurrentAudio();
+      isCapturingRef.current = true;
+      setIsCapturing(true);
+      setElapsedSeconds(0);
+      setVolume(0.2);
+      setWaveform(DEFAULT_WAVEFORM);
+    },
+    [disposeCurrentAudio],
+  );
+
+  const finishCapture = useCallback(() => {
+    if (!isCapturingRef.current) return;
+
+    const purpose = capturePurposeRef.current;
+    captureAttemptRef.current += 1;
+    isCapturingRef.current = false;
+    disposeCurrentAudio();
+    setIsCapturing(false);
+    setIsPaused(false);
+    isPausedRef.current = false;
+    setVolume(0);
+    setWaveform(DEFAULT_WAVEFORM);
+
+    if (purpose === 'warmup') {
+      setWarmupComplete(true);
+      setElapsedSeconds(0);
+      setPhase('task');
+    } else {
+      setPhase('processing');
+    }
+  }, [disposeCurrentAudio]);
+
+  const beginWarmup = useCallback(() => {
+    setPhase('warmup');
+    setAudioNotice(null);
+    capturePurposeRef.current = 'warmup';
+  }, []);
+
+  const chooseAlternative = useCallback(
+    (mode: 'simulated' | 'reflection') => {
+      captureAttemptRef.current += 1;
+      disposeCurrentAudio();
+      isCapturingRef.current = false;
+      setIsCapturing(false);
+      setCaptureMode(mode);
+      setWarmupComplete(true);
+      setElapsedSeconds(0);
+      setVolume(0);
+      setWaveform(DEFAULT_WAVEFORM);
+      setPhase('task');
+      setAudioNotice(null);
+    },
+    [disposeCurrentAudio],
+  );
+
+  const retryMicrophone = useCallback(() => {
+    const support = detectMicrophoneSupport();
+    setMicAvailability(support);
+    setMicStatus(support.supported ? 'available' : 'unsupported');
+    setCaptureMode(support.supported ? 'microphone' : null);
+    setAudioNotice(
+      support.supported
+        ? 'When you are ready, tap the microphone again.'
+        : 'This browser still cannot use a microphone here.',
+    );
+  }, []);
+
+  const togglePause = useCallback(() => {
+    if (!isCapturingRef.current) return;
+
+    const nextPaused = !isPausedRef.current;
+    isPausedRef.current = nextPaused;
+    setIsPaused(nextPaused);
+
+    if (nextPaused) {
+      stopAnimation();
+      if (audioSessionRef.current?.context.state === 'running') {
+        void audioSessionRef.current.context.suspend().catch(() => undefined);
+      }
+    } else {
+      if (audioSessionRef.current?.context.state === 'suspended') {
+        void audioSessionRef.current.context.resume().catch(() => undefined);
+      }
+      if (captureMode === 'microphone') {
+        startMicrophoneAnalysis();
+      } else if (captureMode === 'simulated') {
+        startSimulatedAnimation();
+      }
+    }
+  }, [captureMode, startMicrophoneAnalysis, startSimulatedAnimation, stopAnimation]);
+
+  const handleOrbClick = useCallback(() => {
+    if (isPaused || isRequesting) return;
+
+    if (isCapturing) {
+      finishCapture();
+      return;
+    }
+
+    const purpose = phase === 'warmup' ? 'warmup' : 'task';
+    if (captureMode === 'simulated') {
+      startSimulatedCapture(purpose);
+    } else {
+      startMicrophoneCapture(purpose);
+    }
+  }, [
+    captureMode,
+    finishCapture,
+    isCapturing,
+    isPaused,
+    isRequesting,
+    phase,
+    startMicrophoneCapture,
+    startSimulatedCapture,
+  ]);
+
+  const handleReadPrompt = useCallback(
+    (text: string) => {
+      if (!soundEnabled) return;
+      if (!readTextAloud(text)) {
+        setSpeechAvailable(false);
+        setAudioNotice('Audio reading is not available in this browser. The prompt is shown in full.');
+      }
+    },
+    [soundEnabled],
+  );
+
+  const toggleSound = useCallback(() => {
+    if (soundEnabled) {
+      stopReadingTextAloud();
+      setSoundEnabled(false);
+    } else {
+      setSoundEnabled(true);
+      setAudioNotice(null);
+    }
+  }, [soundEnabled]);
+
+  const handleBack = useCallback(() => {
+    captureAttemptRef.current += 1;
+    disposeCurrentAudio();
+    stopReadingTextAloud();
+    window.history.back();
+  }, [disposeCurrentAudio]);
+
+  const handleReflectionSubmit = useCallback(() => {
+    if (reflection.trim().length < 3) return;
+    setPhase('processing');
+  }, [reflection]);
+
+  const handleProcessingComplete = useCallback(() => {
+    if (!mountedRef.current) return;
     updateDomainScore('language', 18);
-    setLocation('/dashboard');
-  };
+    setLocation('/domain/language');
+  }, [setLocation, updateDomainScore]);
+
+  const prompt =
+    phase === 'warmup'
+      ? 'Tap the microphone, say a few words, and tap it again when you are ready.'
+      : 'Tell me about a place you love, in as much detail as you would like.';
+  const microphoneFallback =
+    !micAvailability?.supported ||
+    micStatus === 'denied' ||
+    micStatus === 'unsupported' ||
+    micStatus === 'error';
+  const orbScale = 1 + Math.min(0.32, volume * 0.32);
+  const demoCapture = captureMode === 'simulated';
 
   return (
-    <div className="min-h-screen bg-navy flex flex-col relative overflow-hidden text-white">
+    <div className="min-h-screen bg-navy text-white flex flex-col relative overflow-hidden">
       {phase !== 'processing' && (
-        <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
-          <button onClick={() => window.history.back()} className="p-2 text-white/50 hover:bg-white/10 rounded-full transition-colors">
-            <ArrowLeft />
+        <header className="absolute top-0 left-0 right-0 px-5 py-5 sm:px-8 z-30 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label="Leave voice reflection"
+            className="min-h-11 min-w-11 rounded-full text-white/75 hover:text-white hover:bg-white/10 transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+          >
+            <ArrowLeft size={23} />
           </button>
-          
-          {(phase === 'prompt' || phase === 'recording') && (
-            <button 
-              onClick={() => setIsPaused(!isPaused)}
-              className="p-2 text-white/50 hover:bg-white/10 rounded-full transition-colors"
-              title="Pause test"
+
+          <div className="flex items-center gap-2">
+            {isCapturing && (
+              <button
+                type="button"
+                onClick={togglePause}
+                aria-label={isPaused ? 'Resume recording' : 'Pause recording'}
+                className="min-h-11 min-w-11 rounded-full text-white/75 hover:text-white hover:bg-white/10 transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+              >
+                {isPaused ? <Play size={21} /> : <Pause size={21} />}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-label={soundEnabled ? 'Turn sound off' : 'Turn sound on'}
+              className="min-h-11 min-w-11 rounded-full text-white/75 hover:text-white hover:bg-white/10 transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
             >
-              {isPaused ? <Play /> : <Pause />}
+              {soundEnabled ? <Volume2 size={21} /> : <VolumeX size={21} />}
             </button>
-          )}
-        </div>
+          </div>
+        </header>
       )}
 
       {phase === 'intro' && (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-8 max-w-md mx-auto w-full text-center z-10 animate-in fade-in duration-500">
-          <div className="inline-flex items-center justify-center px-3 py-1 bg-white/10 text-white/70 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-            Practice Round
-          </div>
-          <h1 className="text-3xl font-bold">First, let's test your microphone.</h1>
-          <p className="text-white/70 font-medium text-lg">Just tap the microphone and say "Hello."</p>
-          
-          <Button 
-            onClick={() => setPhase('prompt')}
-            className="h-16 text-xl bg-cyan hover:bg-cyan/90 text-navy font-bold rounded-2xl shadow-md transition-all mt-8 w-full"
-          >
-            I'm ready
-          </Button>
-        </div>
-      )}
+        <main className="flex-1 w-full max-w-xl mx-auto px-6 pt-28 pb-12 flex flex-col justify-center animate-in fade-in duration-500">
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-cyan">
+              <Mic size={15} />
+              Weekly check-in · Language
+            </div>
+            <div className="space-y-4">
+              <h1 className="text-3xl sm:text-5xl font-semibold leading-tight tracking-tight">
+                Let&apos;s take a quiet moment to talk.
+              </h1>
+              <p className="text-lg sm:text-xl leading-relaxed text-white/75">
+                Share a place, person, or memory that matters to you. There is no right way to
+                answer.
+              </p>
+            </div>
 
-      {(phase === 'prompt' || phase === 'recording') && (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-16 max-w-2xl mx-auto w-full text-center z-10 animate-in fade-in duration-700">
-          
-          <div className="space-y-6">
-            <h1 className="text-3xl md:text-5xl font-medium leading-tight">
-              Tell me about a place you love, in as much detail as you'd like.
-            </h1>
-            <p className="text-white/50 text-lg font-medium">
-              No right answers here. Just talk.
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+              <div className="rounded-2xl border border-white/15 bg-white/5 p-4 flex gap-3 items-start">
+                <Clock3 className="text-cyan mt-0.5 shrink-0" size={21} />
+                <div>
+                  <p className="font-semibold">About 2 minutes</p>
+                  <p className="text-sm text-white/60 mt-1">Up to 60 seconds of speaking</p>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-white/15 bg-white/5 p-4 flex gap-3 items-start">
+                <ShieldCheck className="text-cyan mt-0.5 shrink-0" size={21} />
+                <div>
+                  <p className="font-semibold">Your choice</p>
+                  <p className="text-sm text-white/60 mt-1">Pause, use text, or skip the mic</p>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={beginWarmup}
+              className="w-full h-16 rounded-2xl bg-cyan text-navy hover:bg-cyan/90 text-lg font-bold shadow-lg shadow-cyan/10"
+            >
+              Begin with a practice round
+            </Button>
+            <p className="text-xs leading-relaxed text-white/45">
+              Demo only · Nothing is uploaded · The result is scripted and is not real voice
+              analysis.
             </p>
           </div>
+        </main>
+      )}
 
-          <div className="relative flex justify-center py-12">
-            <div className={`absolute inset-0 rounded-full border border-white/10 ${!isPaused && 'animate-[spin_10s_linear_infinite]'}`} />
-            <div className={`absolute inset-4 rounded-full border border-cyan/10 ${!isPaused && 'animate-[spin_15s_linear_infinite_reverse]'}`} />
-
-            <button 
-              onClick={() => phase === 'prompt' ? startRecording() : stopRecording()}
-              disabled={isPaused}
-              className={`relative z-10 w-32 h-32 rounded-full bg-cyan/20 border-2 border-cyan/50 flex flex-col items-center justify-center transition-transform ${!isPaused && 'hover:scale-105'}`}
-            >
-              {phase === 'prompt' ? (
+      {(phase === 'warmup' || phase === 'task') && (
+        <main className="flex-1 w-full max-w-3xl mx-auto px-5 pt-28 pb-10 flex flex-col items-center animate-in fade-in duration-500">
+          <div className="w-full max-w-2xl text-center space-y-4">
+            <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-cyan">
+              {phase === 'warmup' ? (
                 <>
-                  <Mic className="w-10 h-10 text-cyan mb-2" />
-                  <span className="text-xs font-bold text-cyan uppercase tracking-widest">Tap to speak</span>
+                  <span className="rounded-full bg-cyan/15 px-3 py-1">Practice round</span>
+                  <span className="text-white/45">Doesn&apos;t count</span>
                 </>
               ) : (
                 <>
-                  <div 
-                    className={`absolute inset-0 bg-cyan/30 rounded-full transition-all duration-100 ease-out`}
-                    style={{ transform: `scale(${isPaused ? 1 : 1 + (volume / 200)})`, opacity: isPaused ? 0.5 : 0.5 + (volume / 200) }}
-                  />
-                  <div className={`w-6 h-6 bg-cyan rounded-sm relative z-20 ${!isPaused && 'animate-pulse'}`} />
-                  <span className="absolute -bottom-8 text-xs font-bold text-cyan uppercase tracking-widest whitespace-nowrap">Tap to stop</span>
+                  <span className="rounded-full bg-cyan/15 px-3 py-1">Part 1 of 1</span>
+                  {warmupComplete && <span className="text-white/45">Warm-up complete</span>}
                 </>
               )}
-            </button>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-semibold leading-tight tracking-tight">
+              {phase === 'warmup' ? "Let's try it once together." : 'Tell me about a place you love.'}
+            </h1>
+            <p className="text-lg sm:text-xl leading-relaxed text-white/70 max-w-xl mx-auto">
+              {phase === 'warmup'
+                ? 'A quick practice makes the real reflection feel easy.'
+                : 'Share as much detail as you would like. No right answers here. Just talk.'}
+            </p>
           </div>
-          
-          <div className="absolute bottom-6 left-0 w-full text-center">
-            <p className="text-xs text-white/30 font-medium">Demo note: Results are simulated. No real analysis is performed.</p>
+
+          <div className="w-full max-w-2xl mt-7 rounded-2xl border border-white/15 bg-white/5 px-4 py-4 sm:px-5 flex items-center justify-between gap-4">
+            <p className="text-base sm:text-lg leading-relaxed text-white/90">{prompt}</p>
+            {soundEnabled && speechAvailable && (
+              <button
+                type="button"
+                onClick={() => handleReadPrompt(prompt)}
+                aria-label="Read this prompt aloud"
+                className="min-h-11 min-w-11 shrink-0 rounded-full border border-cyan/40 text-cyan hover:bg-cyan/10 inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+              >
+                <Volume2 size={21} />
+              </button>
+            )}
           </div>
-        </div>
+
+          {audioNotice && (
+            <div
+              role="status"
+              className="w-full max-w-2xl mt-4 rounded-2xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-sm leading-relaxed text-white/85"
+            >
+              {audioNotice}
+            </div>
+          )}
+
+          {captureMode === 'reflection' ? (
+            <section className="w-full max-w-2xl mt-8 rounded-3xl border border-white/15 bg-white/5 p-5 sm:p-7">
+              <div className="flex items-center gap-3 text-cyan mb-4">
+                <Type size={22} />
+                <h2 className="text-lg font-semibold text-white">Type your reflection instead</h2>
+              </div>
+              <textarea
+                value={reflection}
+                onChange={(event) => setReflection(event.target.value.slice(0, 1200))}
+                aria-label="Your reflection"
+                placeholder="A few words about a place you love..."
+                className="w-full min-h-40 rounded-2xl border border-white/20 bg-navy/50 p-4 text-base leading-relaxed text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan resize-y"
+              />
+              <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-sm text-white/55">Your text stays in this demo session.</p>
+                <Button
+                  onClick={handleReflectionSubmit}
+                  disabled={reflection.trim().length < 3}
+                  className="w-full sm:w-auto min-h-14 px-7 rounded-2xl bg-cyan text-navy hover:bg-cyan/90 font-bold"
+                >
+                  Continue
+                </Button>
+              </div>
+            </section>
+          ) : microphoneFallback && !isCapturing && captureMode !== 'simulated' ? (
+            <section className="w-full max-w-2xl mt-8 rounded-3xl border border-cyan/30 bg-white/8 p-5 sm:p-7">
+              <div className="flex items-start gap-3">
+                <Mic className="text-cyan mt-1 shrink-0" size={24} />
+                <div className="space-y-2">
+                  <h2 className="text-lg font-semibold">The microphone is not available</h2>
+                  <p className="text-sm sm:text-base leading-relaxed text-white/70">
+                    {micStatus === 'denied'
+                      ? 'Permission was declined. You are in control: try the permission again or continue without recording.'
+                      : 'This browser or connection does not support microphone audio here.'}
+                  </p>
+                  <p className="text-sm leading-relaxed text-white/55">
+                    Microphone input is not saved or uploaded, and no real analysis is performed.
+                  </p>
+                  {phase === 'warmup' && (
+                    <p className="text-sm leading-relaxed text-cyan/90">
+                      Choose an option below for your uncounted practice round. The reflection
+                      comes next.
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="mt-6 grid gap-3">
+                <Button
+                  onClick={retryMicrophone}
+                  className="min-h-14 rounded-2xl bg-cyan text-navy hover:bg-cyan/90 font-bold"
+                >
+                  <RotateCcw size={19} />
+                  Try microphone again
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => chooseAlternative('reflection')}
+                  className="min-h-14 rounded-2xl border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white font-semibold"
+                >
+                  <Type size={19} />
+                  Type a reflection instead
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => chooseAlternative('simulated')}
+                  className="min-h-11 rounded-xl text-sm font-semibold text-cyan/90 underline underline-offset-4 hover:text-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+                >
+                  Use a simulated demo (no recording)
+                </button>
+              </div>
+            </section>
+          ) : (
+            <section className="w-full max-w-2xl mt-5 flex flex-col items-center">
+              <div className="relative flex items-center justify-center w-72 h-72 sm:w-80 sm:h-80">
+                <div
+                  className={`absolute inset-5 rounded-full border border-cyan/20 ${
+                    isCapturing && !isPaused ? 'animate-[spin_16s_linear_infinite]' : ''
+                  }`}
+                />
+                <div
+                  className={`absolute inset-12 rounded-full border border-cyan/25 ${
+                    isCapturing && !isPaused
+                      ? 'animate-[spin_11s_linear_infinite_reverse]'
+                      : ''
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={handleOrbClick}
+                  disabled={isRequesting || isPaused}
+                  aria-label={
+                    isCapturing
+                      ? 'Stop speaking'
+                      : phase === 'warmup'
+                        ? 'Start practice recording'
+                        : 'Start voice reflection'
+                  }
+                  className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 rounded-full border-2 border-cyan/70 bg-cyan/15 text-cyan shadow-[0_0_80px_rgba(27,206,223,0.16)] transition-transform duration-300 hover:scale-[1.03] disabled:cursor-default disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan/40"
+                  style={{ transform: `scale(${orbScale})` }}
+                >
+                  <span className="absolute inset-4 rounded-full bg-cyan/10" />
+                  <span className="relative z-10 flex flex-col items-center justify-center gap-3">
+                    {isRequesting ? (
+                      <span className="text-base font-semibold">Opening microphone…</span>
+                    ) : isCapturing ? (
+                      <>
+                        <span className="flex items-end justify-center gap-1 h-11" aria-hidden="true">
+                          {waveform.map((bar, index) => (
+                            <span
+                              key={index}
+                              className="w-1.5 rounded-full bg-cyan transition-[height] duration-100"
+                              style={{
+                                height: `${12 + bar * 38 + volume * 12}px`,
+                              }}
+                            />
+                          ))}
+                        </span>
+                        <span className="text-xs font-bold uppercase tracking-[0.16em]">
+                          Tap to finish
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Mic size={43} strokeWidth={1.5} />
+                        <span className="text-xs font-bold uppercase tracking-[0.16em]">
+                          Tap to speak
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+
+              <div className="text-center -mt-2 space-y-3">
+                <p className="text-base text-white/70">
+                  {isCapturing
+                    ? demoCapture
+                      ? 'Demo waveform · no microphone is being used.'
+                      : 'The light responds to your voice. Tap again whenever you are ready.'
+                    : 'There is plenty of time. Start whenever you feel ready.'}
+                </p>
+                {isCapturing && (
+                  <p className="text-sm text-white/50 tabular-nums">
+                    {isPaused ? 'Paused at ' : 'Elapsed · '}
+                    {formatTime(elapsedSeconds)} <span className="text-white/35">/ 1:00</span>
+                  </p>
+                )}
+                {demoCapture && (
+                  <p className="text-xs text-cyan/90">
+                    Simulated demo · nothing is recorded or analyzed.
+                  </p>
+                )}
+              </div>
+            </section>
+          )}
+
+          <div className="mt-auto pt-8 text-center max-w-xl">
+            <p className="text-xs leading-relaxed text-white/40">
+              Demo only · No recordings are uploaded · This experience does not recognize words or
+              perform real analysis.
+            </p>
+          </div>
+        </main>
       )}
 
-      {isPaused && (
-        <div className="absolute inset-0 bg-navy/90 z-40 flex flex-col items-center justify-center backdrop-blur-md animate-in fade-in zoom-in-95">
-          <h2 className="text-3xl font-bold text-white mb-4">Take your time.</h2>
-          <p className="text-white/70 mb-8 font-medium">Ready when you are.</p>
-          <Button 
-            onClick={() => setIsPaused(false)}
-            className="h-14 px-8 bg-cyan text-navy rounded-2xl text-lg font-bold"
+      {isPaused && isCapturing && (
+        <div className="absolute inset-0 z-40 bg-navy/92 backdrop-blur-sm flex flex-col items-center justify-center px-6 text-center animate-in fade-in duration-300">
+          <div className="rounded-full bg-cyan/15 p-5 text-cyan mb-6">
+            <Pause size={32} />
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-semibold">Take your time.</h2>
+          <p className="mt-3 text-lg text-white/70">The clock and listening display are paused.</p>
+          <Button
+            onClick={togglePause}
+            className="mt-8 min-h-14 px-9 rounded-2xl bg-cyan text-navy hover:bg-cyan/90 text-lg font-bold"
           >
-            Resume
+            <Play size={20} />
+            Resume when ready
           </Button>
         </div>
       )}
 
       {phase === 'processing' && (
         <div className="absolute inset-0 z-50 bg-background text-foreground">
-          <ProcessingSequence onComplete={handleProcessingComplete} />
+          <ProcessingSequence domain="language" modality="voice" onComplete={handleProcessingComplete} />
         </div>
       )}
     </div>

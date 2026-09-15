@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const waitlistSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().trim().email("Please enter a valid email address").max(254),
 });
 
 function WaitlistForm({ location = "hero" }: { location?: string }) {
@@ -32,10 +32,10 @@ function WaitlistForm({ location = "hero" }: { location?: string }) {
           setSuccess(true);
           form.reset();
         },
-        onError: (error: any) => {
+        onError: () => {
           form.setError("email", { 
             type: "manual", 
-            message: error?.message || "Failed to join waitlist. Please try again." 
+            message: "We couldn't save your place just now. Please try again in a moment."
           });
         }
       }
@@ -44,7 +44,7 @@ function WaitlistForm({ location = "hero" }: { location?: string }) {
 
   if (success) {
     return (
-      <div className="flex items-center gap-3 p-4 bg-cyan/10 text-navy rounded-xl border border-cyan/20 animate-in fade-in zoom-in duration-300">
+      <div role="status" className="flex items-center gap-3 p-4 bg-cyan/10 text-navy rounded-xl border border-cyan/20 animate-in fade-in zoom-in duration-300">
         <CheckCircle2 className="text-cyan w-6 h-6 shrink-0" />
         <p className="font-medium text-sm">You're on the list. We'll be in touch soon.</p>
       </div>
@@ -53,23 +53,24 @@ function WaitlistForm({ location = "hero" }: { location?: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-full max-w-sm">
-        <div className="flex gap-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-full max-w-lg">
+        <div className="flex flex-col sm:flex-row gap-3">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className="flex-1 space-y-0 relative">
+              <FormItem className="flex-1 min-w-0 space-y-2">
                 <FormControl>
                   <Input 
+                    type="email"
+                    autoComplete="email"
+                    aria-label="Email address"
                     placeholder="Enter your email" 
                     className="h-12 bg-white border-gray-200 text-base focus-visible:ring-cyan shadow-sm"
                     {...field} 
                   />
                 </FormControl>
-                <div className="absolute top-full left-0 mt-1">
-                  <FormMessage className="text-destructive text-xs" />
-                </div>
+                <FormMessage className="text-navy text-sm" />
               </FormItem>
             )}
           />
@@ -80,9 +81,6 @@ function WaitlistForm({ location = "hero" }: { location?: string }) {
           >
             {joinWaitlist.isPending ? "Joining..." : "Join the waitlist"}
           </Button>
-        </div>
-        <div className="h-5">
-          {/* Spacer so the absolutely positioned message doesn't overlap text below */}
         </div>
         <p className="text-xs text-navy/60 font-medium tracking-wide">
           Be first in line when we open. No spam, ever.

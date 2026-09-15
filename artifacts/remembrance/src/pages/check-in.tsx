@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { useDemoState } from '@/lib/store';
+import { localDateKey, useDemoState } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Check, Moon, Sun, Cloud, CloudRain, CloudLightning } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
@@ -15,15 +15,17 @@ const MOODS = [
 
 export default function CheckIn() {
   const [, setLocation] = useLocation();
-  const { addCheckIn } = useDemoState();
-  
-  const [mood, setMood] = useState(4);
-  const [sleep, setSleep] = useState(7);
-  const [notes, setNotes] = useState('');
+  const { state, addCheckIn } = useDemoState();
+  const today = localDateKey();
+  const existing = state.checkIns.find((checkIn) => checkIn.date === today);
+
+  const [mood, setMood] = useState(existing?.mood || 4);
+  const [sleep, setSleep] = useState(existing?.sleep || 7);
+  const [notes, setNotes] = useState(existing?.notes || '');
 
   const handleSubmit = () => {
     addCheckIn({
-      date: new Date().toISOString().split('T')[0],
+      date: today,
       mood,
       sleep,
       notes

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useParams } from 'wouter';
-import { useDemoState } from '@/lib/store';
+import { DomainKey, useDemoState } from '@/lib/store';
 import { FocusField, ConnectPath, RecallChain, NameMatch, DrawCopy, ProcessingSequence } from '@/components/tasks';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clock } from 'lucide-react';
@@ -18,7 +18,7 @@ export default function Assessment() {
   const { id } = useParams<{ id: string }>();
   const { updateDomainScore } = useDemoState();
   
-  const domainId = (id || 'memory') as keyof typeof DOMAIN_TASKS;
+  const domainId: DomainKey = DOMAIN_TASKS[id || 'memory'] ? (id as DomainKey) : 'memory';
   const taskInfo = DOMAIN_TASKS[domainId] || DOMAIN_TASKS.memory;
   const CurrentTask = taskInfo.component;
 
@@ -33,10 +33,11 @@ export default function Assessment() {
   };
 
   const handleProcessingComplete = () => {
-    // Generate a random slight variation in score for demo purposes (14-19)
+    // Scores are simulated for this demo; the weekly write itself is real
+    // session state and creates the timestamped snapshot used by reports.
     const newScore = Math.floor(Math.random() * 6) + 14; 
-    updateDomainScore(domainId as any, newScore);
-    setLocation('/dashboard');
+    const completion = updateDomainScore(domainId, newScore);
+    setLocation(completion.cycleCompleted ? '/progress' : '/dashboard');
   };
 
   return (
@@ -59,6 +60,10 @@ export default function Assessment() {
             <span className="font-bold text-navy text-lg">Est. time: {taskInfo.time}</span>
           </div>
 
+          <p className="text-center text-xs text-navy/45 font-medium">
+            Demo results are simulated for wellness tracking and are not a clinical measurement.
+          </p>
+
           <div className="pt-8">
             <Button 
               onClick={() => setPhase('warmup')}
@@ -76,6 +81,7 @@ export default function Assessment() {
           <CurrentTask 
             key={phase} 
             isWarmup={phase === 'warmup'} 
+             allowSkipWarmup={false}
             onComplete={phase === 'warmup' ? handleWarmupComplete : handleTaskComplete} 
           />
         </div>
@@ -83,7 +89,7 @@ export default function Assessment() {
 
       {/* Processing Phase */}
       {phase === 'processing' && (
-        <ProcessingSequence onComplete={handleProcessingComplete} />
+        <ProcessingSequence domain={domainId} onComplete={handleProcessingComplete} />
       )}
     </div>
   );
