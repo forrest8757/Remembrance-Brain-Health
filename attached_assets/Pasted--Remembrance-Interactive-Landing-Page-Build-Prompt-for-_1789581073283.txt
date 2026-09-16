@@ -1,0 +1,138 @@
+# Remembrance — Interactive Landing Page Build Prompt (for Replit)
+
+Build a premium, highly interactive marketing landing page for **Remembrance**, a direct-to-consumer brain-health platform. The bar is the class of Whoop, Oura, and Function Health — full-bleed, cinematic, effortless motion — but Remembrance goes one step further: **visitors can actually try a piece of the product right on the page.** Interactivity is the #1 priority. This page should feel alive, responsive, and premium in every scroll and hover.
+
+The single conversion goal: **join the waitlist (email only, no price shown).**
+
+---
+
+## Positioning & voice (hard rules)
+
+- **Audience:** an adult (often 45–70) worried about their *own* brain health — usually because they watched a parent or loved one decline. Speak to fear-born-from-experience + a desire for control. Warm, reassuring, empowering. Never clinical, never alarming.
+- **Wellness only:** Remembrance is a wellness & monitoring product. Never use "detect," "diagnose," "screen," "test for dementia," or disease claims. Speak to *understanding, tracking, and supporting your brain health.*
+- **Include a wellness disclaimer** in the footer and near any assessment interaction (every reference site does this — copy the discipline, not the words).
+
+---
+
+## Design language
+
+- **Palette:** Navy `#1E3A5F` (primary text/depth), Cyan `#1BCEDF` (the single active accent — reserve it for CTAs, active states, and "living" elements), Cream `#F5F1EA` (canvas). Add soft navy→cyan gradients for the score orb and brain viz.
+- **Aesthetic:** "made of light on a calm canvas." Lots of cream negative space, one focal element per viewport, soft glows, gentle depth. Premium restraint over busyness.
+- **Typography:** large, confident, highly legible (audience skews older). A refined sans for UI + a warmer display face for headlines. Generous line-height. Headlines big and human.
+- **Wordmark:** the existing Remembrance gradient wordmark.
+- **Imagery:** warm, real, hopeful — people in control of their lives (not sick, not scared). Avoid stocky "worried senior holding head" clichés.
+
+## Tech & libraries
+
+- React + Tailwind. **Framer Motion** for animation/scroll orchestration. **Intersection Observer** for scroll-triggered reveals. Inline **SVG** for the brain visualization and score orb (animate paths/opacity/scale). Canvas for the interactive test taste.
+- Mobile-first, fully responsive. Smooth scroll. 60fps target — animate transform/opacity, not layout.
+- **No browser storage.** Keep everything in React state. Waitlist submit posts to a simple backend/table.
+
+## Global motion & interaction principles
+
+- **Scroll is the timeline.** Sections reveal with soft fades + gentle rises as they enter view. Subtle parallax on hero and score sections (keep it tasteful, never nauseating).
+- **Everything reacts.** Buttons, cards, and the brain sectors respond to hover/tap with light, motion, and (on mobile) a subtle press state. Cyan glows follow interaction.
+- **The brain viz is the mascot.** The five-sector brain visualization appears throughout, softly pulsing, and responds to the user (hover a sector → it lights and names its domain).
+- **Respect `prefers-reduced-motion`** — swap heavy motion for simple fades.
+
+---
+
+## Section-by-section build
+
+### 1. Sticky nav
+- Transparent over hero, gains a cream blur background on scroll.
+- Left: wordmark. Right: minimal links (How it works · The Science · The 5 Areas) + a prominent cyan **[Join the waitlist]** button that stays visible the whole way down.
+
+### 2. Hero — the signature moment
+Full-viewport, cream. Layout: headline + subhead + email CTA on one side, the **living Remembrance Score orb** on the other (stacks on mobile, orb on top).
+
+- **The orb:** a navy→cyan gradient sphere with the five brain sectors faintly orbiting/pulsing inside it, and a number softly breathing at its center. On load it **counts up to a sample score (e.g. 84/100)** with a gentle glow bloom. This is Remembrance's "Whoop Age orb" — make it the most beautiful object on the page. It should feel gently alive at rest (slow pulse, drifting light).
+- **Headline (large, warm):** *"Know how your brain is doing. Before you ever have to wonder."*
+- **Subhead:** *"Remembrance helps you understand, track, and support your brain health — a few minutes a week, from home."*
+- **CTA:** inline email field + cyan **[Join the waitlist]**. Microcopy: *"Be first in line. No spam, ever."*
+- **Scroll cue** at the bottom nudging into the "try it" section.
+
+### 3. ⭐ Interactive "Try it" — a taste of a real test (THE differentiator)
+This is the section none of the reference sites can do. Let the visitor **experience the product in 15 seconds** and get a live micro-result. Make it feel magical and effortless.
+
+- **Framing headline:** *"See it for yourself. Take a 15-second brain moment."* Subhead: *"No sign-up. Just a taste of what a Remembrance check-in feels like."*
+- **The interaction (pick one signature mini-test — recommend a short "Focus Field"):** cyan circles gently fade in on a small cream field; instruct *"Tap the blue circles as they appear."* One-line, one instruction, big targets. Satisfying ripple + soft glow on each tap. Runs ~12–15s with an unpressured progress ring.
+- **The payoff:** a beautiful mini **processing animation** (~3–4s: waveform/metrics + the Attention sector lighting up on a small brain viz) → reveal a friendly, encouraging micro-result (e.g. *"Sharp focus. This is the kind of quick check Remembrance turns into your ongoing picture."*). **Never a clinical or negative result** — always warm and encouraging, since this is marketing, not assessment.
+- **Immediately after the reveal:** a soft CTA — *"Want your full Remembrance Score? Join the waitlist."* This is the highest-intent conversion moment on the page. Capitalize.
+- Small disclaimer beneath: *"For a feel of the experience — not a health assessment."*
+- **Fully accessible:** works on touch and mouse, big targets, skippable, no penalty, no timer stress.
+
+### 4. Emotional hook — why this matters to *you*
+Calm, spacious, human. One warm image or the brain viz drifting.
+- **Headline:** *"If you've watched someone you love slip away, you already know the fear."*
+- **Body (2–3 short lines):** acknowledge the family-history experience and reframe toward agency — *you don't have to wait and wonder; you can stay close to your own brain health and act early.* No statistics, no scare tactics. Gentle fade-up on scroll.
+
+### 5. How it works — interactive 3-step
+Horizontal stepper (stacks on mobile). Each step is a **card that activates as you scroll to it / on hover** — icon animates, cyan accent fills, a small illustration or micro-animation plays.
+1. **Take your baseline** — one easy assessment across five key areas → your Remembrance Score.
+2. **Check in weekly** — a few minutes a week, one area at a time, through quick interactive activities and a short voice check.
+3. **Get your plan & watch progress** — personalized guidance, and a full re-score every five weeks so you can *see* your progress.
+- Consider a progress line that "draws" itself in cyan connecting the three steps as you scroll.
+
+### 6. The Remembrance Score, explained
+Center the score orb again, larger. As it enters view, it **animates its count-up** and the five sectors light in sequence.
+- **Headline:** *"One number. Your whole picture."*
+- Copy: one simple, trackable number that moves as you build better habits — with five areas of brain health underneath it, each explained in plain language.
+- Small "then vs now" progress mock (a line ticking upward) to sell the longitudinal payoff.
+
+### 7. The five areas — interactive explorer
+An **interactive brain visualization** with five selectable sectors. Hover/tap a sector → it lights cyan, and a panel reveals that domain in plain, friendly language:
+- **Attention** — staying focused and thinking quickly.
+- **Executive Function** — planning, organizing, and solving problems.
+- **Memory** — learning and recalling new things.
+- **Language** — finding words and understanding.
+- **Coordination** — visual and spatial awareness. *(Perceptual-Motor, in plain terms.)*
+Make exploring the brain genuinely fun — this is a chance to be delightful and educational at once. Default to one sector active so it's obviously interactive.
+
+### 8. Your plan — guidance preview
+Show that Remembrance doesn't just measure — it helps. A soft, scroll-revealed grid of the six guidance areas, each a clean card with a cyan icon: **Diet · Exercise · Sleep · Social Connection · Health Checkups · Brain Training.** One line each on how small, personalized steps support brain health.
+
+### 9. Trust & the story
+Remembrance has no press or testimonials yet — do **not** fabricate any. Lead with the **founder story** instead (it's the most authentic trust you have):
+- **Headline:** *"Built by people who've been where you are."*
+- Short, honest paragraph: created out of personal loss and the belief that people shouldn't have to wait, powerless, for something they might get ahead of.
+- **Real trust signals only:** the **Dementia Society of America** partnership (logo with permission) and a brief "grounded in established brain-health science" line.
+- Leave clearly-labeled **placeholder slots** for future testimonials/press (structured like Oura's real-member cards with face + name + tag) so they can drop in later — but render them as "coming soon" / hidden until real, never faked.
+
+### 10. Final CTA
+Full-width, warm, the orb glowing softly behind.
+- **Headline:** *"Get ahead of it. Starting today."*
+- Email field + cyan **[Join the waitlist]**. Microcopy: *"No cost to join. Just early access when we're ready."*
+
+### 11. Footer
+Wordmark · minimal links (Privacy · Terms · Contact) · © 2026 Remembrance Health LLC · and the **wellness disclaimer**: *"Remembrance is a wellness and brain-health tool. It is not a medical device and does not diagnose, treat, or detect any disease. It is not a substitute for care from a qualified professional."*
+
+---
+
+## Waitlist form behavior
+- **Email only.** No price, no plan choice, no extra fields.
+- Inline validation → on success, a warm confirmation state with a small celebratory motion (*"You're on the list. We'll be in touch."*).
+- The email CTA appears **three times**: hero, after the "Try it" reveal, and final CTA. The post-try-it one converts best — make it prominent.
+- Persist signups to a simple backend/table.
+
+## Responsive & accessibility (this audience demands it)
+- Mobile-first; everything works one-handed with large tap targets (≥44px, prefer bigger).
+- High contrast, large readable type, legible at arm's length. Never rely on color alone.
+- Full keyboard navigation; visible focus states; ARIA labels on interactive elements.
+- Honor `prefers-reduced-motion`.
+- The "Try it" interaction must be fully operable by touch, mouse, and keyboard, and easy to skip.
+
+## Performance
+- Lazy-load below-the-fold imagery; compress assets; animate only transform/opacity.
+- Keep the hero orb and brain viz as lightweight SVG/Canvas, not heavy video, so first paint is fast.
+
+## Do NOT
+- No price anywhere. No fabricated testimonials, press logos, or stats. No "detect/diagnose/screen/dementia" language. No clinical coldness or fear imagery. No browser storage. No clutter — one focal moment per viewport, cyan used sparingly so CTAs always pop.
+
+## Build order
+1. Design system (tokens, type, brain-viz SVG, score orb component).
+2. Hero + orb + sticky nav + waitlist form (get the signature moment right first).
+3. The "Try it" interactive test + mini processing + reveal (the differentiator — invest here).
+4. Remaining sections top to bottom with scroll animations.
+5. Responsive + accessibility + reduced-motion pass.
+6. Performance + polish.

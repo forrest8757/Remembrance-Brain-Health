@@ -4,6 +4,8 @@ type BrainVisualizationProps = {
   className?: string;
   /** Five sectors map to attention, executive function, memory, language, and coordination. */
   activeSector?: number | null;
+  onSectorClick?: (index: number) => void;
+  onSectorHover?: (index: number) => void;
 };
 
 const SECTORS = [
@@ -30,7 +32,7 @@ const SECTORS = [
   },
 ];
 
-export function BrainVisualization({ className = '', activeSector = null }: BrainVisualizationProps) {
+export function BrainVisualization({ className = '', activeSector = null, onSectorClick, onSectorHover }: BrainVisualizationProps) {
   return (
     <div className={`relative mx-auto aspect-square w-full max-w-[400px] ${className}`} role="img" aria-label="Five-sector brain visualization">
       <div className="absolute inset-0 rounded-full border border-cyan/15 animate-[pulse_4s_ease-in-out_infinite]" />
@@ -58,7 +60,11 @@ export function BrainVisualization({ className = '', activeSector = null }: Brai
                 strokeOpacity={active ? 0.52 : 0.22}
                 strokeWidth="1.2"
                 filter={activeSector === index ? 'url(#brain-sector-glow)' : undefined}
-                className={`transition-all duration-700 ${activeSector === index ? 'animate-pulse' : ''}`}
+                className={`transition-all duration-700 ${activeSector === index ? 'animate-pulse' : ''} ${onSectorClick || onSectorHover ? 'cursor-pointer' : ''}`}
+                onClick={() => onSectorClick?.(index)}
+                onMouseEnter={() => onSectorHover?.(index)}
+                role={onSectorClick ? "button" : undefined}
+                aria-label={sector.label}
               >
                 <title>{sector.label}</title>
               </path>

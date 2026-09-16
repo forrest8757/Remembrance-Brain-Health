@@ -3,6 +3,7 @@
 ## Source of truth
 Before every change, revisit the relevant sections of the supplied documents and check the result against them. Current direct user instructions take precedence over document conflicts.
 
+- `attached_assets/Pasted--Remembrance-Interactive-Landing-Page-Build-Prompt-for-_1789581073283.txt`: current landing-page interaction and visual specification, superseding the earlier landing specification. Landing interactions use React state only; the 15-second marketing preview is separate from substantive product assessments. Keep sample scores illustrative and omit partnership logos until approved assets are supplied.
 - `attached_assets/Pasted--Remembrance-Product-Demo-Build-Spec-for-Replit-Target-_1789504687228.txt`: primary interaction, screen, animation, and demo-control specification.
 - `attached_assets/Pasted--Remembrance-Product-Requirements-Document-PRD-Version-_1789504705539.txt`: product model, five-week cycle, entities, and scope.
 - `attached_assets/Pasted--Remembrance-Landing-Page-Spec-Waitlist-Purpose-Convert_1789504713146.txt`: marketing page and email-only waitlist.

@@ -32,7 +32,6 @@ function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
-        <Route path="/" component={Landing} />
         <Route path="/welcome" component={Welcome} />
         <Route path="/baseline" component={Baseline} />
         <Route path="/score-reveal" component={ScoreReveal} />
@@ -54,18 +53,32 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
   return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
 }
 
+function AppContent() {
+  const [location] = useLocation();
+
+  // Marketing interactions are ephemeral. Only the separate product demo
+  // mounts the provider that reads and writes session storage.
+  if (location === '/') {
+    return <RoutedErrorBoundary><Landing /></RoutedErrorBoundary>;
+  }
+
+  return (
+    <DemoProvider>
+      <Router />
+      <DemoPanel />
+    </DemoProvider>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <DemoProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-            <div className="min-h-[100dvh] flex flex-col font-sans bg-background text-foreground relative">
-              <Router />
-              <DemoPanel />
-            </div>
-          </WouterRouter>
-        </DemoProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <div className="min-h-[100dvh] flex flex-col font-sans bg-background text-foreground relative">
+            <AppContent />
+          </div>
+        </WouterRouter>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
