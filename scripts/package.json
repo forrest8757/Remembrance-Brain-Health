@@ -5,10 +5,17 @@
   "type": "module",
   "scripts": {
     "hello": "tsx ./src/hello.ts",
+    "prepare-brain": "tsx ./src/prepare-brain.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
     "@types/node": "catalog:",
+    "meshoptimizer": "^1.2.0",
+    "sharp": "^0.35.4",
+    "three": "^0.186.0",
     "tsx": "catalog:"
   }
 }

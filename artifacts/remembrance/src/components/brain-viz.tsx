@@ -1,86 +1,212 @@
-import React from 'react';
+import React, {
+  Component,
+  Suspense,
+  lazy,
+  useMemo,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from 'react';
 
 type BrainVisualizationProps = {
   className?: string;
-  /** Five sectors map to attention, executive function, memory, language, and coordination. */
+  /**
+   * The selected wellness domain. The uploaded model is one continuous mesh,
+   * so this state is represented with a label and halo rather than anatomical
+   * regions painted onto the model.
+   */
   activeSector?: number | null;
   onSectorClick?: (index: number) => void;
   onSectorHover?: (index: number) => void;
+  /** Opt in to an almost-still rotation. The default view is fixed. */
+  gentleRotation?: boolean;
 };
 
-const SECTORS = [
-  {
-    label: 'Attention',
-    // Upper and front left lobe
-    path: 'M50 12C39 8 24 12 17 22C10 31 13 43 20 48L45 51L50 37Z',
-  },
-  {
-    label: 'Executive function',
-    path: 'M20 48C11 54 12 69 19 78C26 88 38 92 50 88L50 55L45 51Z',
-  },
-  {
-    label: 'Memory',
-    path: 'M50 12L50 37L45 51L50 55L50 88C54 91 58 91 62 88L62 55L57 51L62 37L62 15C58 12 54 11 50 12Z',
-  },
-  {
-    label: 'Language',
-    path: 'M62 15C75 10 89 16 96 27C101 36 97 45 92 50L62 37Z',
-  },
-  {
-    label: 'Coordination',
-    path: 'M92 50C101 58 99 70 93 79C86 89 74 93 62 88L62 55L57 51Z',
-  },
-];
+const DOMAINS = [
+  'Attention',
+  'Executive function',
+  'Memory',
+  'Language',
+  'Coordination',
+] as const;
 
-export function BrainVisualization({ className = '', activeSector = null, onSectorClick, onSectorHover }: BrainVisualizationProps) {
+function loadBrainModel() {
+  return import('./brain-model').then(({ BrainModel }) => ({
+    default: BrainModel,
+  }));
+}
+
+function ModelLoading({ label = 'Loading the interactive brain model…' }: { label?: string }) {
   return (
-    <div className={`relative mx-auto aspect-square w-full max-w-[400px] ${className}`} role="img" aria-label="Five-sector brain visualization">
-      <div className="absolute inset-0 rounded-full border border-cyan/15 animate-[pulse_4s_ease-in-out_infinite]" />
-      <div className="absolute inset-3 rounded-full border border-cyan/20 animate-[pulse_4s_ease-in-out_infinite_1s]" />
-      <svg viewBox="0 0 110 110" className="absolute inset-5 h-[calc(100%-2.5rem)] w-[calc(100%-2.5rem)] overflow-visible" aria-hidden="true">
-        <defs>
-          <filter id="brain-sector-glow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="1.8" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <g transform="translate(5 5)">
-          {SECTORS.map((sector, index) => {
-            const active = activeSector === null || activeSector === index;
-            return (
-              <path
-                key={sector.label}
-                d={sector.path}
-                fill={active ? '#1BCEDF' : '#1E3A5F'}
-                fillOpacity={active ? 0.56 : 0.08}
-                stroke="#1E3A5F"
-                strokeOpacity={active ? 0.52 : 0.22}
-                strokeWidth="1.2"
-                filter={activeSector === index ? 'url(#brain-sector-glow)' : undefined}
-                className={`transition-all duration-700 ${activeSector === index ? 'animate-pulse' : ''} ${onSectorClick || onSectorHover ? 'cursor-pointer' : ''}`}
-                onClick={() => onSectorClick?.(index)}
-                onMouseEnter={() => onSectorHover?.(index)}
-                role={onSectorClick ? "button" : undefined}
-                aria-label={sector.label}
+    <div
+      className="absolute inset-0 z-10 flex items-center justify-center p-6 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <p className="max-w-[16rem] rounded-2xl bg-cream/85 px-4 py-3 text-sm font-semibold text-navy/70 shadow-sm backdrop-blur-sm">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+type ViewerBoundaryProps = {
+  children: ReactNode;
+  onRetry: () => void;
+};
+
+type ViewerBoundaryState = {
+  error: Error | null;
+};
+
+class ViewerBoundary extends Component<ViewerBoundaryProps, ViewerBoundaryState> {
+  state: ViewerBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: unknown): ViewerBoundaryState {
+    return {
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+
+  componentDidCatch(error: unknown, info: ErrorInfo): void {
+    // Keep this scoped to the lazy viewer. Other Remembrance interactions
+    // should remain available when a browser cannot load the viewer chunk.
+    if (import.meta.env.DEV) {
+      console.warn('The interactive brain viewer failed to load.', error, info.componentStack);
+    }
+  }
+
+  render(): ReactNode {
+    if (!this.state.error) return this.props.children;
+
+    return (
+      <div
+        className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 p-6 text-center"
+        role="alert"
+      >
+        <p className="max-w-[19rem] text-sm font-bold leading-relaxed text-navy">
+          The interactive brain viewer could not load.
+        </p>
+        <p className="max-w-[20rem] text-xs font-medium leading-relaxed text-navy/65">
+          The rest of the demo is still available. This is a viewer or WebGL
+          issue, not a substitute illustration.
+        </p>
+        <button
+          type="button"
+          onClick={this.props.onRetry}
+          className="min-h-11 rounded-full bg-navy px-5 text-sm font-bold text-white transition-colors hover:bg-navy/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2"
+        >
+          Retry viewer
+        </button>
+      </div>
+    );
+  }
+}
+
+function DomainControls({
+  activeSector,
+  onSectorClick,
+  onSectorHover,
+}: Pick<BrainVisualizationProps, 'activeSector' | 'onSectorClick' | 'onSectorHover'>) {
+  return (
+    <div className="relative z-30 mt-3 w-full" aria-label="Wellness domains">
+      <p className="mb-2 text-center text-xs font-medium leading-relaxed text-navy/55">
+        Choose a domain to explore. The single model is an illustration, not a map of
+        anatomical regions.
+      </p>
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+        {DOMAINS.map((domain, index) => {
+          const selected = activeSector === index;
+          return (
+            <button
+              key={domain}
+              type="button"
+              aria-label={`Select ${domain} domain`}
+              aria-pressed={selected}
+              onClick={() => onSectorClick?.(index)}
+              onMouseEnter={() => onSectorHover?.(index)}
+              onFocus={() => onSectorHover?.(index)}
+              className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border px-1 py-1.5 text-center text-[10px] font-bold leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 sm:text-[11px] ${
+                selected
+                  ? 'border-cyan/50 bg-cyan/15 text-navy shadow-sm'
+                  : 'border-navy/10 bg-white/70 text-navy/65 hover:border-cyan/35 hover:bg-cyan/5'
+              }`}
+            >
+              <span
+                className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
+                  selected ? 'bg-cyan text-navy' : 'bg-navy/10 text-navy/70'
+                }`}
+                aria-hidden="true"
               >
-                <title>{sector.label}</title>
-              </path>
-            );
-          })}
-          <path
-            d="M50 12C38 7 23 12 16 23C10 32 12 44 19 50C10 57 12 71 19 80C28 91 42 94 50 89C58 94 72 91 91 80C98 71 100 57 91 50C98 44 100 32 94 23C87 12 72 7 62 12C58 10 54 10 50 12Z"
-            fill="none"
-            stroke="#1E3A5F"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path d="M50 12V89M62 15V88M50 51h12" fill="none" stroke="#1E3A5F" strokeOpacity="0.4" strokeWidth="1.2" />
-        </g>
-      </svg>
+                {index + 1}
+              </span>
+              <span>{domain}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The visual shell intentionally contains no Three.js import. The model
+ * renderer lives in a lazy chunk so pages that never show the brain do not pay
+ * its download or parse cost during their initial route load.
+ */
+export function BrainVisualization({
+  className = '',
+  activeSector = null,
+  onSectorClick,
+  onSectorHover,
+  gentleRotation = false,
+}: BrainVisualizationProps) {
+  const [viewerAttempt, setViewerAttempt] = useState(0);
+  const LazyBrainModel = useMemo(
+    () => lazy(loadBrainModel),
+    [viewerAttempt],
+  );
+  const activeDomain =
+    activeSector !== null && activeSector !== undefined
+      ? DOMAINS[activeSector]
+      : undefined;
+  const hasDomainControls = Boolean(onSectorClick || onSectorHover);
+
+  return (
+    <div className={`relative mx-auto w-full max-w-[400px] ${className}`}>
+      <div className="relative aspect-square w-full" role="img" aria-label="Interactive 3D brain illustration">
+        <div
+          className={`pointer-events-none absolute inset-[8%] rounded-full border transition-all duration-500 ${
+            activeDomain
+              ? 'border-cyan/45 shadow-[0_0_42px_rgba(27,206,223,0.22)]'
+              : 'border-cyan/20 shadow-[0_0_28px_rgba(27,206,223,0.12)]'
+          }`}
+          aria-hidden="true"
+        />
+        <ViewerBoundary
+          key={viewerAttempt}
+          onRetry={() => setViewerAttempt((attempt) => attempt + 1)}
+        >
+          <Suspense fallback={<ModelLoading />}>
+            <LazyBrainModel
+              gentleRotation={gentleRotation}
+              retryKey={viewerAttempt}
+            />
+          </Suspense>
+        </ViewerBoundary>
+        <p className="sr-only">
+          {activeDomain
+            ? `Selected wellness domain: ${activeDomain}. The 3D model is a shared illustration and does not show anatomical regions.`
+            : 'The 3D model is a shared brain illustration. It does not show anatomical regions.'}
+        </p>
+      </div>
+      {hasDomainControls ? (
+        <DomainControls
+          activeSector={activeSector}
+          onSectorClick={onSectorClick}
+          onSectorHover={onSectorHover}
+        />
+      ) : null}
     </div>
   );
 }
