@@ -27,30 +27,7 @@ export default function Landing() {
         <main>
           <Hero />
 
-        {/* 3. Emotional hook */}
-        <section className="py-32 px-6 bg-white border-y border-navy/5 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/5 rounded-full blur-[100px] pointer-events-none" />
-          
-          <motion.div 
-            className="container mx-auto max-w-4xl text-center space-y-8 relative z-10"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-          >
-            <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight leading-tight">
-              If you've watched someone you love slip away, <br className="hidden md:block" />
-              you already know the fear.
-            </h2>
-            <div className="space-y-6 text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto font-medium">
-              <p>
-                You don't have to wait and wonder. You can stay close to your own brain health and act early, empowered by a clear understanding of where you stand.
-              </p>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* 4. How it works */}
+        {/* 3. How it works */}
         <section id="how-it-works" className="py-32 px-6">
           <div className="container mx-auto max-w-6xl space-y-20">
             <motion.div 
@@ -69,7 +46,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 5. The five areas — interactive explorer */}
+        {/* 4. The five areas — interactive explorer */}
         <section id="areas" className="py-32 px-6">
           <div className="container mx-auto max-w-6xl space-y-16">
             <motion.div 
@@ -98,7 +75,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 6. The Remembrance Score, explained */}
+        {/* 5. The Remembrance Score, explained */}
         <section className="py-32 px-6 bg-white border-y border-navy/5 overflow-hidden">
           <div className="container mx-auto max-w-5xl grid md:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -147,7 +124,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 7. Your plan — guidance preview */}
+        {/* 6. Your plan — guidance preview */}
         <section className="py-32 px-6 bg-white border-y border-navy/5">
           <div className="container mx-auto max-w-6xl">
             <motion.div 
@@ -193,7 +170,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 8. Interactive "Try it" */}
+        {/* 7. Interactive "Try it" */}
         <section id="try-it" className="py-32 px-6">
           <div className="container mx-auto max-w-4xl space-y-12">
             <motion.div
@@ -211,7 +188,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 9. Trust & the story */}
+        {/* 8. Trust & the story */}
         <section id="science" className="py-32 px-6 bg-navy text-cream relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan/10 blur-[120px] rounded-full pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan/5 blur-[100px] rounded-full pointer-events-none" />
@@ -282,6 +259,29 @@ export default function Landing() {
               ))}
             </motion.div>
           </div>
+        </section>
+
+        {/* 9. Emotional hook */}
+        <section className="py-32 px-6 bg-white border-y border-navy/5 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/5 rounded-full blur-[100px] pointer-events-none" />
+          
+          <motion.div 
+            className="container mx-auto max-w-4xl text-center space-y-8 relative z-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeUp}
+          >
+            <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight leading-tight">
+              If you've watched someone you love slip away, <br className="hidden md:block" />
+              you already know the fear.
+            </h2>
+            <div className="space-y-6 text-lg md:text-xl text-navy/70 leading-relaxed max-w-3xl mx-auto font-medium">
+              <p>
+                You don't have to wait and wonder. You can stay close to your own brain health and act early, empowered by a clear understanding of where you stand.
+              </p>
+            </div>
+          </motion.div>
         </section>
 
         {/* 10. Final CTA */}
