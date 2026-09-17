@@ -8,7 +8,7 @@ import { Footer } from '@/components/landing/footer';
 import { ScoreOrb } from '@/components/landing/score-orb';
 import { WaitlistForm } from '@/components/landing/waitlist-form';
 import { FocusPreview } from '@/components/landing/focus-preview';
-import { Apple, ArrowDown, Dumbbell, Moon, Users, Stethoscope, Lightbulb, Shield, LineChart } from 'lucide-react';
+import { Apple, ArrowDown, Dumbbell, Moon, Users, Stethoscope, Lightbulb, Shield } from 'lucide-react';
 
 export default function Landing() {
   const reducedMotion = useReducedMotion();
@@ -75,56 +75,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 5. The Remembrance Score, explained */}
-        <section className="py-32 px-6 bg-white border-y border-navy/5 overflow-hidden">
-          <div className="container mx-auto max-w-5xl grid md:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-              className="order-2 md:order-1 flex justify-center relative"
-            >
-              <ScoreOrb targetScore={84} size="large" />
-              
-              {/* Progress mock card overlaid */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20, y: 20 }}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="absolute -bottom-8 -right-4 md:-right-12 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-border flex items-center gap-4"
-              >
-                <div className="w-10 h-10 bg-cyan/10 text-cyan rounded-full flex items-center justify-center">
-                  <LineChart size={20} />
-                </div>
-                <div>
-                  <div className="text-xs text-navy/70 font-bold uppercase tracking-wide">Illustrative 5-week trend</div>
-                  <div className="text-navy font-semibold flex items-center gap-2">
-                    +4 points <span className="text-navy text-sm bg-cyan/10 px-2 py-0.5 rounded-full">Sample data</span>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-            
-            <motion.div 
-              className="order-1 md:order-2 space-y-6"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-            >
-              <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight">
-                One number. <br /> Your whole picture.
-              </h2>
-              <p className="text-xl text-navy/70 leading-relaxed font-medium">
-                A simple way to follow your recorded results over time — with five key areas of brain health underneath it, explained in plain language. Scores can vary; this example is not a prediction of improvement.
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 6. Your plan — guidance preview */}
+        {/* 5. Your plan — guidance preview */}
         <section className="py-32 px-6 bg-white border-y border-navy/5">
           <div className="container mx-auto max-w-6xl">
             <motion.div 
@@ -170,7 +121,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 7. Interactive "Try it" */}
+        {/* 6. Interactive "Try it" */}
         <section id="try-it" className="py-32 px-6">
           <div className="container mx-auto max-w-4xl space-y-12">
             <motion.button
@@ -211,7 +162,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 8. Trust & the story */}
+        {/* 7. Trust & the story */}
         <section id="science" className="py-32 px-6 bg-navy text-cream relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan/10 blur-[120px] rounded-full pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan/5 blur-[100px] rounded-full pointer-events-none" />
@@ -284,7 +235,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 9. Emotional hook */}
+        {/* 8. Emotional hook */}
         <section className="py-32 px-6 bg-white border-y border-navy/5 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/5 rounded-full blur-[100px] pointer-events-none" />
           
@@ -307,7 +258,7 @@ export default function Landing() {
           </motion.div>
         </section>
 
-        {/* 10. Final CTA */}
+        {/* 9. Final CTA */}
         <section className="py-32 px-6 relative overflow-hidden flex justify-center items-center text-center">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
           
