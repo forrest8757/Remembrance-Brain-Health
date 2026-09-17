@@ -119,107 +119,52 @@ function InstructionButton({ instruction, disabled }: { instruction: string; dis
   );
 }
 
-type Shape = {
-  id: number;
-  type: 'circle' | 'square';
-  color: 'cyan' | 'navy';
-  x: number;
-  y: number;
-};
-
-function nextShape(id: number, rule: 'circle' | 'square'): Shape {
-  const target = Math.random() > 0.34;
-  const type = target
-    ? rule
-    : rule === 'circle'
-      ? Math.random() > 0.5
-        ? 'square'
-        : 'circle'
-      : Math.random() > 0.5
-        ? 'circle'
-        : 'square';
-  const color = rule === 'circle' && type === 'circle' ? 'cyan' : target && rule === 'square' ? 'navy' : 'navy';
-  return {
-    id,
-    type,
-    color,
-    x: 14 + Math.random() * 72,
-    y: 14 + Math.random() * 72,
-  };
-}
-
-function isShapeTarget(shape: Shape, rule: 'circle' | 'square') {
-  return rule === 'circle' ? shape.type === 'circle' && shape.color === 'cyan' : shape.type === 'square';
-}
+const FOCUS_TARGETS = [
+  { x: 50, y: 50 },
+  { x: 28, y: 34 },
+  { x: 72, y: 30 },
+  { x: 66, y: 68 },
+  { x: 34, y: 72 },
+  { x: 50, y: 24 },
+  { x: 76, y: 54 },
+  { x: 24, y: 56 },
+];
 
 export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
   const [isPaused, setIsPaused] = useState(false);
-  const [shape, setShape] = useState<Shape | null>(() =>
-    isWarmup ? { id: 1, type: 'circle', color: 'cyan', x: 50, y: 50 } : nextShape(1, 'circle'),
-  );
-  const [shapeId, setShapeId] = useState(1);
-  const [hits, setHits] = useState(0);
+  const [targetIndex, setTargetIndex] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [finishPending, setFinishPending] = useState(false);
-  const { feedback } = useTaskFeedback();
-  const assessmentSeconds = 120;
-  const rule: 'circle' | 'square' = isWarmup || Math.floor(elapsedSeconds / 30) % 2 === 0 ? 'circle' : 'square';
-
-  useEffect(() => {
-    setShape(isWarmup ? { id: 1, type: 'circle', color: 'cyan', x: 50, y: 50 } : nextShape(1, rule));
-  }, [isWarmup, rule]);
+  const activitySeconds = 15;
 
   usePausableTicker(
-    () => {
-      setShapeId((previous) => {
-        const id = previous + 1;
-        setShape(nextShape(id, rule));
-        return id;
-      });
-    },
-    1450,
-    isPaused,
-    !isWarmup && !finishPending,
-  );
-
-  usePausableTicker(
-    () => setElapsedSeconds((value) => Math.min(assessmentSeconds, value + 1)),
+    () => setElapsedSeconds((value) => Math.min(activitySeconds, value + 1)),
     1000,
     isPaused,
     !isWarmup && !finishPending,
   );
 
-  // Attention is a sustained, timed activity. A high hit count never ends it
-  // early; the changing rule phases are part of the assessment.
   usePausableTimeout(
     () => setFinishPending(true),
-    assessmentSeconds * 1000,
+    activitySeconds * 1000,
     isPaused,
     !isWarmup && !finishPending,
   );
   usePausableTimeout(onComplete, 700, isPaused, finishPending);
 
   const handleShape = () => {
-    if (isPaused || !shape) return;
-    const target = isShapeTarget(shape, rule);
-    setShape(null);
-    if (target) {
-      feedback('success');
-      if (isWarmup) {
-        setFinishPending(true);
-      } else {
-        setHits((value) => value + 1);
-      }
-    } else {
-      feedback('neutral');
+    if (isPaused || finishPending) return;
+    if (isWarmup) {
+      setFinishPending(true);
+      return;
     }
+    setTargetIndex((index) => (index + 1) % FOCUS_TARGETS.length);
   };
 
   const instruction = isWarmup
-    ? 'Tap the blue circle.'
-    : rule === 'circle'
-      ? 'Tap the cyan circles and let the rest drift by.'
-      : 'Now tap the squares instead.';
+    ? 'Try following the bright circle.'
+    : 'Follow one large cyan circle at a time.';
+  const target = FOCUS_TARGETS[targetIndex];
 
   return (
     <TaskShell
@@ -233,42 +178,37 @@ export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
       <div className="mx-auto flex w-full max-w-[430px] flex-col items-center gap-4">
         <p className="text-center text-sm font-medium text-navy/60">
           {isWarmup
-            ? 'Try the example first; practice does not count.'
-            : rule === 'circle'
-              ? 'There is no penalty if a shape drifts by.'
-              : 'The rule has changed calmly. Shapes remain large and spaced out.'}
+            ? 'Take a gentle practice moment. There is no score or penalty.'
+            : 'Let your attention wander, then gently bring it back.'}
         </p>
         <div className="relative aspect-square w-full overflow-hidden rounded-[2rem] border border-border bg-white shadow-sm">
-          {shape && (
-            <button
-              type="button"
-              onClick={handleShape}
-              aria-label={shape.type === 'circle' ? `${shape.color} circle` : `${shape.color} square`}
-              className={`absolute h-20 w-20 -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-75 fade-in duration-500 sm:h-24 sm:w-24 ${
-                shape.type === 'circle' ? 'rounded-full' : 'rounded-2xl'
-              } ${
-                shape.color === 'cyan'
-                  ? 'bg-cyan shadow-[0_0_24px_rgba(27,206,223,0.48)]'
-                  : 'bg-navy/80 shadow-[0_0_14px_rgba(30,58,95,0.14)]'
-              }`}
-              style={{ left: `${shape.x}%`, top: `${shape.y}%` }}
-            />
-          )}
+          <button
+            type="button"
+            onClick={handleShape}
+            aria-label="Bright cyan circle. Activate to continue."
+            className="absolute h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan shadow-[0_0_28px_rgba(27,206,223,0.48)] transition-[left,top] duration-500 ease-out animate-in zoom-in-75 fade-in sm:h-24 sm:w-24"
+            style={{ left: `${target.x}%`, top: `${target.y}%` }}
+          />
           {finishPending && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/85">
               <div className="flex items-center gap-2 text-xl font-bold text-navy">
-                <Check className="text-cyan" size={28} /> Nicely done.
+                <Check className="text-cyan" size={28} /> Nicely done. Take a breath.
               </div>
             </div>
           )}
         </div>
-        {!isWarmup && <div className="h-2 w-full overflow-hidden rounded-full bg-navy/5" aria-label="Quiet progress">
-           <div className="h-full rounded-full bg-cyan transition-all duration-500" style={{ width: `${Math.min(100, (elapsedSeconds / assessmentSeconds) * 100)}%` }} />
-        </div>}
+        {!isWarmup && (
+          <div className="h-2 w-full overflow-hidden rounded-full bg-navy/5" aria-label="Quiet progress">
+            <div
+              className="h-full rounded-full bg-cyan transition-all duration-500"
+              style={{ width: `${Math.min(100, (elapsedSeconds / activitySeconds) * 100)}%` }}
+            />
+          </div>
+        )}
         {!isWarmup && (
           <div className="flex w-full items-center justify-between text-xs font-bold uppercase tracking-wider text-navy/45">
-            <span>{Math.floor(elapsedSeconds / 30) + 1} of 4 rule phases</span>
-            <span>{Math.max(0, assessmentSeconds - elapsedSeconds)}s remaining · {hits} caught</span>
+            <span>Focus field · no score</span>
+            <span>{Math.max(0, activitySeconds - elapsedSeconds)}s remaining</span>
           </div>
         )}
       </div>
