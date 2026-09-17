@@ -3,9 +3,14 @@ import path from "node:path";
 import process from "node:process";
 
 import sharp from "sharp";
+import { Color } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 const SOURCE_DIR = path.resolve(process.env.BRAIN_SOURCE_DIR ?? "/tmp/brain-source");
+const OBJ_PATH = path.resolve(process.env.BRAIN_OBJ_PATH ?? path.join(SOURCE_DIR, "base.obj"));
+const USE_TEXTURES = process.env.BRAIN_USE_TEXTURES === "true";
+const neutralColor = new Color(0.65, 0.59, 0.53).convertLinearToSRGB();
+const NEUTRAL_RGB = [neutralColor.r, neutralColor.g, neutralColor.b].map((value) => value * 255);
 const OUTPUT_PATH = path.resolve(
   process.env.BRAIN_POSTER_PATH ??
     path.resolve(process.cwd(), "../artifacts/remembrance/public/models/brain-poster.png"),
@@ -247,6 +252,7 @@ function fract(value) {
 }
 
 function sampleDiffuse(texture, u, v) {
+  if (!texture) return NEUTRAL_RGB;
   const wrappedU = fract(u);
   const wrappedV = fract(v);
   // Bilinear filtering is deliberately clamped to the atlas edge instead of wrapping across
@@ -470,15 +476,15 @@ function repairInternalHoles(raw, width, height) {
 }
 
 async function main() {
-  const objPath = path.join(SOURCE_DIR, "base.obj");
+  const objPath = OBJ_PATH;
   const diffusePath = path.join(SOURCE_DIR, "texture_diffuse.png");
   const [objText, diffuseInput] = await Promise.all([
     fs.readFile(objPath, "utf8"),
-    sharp(diffusePath)
+    USE_TEXTURES ? sharp(diffusePath)
       .resize(1024, 1024, { fit: "fill", kernel: sharp.kernel.lanczos3 })
       .removeAlpha()
       .raw()
-      .toBuffer({ resolveWithObject: true }),
+      .toBuffer({ resolveWithObject: true }) : null,
   ]);
 
   const object = new OBJLoader().parse(objText);
@@ -490,12 +496,12 @@ async function main() {
     positions: normalized.positions,
     normals: smoothed.normals,
     uvs: source.uv,
-    texture: {
+    texture: diffuseInput ? {
       data: diffuseInput.data,
       width: diffuseInput.info.width,
       height: diffuseInput.info.height,
       channels: diffuseInput.info.channels,
-    },
+    } : null,
     vertexCount: source.vertexCount,
   });
 
@@ -521,7 +527,7 @@ async function main() {
     JSON.stringify(
       {
         source: objPath,
-        diffuse: diffusePath,
+        diffuse: USE_TEXTURES ? diffusePath : null,
         output: OUTPUT_PATH,
         renderer: "CPU barycentric rasterizer with z-buffer",
         canvas: `${WIDTH}x${HEIGHT}`,
@@ -531,7 +537,7 @@ async function main() {
         normalizedBounds: normalized.transformedBounds,
         rotationRadians: { y: ROTATION_Y, x: ROTATION_X },
         orientation: "Y-up source orientation retained; orthographic three-quarter view",
-        texture: `${diffuseInput.info.width}x${diffuseInput.info.height}`,
+        texture: diffuseInput ? `${diffuseInput.info.width}x${diffuseInput.info.height}` : "none — neutral matte",
         supersample: `${SUPERSAMPLE}x`,
         repairedInternalHoles: repairedPixels,
         posterBytes: poster.byteLength,

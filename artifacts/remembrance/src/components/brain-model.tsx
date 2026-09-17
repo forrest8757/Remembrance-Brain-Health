@@ -19,8 +19,8 @@ type SharedBrainAsset = {
   scene: THREE.Group;
 };
 
-const DEFAULT_MODEL_URL = `${import.meta.env.BASE_URL}models/brain.glb`;
-const POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png`;
+const DEFAULT_MODEL_URL = `${import.meta.env.BASE_URL}models/brain.glb?v=neutral`;
+const POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png?v=neutral`;
 const sharedAssetCache = new Map<string, Promise<SharedBrainAsset>>();
 
 function readableError(error: unknown): string {

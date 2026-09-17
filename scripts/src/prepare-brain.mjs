@@ -10,6 +10,9 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MeshoptSimplifier } from "meshoptimizer";
 
 const SOURCE_DIR = path.resolve(process.env.BRAIN_SOURCE_DIR ?? "/tmp/brain-source");
+const OBJ_PATH = path.resolve(process.env.BRAIN_OBJ_PATH ?? path.join(SOURCE_DIR, "base.obj"));
+// A standalone OBJ defaults to neutral matte geometry. Textures are opt-in.
+const USE_TEXTURES = process.env.BRAIN_USE_TEXTURES === "true";
 const OUTPUT_PATH = path.resolve(
   process.env.BRAIN_OUTPUT_PATH ??
     path.resolve(process.cwd(), "../artifacts/remembrance/public/models/brain.glb"),
@@ -23,10 +26,12 @@ const SIMPLIFY_RATIO = 0.18;
 const SIMPLIFY_ERROR = 0.01;
 
 const REQUIRED_FILES = [
-  "base.obj",
-  "texture_diffuse.png",
-  "texture_normal.png",
-  "texture_roughness.png",
+  OBJ_PATH,
+  ...(USE_TEXTURES
+    ? ["texture_diffuse.png", "texture_normal.png", "texture_roughness.png"].map(
+        (name) => path.join(SOURCE_DIR, name),
+      )
+    : []),
 ];
 
 const fail = (message) => {
@@ -34,8 +39,7 @@ const fail = (message) => {
 };
 
 async function assertSourceFiles() {
-  for (const fileName of REQUIRED_FILES) {
-    const filePath = path.join(SOURCE_DIR, fileName);
+  for (const filePath of REQUIRED_FILES) {
     let stat;
     try {
       stat = await fs.stat(filePath);
@@ -167,7 +171,7 @@ function makeAccessor(document, buffer, name, array, type) {
 async function main() {
   await assertSourceFiles();
 
-  const objPath = path.join(SOURCE_DIR, "base.obj");
+  const objPath = OBJ_PATH;
   const objText = await fs.readFile(objPath, "utf8");
   const loaded = new OBJLoader().parse(objText);
   const meshes = loaded.children.filter(
@@ -191,28 +195,29 @@ async function main() {
   const normal = makeAccessor(document, buffer, "NORMAL", source.normal, Accessor.Type.VEC3);
   const uv = makeAccessor(document, buffer, "TEXCOORD_0", source.uv, Accessor.Type.VEC2);
 
-  const diffuseBytes = await resizeDiffuse(path.join(SOURCE_DIR, "texture_diffuse.png"));
-  const normalBytes = await resizeNormal(path.join(SOURCE_DIR, "texture_normal.png"));
-  const metalRoughnessBytes = await createMetalRoughness(
+  const diffuseBytes = USE_TEXTURES ? await resizeDiffuse(path.join(SOURCE_DIR, "texture_diffuse.png")) : null;
+  const normalBytes = USE_TEXTURES ? await resizeNormal(path.join(SOURCE_DIR, "texture_normal.png")) : null;
+  const metalRoughnessBytes = USE_TEXTURES ? await createMetalRoughness(
     path.join(SOURCE_DIR, "texture_roughness.png"),
-  );
+  ) : null;
 
-  const diffuseTexture = document
+  const diffuseTexture = USE_TEXTURES ? document
     .createTexture("brain multicolor atlas")
     .setMimeType("image/jpeg")
-    .setImage(diffuseBytes);
-  const normalTexture = document
+    .setImage(diffuseBytes) : null;
+  const normalTexture = USE_TEXTURES ? document
     .createTexture("brain normal atlas")
     .setMimeType("image/png")
-    .setImage(normalBytes);
-  const metalRoughnessTexture = document
+    .setImage(normalBytes) : null;
+  const metalRoughnessTexture = USE_TEXTURES ? document
     .createTexture("brain roughness atlas")
     .setMimeType("image/png")
-    .setImage(metalRoughnessBytes);
+    .setImage(metalRoughnessBytes) : null;
 
   const material = document
-    .createMaterial("brain multicolor matte")
-    .setBaseColorFactor([1, 1, 1, 1])
+    .createMaterial(USE_TEXTURES ? "brain multicolor matte" : "brain neutral matte")
+    // Linear RGB; matches the warm-neutral sRGB material in the still renderer.
+    .setBaseColorFactor(USE_TEXTURES ? [1, 1, 1, 1] : [0.65, 0.59, 0.53, 1])
     .setBaseColorTexture(diffuseTexture)
     .setNormalTexture(normalTexture)
     .setNormalScale(0.65)
@@ -281,12 +286,12 @@ async function main() {
     bounds: finalBounds,
     vertices: finalPosition.getCount(),
     triangles: triangleCount,
-    textures: {
+    textures: USE_TEXTURES ? {
       size: `${TEXTURE_SIZE}x${TEXTURE_SIZE}`,
-      diffuseBytes: diffuseBytes.byteLength,
-      normalBytes: normalBytes.byteLength,
-      metalRoughnessBytes: metalRoughnessBytes.byteLength,
-    },
+      diffuseBytes: diffuseBytes?.byteLength,
+      normalBytes: normalBytes?.byteLength,
+      metalRoughnessBytes: metalRoughnessBytes?.byteLength,
+    } : null,
     outputBytes: glb.byteLength,
     compression: "vertex weld + meshoptimizer simplification + KHR_mesh_quantization; no meshopt/draco decoder",
   };
