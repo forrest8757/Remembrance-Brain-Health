@@ -130,6 +130,39 @@ const FOCUS_TARGETS = [
   { x: 24, y: 56 },
 ];
 
+type Shape = {
+  id: number;
+  type: 'circle' | 'square';
+  color: 'cyan' | 'navy';
+  x: number;
+  y: number;
+};
+
+function nextShape(id: number, rule: 'circle' | 'square'): Shape {
+  const target = Math.random() > 0.34;
+  const type = target
+    ? rule
+    : rule === 'circle'
+      ? Math.random() > 0.5
+        ? 'square'
+        : 'circle'
+      : Math.random() > 0.5
+        ? 'circle'
+        : 'square';
+  const color = rule === 'circle' && type === 'circle' ? 'cyan' : target && rule === 'square' ? 'navy' : 'navy';
+  return {
+    id,
+    type,
+    color,
+    x: 14 + Math.random() * 72,
+    y: 14 + Math.random() * 72,
+  };
+}
+
+function isShapeTarget(shape: Shape, rule: 'circle' | 'square') {
+  return rule === 'circle' ? shape.type === 'circle' && shape.color === 'cyan' : shape.type === 'square';
+}
+
 export function FocusField({ onComplete, isWarmup = false }: TaskProps) {
   const [isPaused, setIsPaused] = useState(false);
   const [targetIndex, setTargetIndex] = useState(0);
