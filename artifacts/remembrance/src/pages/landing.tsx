@@ -150,7 +150,7 @@ export default function Landing() {
                 Understand every part of you
               </h2>
               <p className="text-xl text-navy/70 font-medium">
-                Tap an area to see what it controls in your daily life.
+                Explore the wellness domains to see how your brain supports your daily life.
               </p>
             </motion.div>
             

@@ -16,6 +16,12 @@ type BrainVisualizationProps = {
    * regions painted onto the model.
    */
   activeSector?: number | null;
+  /**
+   * Optional camera focus target that triggers model rotation/zoom.
+   */
+  focusSector?: number | null;
+  /** Whether to show the domain buttons below the visualization */
+  showDomainControls?: boolean;
   onSectorClick?: (index: number) => void;
   onSectorHover?: (index: number) => void;
   /** Opt in to an almost-still rotation. The default view is fixed. */
@@ -157,6 +163,8 @@ function DomainControls({
 export function BrainVisualization({
   className = '',
   activeSector = null,
+  focusSector = null,
+  showDomainControls = true,
   onSectorClick,
   onSectorHover,
   gentleRotation = false,
@@ -170,11 +178,11 @@ export function BrainVisualization({
     activeSector !== null && activeSector !== undefined
       ? DOMAINS[activeSector]
       : undefined;
-  const hasDomainControls = Boolean(onSectorClick || onSectorHover);
+  const hasDomainControls = showDomainControls && Boolean(onSectorClick || onSectorHover);
 
   return (
     <div className={`relative mx-auto w-full max-w-[400px] ${className}`}>
-      <div className="relative aspect-square w-full" role="img" aria-label="Interactive 3D brain illustration">
+      <div className="relative aspect-square w-full" role="group" aria-label="Interactive 3D brain illustration">
         <div
           className={`pointer-events-none absolute inset-[8%] rounded-full border transition-all duration-500 ${
             activeDomain
@@ -191,6 +199,7 @@ export function BrainVisualization({
             <LazyBrainModel
               gentleRotation={gentleRotation}
               retryKey={viewerAttempt}
+              focusSector={focusSector}
             />
           </Suspense>
         </ViewerBoundary>

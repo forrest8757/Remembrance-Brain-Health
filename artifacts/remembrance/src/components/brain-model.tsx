@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import {
+  getBrainDomain,
+  OVERVIEW_VIEW,
+  type BrainDomain,
+} from '../lib/brain-domains';
 
-type BrainModelProps = {
+export type BrainModelProps = {
   className?: string;
   /** Keep the default view still; this is opt-in for contexts that want motion. */
   gentleRotation?: boolean;
   /** Changing this causes a clean loader/renderer retry. */
   retryKey?: number;
   modelUrl?: string;
+  /** Educational focus index. Null (or an unknown index) shows the overview. */
+  focusSector?: number | null;
 };
 
 type ViewerStatus =
@@ -19,8 +26,12 @@ type SharedBrainAsset = {
   scene: THREE.Group;
 };
 
+type ViewController = {
+  focus: (index: number | null | undefined) => void;
+};
+
 const DEFAULT_MODEL_URL = `${import.meta.env.BASE_URL}models/brain.glb?v=neutral`;
-const POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png?v=neutral`;
+const OVERVIEW_POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png?v=neutral`;
 const sharedAssetCache = new Map<string, Promise<SharedBrainAsset>>();
 
 function readableError(error: unknown): string {
@@ -29,15 +40,8 @@ function readableError(error: unknown): string {
   return 'The brain model could not be loaded.';
 }
 
-function hasWebGL(canvas: HTMLCanvasElement): boolean {
-  try {
-    return Boolean(
-      canvas.getContext('webgl2', { alpha: true }) ||
-        canvas.getContext('webgl', { alpha: true }),
-    );
-  } catch {
-    return false;
-  }
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
 }
 
 function loadSharedBrainAsset(url: string): Promise<SharedBrainAsset> {
@@ -75,37 +79,71 @@ function loadSharedBrainAsset(url: string): Promise<SharedBrainAsset> {
   return request;
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
+function getDomain(index: number | null | undefined): BrainDomain | undefined {
+  return getBrainDomain(index);
+}
+
+function posterForDomain(domain: BrainDomain | undefined): string {
+  return domain
+    ? `${import.meta.env.BASE_URL}models/brain-focus-${domain.id}.png`
+    : OVERVIEW_POSTER_URL;
 }
 
 function ViewerStatusMessage({
   status,
+  domain,
   onRetry,
 }: {
   status: ViewerStatus;
+  domain?: BrainDomain;
   onRetry: () => void;
 }) {
+  const poster = posterForDomain(domain);
+  const focusDescription = domain
+    ? ` focused on approximate ${domain.region} region`
+    : '';
+
   if (status.kind === 'ready') return null;
   if (status.kind === 'loading') {
     return (
       <>
-        <img src={POSTER_URL} alt="Uploaded anatomical brain model" className="pointer-events-none absolute inset-0 h-full w-full object-contain" />
-        <p role="status" className="absolute inset-x-0 bottom-1 text-center text-xs text-navy/70">
-          Loading interactive 3D…
+        <img
+          src={poster}
+          alt={
+            domain
+              ? `Still render of the brain model, approximate ${domain.region} focus`
+              : 'Still render of the overview anatomical brain model'
+          }
+          className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+        />
+        <p
+          role="status"
+          className="absolute inset-x-0 bottom-1 text-center text-xs text-navy/70"
+        >
+          Loading interactive 3D{focusDescription}…
         </p>
       </>
     );
   }
 
   return (
-    <div
-      className="absolute inset-0 z-20 text-center"
-    >
-      <img src={POSTER_URL} alt="Still render of the uploaded anatomical brain model" className="absolute inset-0 h-full w-full object-contain" />
+    <div className="absolute inset-0 z-20 text-center">
+      <img
+        src={poster}
+        alt={
+          domain
+            ? `Still render of the brain model, approximate ${domain.region} focus`
+            : 'Still render of the overview anatomical brain model'
+        }
+        className="absolute inset-0 h-full w-full object-contain"
+      />
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 rounded-xl bg-cream/95 px-2 text-xs text-navy/70">
         <span role="status">Still view · interactive 3D unavailable</span>
-        <button type="button" onClick={onRetry} className="min-h-11 px-2 font-semibold text-navy underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-cyan">
+        <button
+          type="button"
+          onClick={onRetry}
+          className="min-h-11 px-2 font-semibold text-navy underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-cyan"
+        >
           Retry 3D
         </button>
       </div>
@@ -115,25 +153,41 @@ function ViewerStatusMessage({
 }
 
 /**
- * Small native Three.js viewer. It deliberately does not use a per-mesh
- * disposal routine: all clones share the GLTF loader's geometry/material/
- * texture resources through sharedAssetCache.
+ * Small native Three.js viewer. It deliberately does not dispose shared GLTF
+ * resources: all clones share the loader's geometry/material/texture cache.
  */
 export function BrainModel({
   className = 'absolute inset-0',
   gentleRotation = false,
   retryKey = 0,
   modelUrl = DEFAULT_MODEL_URL,
+  focusSector = null,
 }: BrainModelProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<ViewController | null>(null);
+  const focusSectorRef = useRef<number | null | undefined>(focusSector);
   const [status, setStatus] = useState<ViewerStatus>({ kind: 'loading' });
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const domain = getDomain(focusSector);
+
+  // Keep this value current without making focus changes tear down the renderer.
+  focusSectorRef.current = focusSector;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
     const host = hostRef.current;
-    if (!canvas || !host) return undefined;
+    if (!host) return undefined;
+
+    // A fresh canvas is intentional. forceContextLoss() makes a reused canvas
+    // unusable in some browsers (and during HMR), so it must never be retained
+    // in JSX or reused by a later renderer setup.
+    const canvas = document.createElement('canvas');
+    canvas.className =
+      'block h-full w-full cursor-grab touch-pan-y select-none active:cursor-grabbing';
+    canvas.style.touchAction = 'pan-y';
+    canvas.style.userSelect = 'none';
+    canvas.setAttribute('aria-label', 'Interactive 3D brain model');
+    canvas.tabIndex = -1;
+    host.appendChild(canvas);
 
     let disposed = false;
     let renderer: THREE.WebGLRenderer | null = null;
@@ -141,6 +195,8 @@ export function BrainModel({
     let resizeObserver: ResizeObserver | null = null;
     let intersectionObserver: IntersectionObserver | null = null;
     let modelRoot: THREE.Group | null = null;
+    let markerRoot: THREE.Group | null = null;
+    let markerMaterial: THREE.MeshBasicMaterial | null = null;
     let scene: THREE.Scene | null = null;
     let camera: THREE.PerspectiveCamera | null = null;
     let modelReady = false;
@@ -149,14 +205,55 @@ export function BrainModel({
     const reducedMotion =
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     const animateGently = gentleRotation && !reducedMotion;
+    // Focus posters use a straight-on camera at (0, 0, distance).
+    const cameraDirection = new THREE.Vector3(0, 0, 1);
+    const overviewQuaternion = new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(...OVERVIEW_VIEW.rotation),
+    );
+    let gentleBaseQuaternion = overviewQuaternion.clone();
+    let gentlePaused = false;
+    let transition:
+      | {
+          startedAt: number;
+          elapsed: number;
+          fromQuaternion: THREE.Quaternion;
+          toQuaternion: THREE.Quaternion;
+          fromPosition: THREE.Vector3;
+          toPosition: THREE.Vector3;
+          fromDistance: number;
+          toDistance: number;
+        }
+      | null = null;
 
-    setStatus({ kind: 'loading' });
+    type DragState = {
+      pointerId: number;
+      startX: number;
+      startY: number;
+      lastX: number;
+      lastY: number;
+      intent: 'none' | 'undecided' | 'orbit' | 'scroll';
+    };
+    const drag: DragState = {
+      pointerId: -1,
+      startX: 0,
+      startY: 0,
+      lastX: 0,
+      lastY: 0,
+      intent: 'none',
+    };
 
     const stopFrame = () => {
       if (frame !== null) {
         cancelAnimationFrame(frame);
         frame = null;
       }
+    };
+
+    const pauseTransition = () => {
+      if (!transition) return;
+      const now = performance.now();
+      transition.elapsed += now - transition.startedAt;
+      transition.startedAt = now;
     };
 
     const render = () => {
@@ -166,25 +263,74 @@ export function BrainModel({
       renderer.render(scene, camera);
     };
 
+    const needsFrame = () => Boolean(transition) || (animateGently && !gentlePaused);
+
+    let tick: (time: number) => void;
     const startFrame = () => {
-      if (!animateGently || frame !== null || !visible || !documentVisible) return;
+      if (
+        frame !== null ||
+        disposed ||
+        !visible ||
+        !documentVisible ||
+        !needsFrame()
+      ) {
+        return;
+      }
       frame = requestAnimationFrame(tick);
     };
 
-    const tick = (time: number) => {
+    const tickFrame = (time: number) => {
       frame = null;
       if (disposed || !renderer || !scene || !camera || !modelRoot || !modelReady) {
         return;
       }
       if (!visible || !documentVisible) return;
-      // A deliberately tiny oscillation is opt-in. Dragging stays in control
-      // and the default is entirely still.
-      if (animateGently) {
-        modelRoot.rotation.z = Math.sin(time * 0.00018) * 0.018;
+
+      if (transition) {
+        const progress = clamp(
+          (transition.elapsed + time - transition.startedAt) / 1100,
+          0,
+          1,
+        );
+        // Smoothstep avoids an abrupt start or stop while keeping rapid
+        // selections responsive (each transition starts from the current pose).
+        const eased = progress * progress * (3 - 2 * progress);
+        modelRoot.quaternion.slerpQuaternions(
+          transition.fromQuaternion,
+          transition.toQuaternion,
+          eased,
+        );
+        modelRoot.position.lerpVectors(
+          transition.fromPosition,
+          transition.toPosition,
+          eased,
+        );
+        const distance =
+          transition.fromDistance +
+          (transition.toDistance - transition.fromDistance) * eased;
+        camera.position.copy(cameraDirection).multiplyScalar(distance);
+        camera.lookAt(0, 0, 0);
+        if (progress >= 1) {
+          modelRoot.quaternion.copy(transition.toQuaternion);
+          modelRoot.position.copy(transition.toPosition);
+          gentleBaseQuaternion.copy(transition.toQuaternion);
+          transition = null;
+        }
         renderer.render(scene, camera);
-        startFrame();
+      } else if (animateGently && !gentlePaused) {
+        const gentleQuaternion = gentleBaseQuaternion.clone().multiply(
+          new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 0, 1),
+            Math.sin(time * 0.00018) * 0.018,
+          ),
+        );
+        modelRoot.quaternion.copy(gentleQuaternion);
+        renderer.render(scene, camera);
       }
+
+      if (needsFrame()) startFrame();
     };
+    tick = tickFrame;
 
     const resize = () => {
       if (!renderer || !camera) return;
@@ -197,24 +343,59 @@ export function BrainModel({
       render();
     };
 
-    const onDocumentVisibility = () => {
-      documentVisible = document.visibilityState !== 'hidden';
-      if (documentVisible) {
-        render();
-        startFrame();
-      } else {
-        stopFrame();
+    const setMarker = (nextDomain: BrainDomain | undefined) => {
+      if (!markerRoot) return;
+      if (!nextDomain) {
+        markerRoot.visible = false;
+        return;
       }
+      markerRoot.visible = true;
+      markerRoot.position
+        .set(...nextDomain.view.target)
+        .multiplyScalar(0.91);
     };
 
-    const drag = {
-      pointerId: -1,
-      startX: 0,
-      startY: 0,
-      lastX: 0,
-      lastY: 0,
-      intent: 'none' as 'none' | 'undecided' | 'orbit' | 'scroll',
+    const applyFocus = (nextDomain: BrainDomain | undefined, instantly = reducedMotion) => {
+      if (!modelRoot || !camera || !modelReady) return;
+      setMarker(nextDomain);
+      const view = nextDomain?.view ?? OVERVIEW_VIEW;
+      const targetQuaternion = new THREE.Quaternion().setFromEuler(
+        new THREE.Euler(...view.rotation),
+      );
+      const targetPoint = new THREE.Vector3(...view.target).multiplyScalar(0.91);
+      const targetPosition = targetPoint.clone().applyQuaternion(targetQuaternion).negate();
+      const currentDistance = camera.position.length() || OVERVIEW_VIEW.distance;
+
+      if (instantly) {
+        modelRoot.quaternion.copy(targetQuaternion);
+        modelRoot.position.copy(targetPosition);
+        camera.position.copy(cameraDirection).multiplyScalar(view.distance);
+        camera.lookAt(0, 0, 0);
+        gentleBaseQuaternion.copy(targetQuaternion);
+        transition = null;
+        render();
+        return;
+      }
+
+      transition = {
+        startedAt: performance.now(),
+        elapsed: 0,
+        fromQuaternion: modelRoot.quaternion.clone(),
+        toQuaternion: targetQuaternion,
+        fromPosition: modelRoot.position.clone(),
+        toPosition: targetPosition,
+        fromDistance: currentDistance,
+        toDistance: view.distance,
+      };
+      startFrame();
     };
+
+    const focus = (index: number | null | undefined) => {
+      // Resolve on every call so a rapid sequence always replaces the previous
+      // destination, rather than queueing stale transitions.
+      applyFocus(getDomain(index));
+    };
+    controllerRef.current = { focus };
 
     const finishPointer = (event: PointerEvent) => {
       if (drag.pointerId !== event.pointerId) return;
@@ -241,7 +422,6 @@ export function BrainModel({
       const totalY = event.clientY - drag.startY;
       if (drag.intent === 'undecided' && Math.hypot(totalX, totalY) > 6) {
         // Let the browser keep vertical touch gestures for page scrolling.
-        // Only claim a clear horizontal gesture for model rotation.
         if (
           event.pointerType !== 'mouse' &&
           Math.abs(totalY) > Math.abs(totalX) * 1.1
@@ -251,6 +431,9 @@ export function BrainModel({
           return;
         }
         drag.intent = 'orbit';
+        // A real orbit gesture cancels a focus transition at its current pose.
+        transition = null;
+        gentlePaused = true;
         canvas.setPointerCapture(event.pointerId);
       }
       if (drag.intent !== 'orbit') return;
@@ -262,9 +445,9 @@ export function BrainModel({
         -0.42,
         0.42,
       );
+      render();
       drag.lastX = event.clientX;
       drag.lastY = event.clientY;
-      render();
     };
 
     const onPointerUp = (event: PointerEvent) => finishPointer(event);
@@ -280,19 +463,61 @@ export function BrainModel({
       }
     };
 
-    if (!hasWebGL(canvas)) {
-      setStatus({
-        kind: 'error',
-        message: 'This browser does not provide a usable WebGL context.',
-      });
-      return () => {
-        disposed = true;
-      };
-    }
+    const onDocumentVisibility = () => {
+      documentVisible = document.visibilityState !== 'hidden';
+      if (documentVisible) {
+        if (transition) transition.startedAt = performance.now();
+        render();
+        startFrame();
+      } else {
+        pauseTransition();
+        stopFrame();
+      }
+    };
+
+    const cleanup = () => {
+      disposed = true;
+      stopFrame();
+      resizeObserver?.disconnect();
+      intersectionObserver?.disconnect();
+      window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onDocumentVisibility);
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerCancel);
+      canvas.removeEventListener('webglcontextlost', onContextLost);
+      if (drag.pointerId !== -1 && canvas.hasPointerCapture(drag.pointerId)) {
+        canvas.releasePointerCapture(drag.pointerId);
+      }
+      if (modelRoot?.parent) modelRoot.parent.remove(modelRoot);
+      markerMaterial?.dispose();
+      renderer?.dispose();
+      renderer?.forceContextLoss();
+      renderer = null;
+      controllerRef.current = null;
+      // Never leave a context-lost canvas behind for a retry or HMR setup.
+      if (canvas.parentElement === host) host.removeChild(canvas);
+    };
+
+    setStatus({ kind: 'loading' });
 
     try {
+      // Three r186 viewer support is deliberately WebGL2-only. Do not fall
+      // through to a WebGL1 renderer with different material behavior.
+      const webgl2 = canvas.getContext('webgl2', { alpha: true });
+      if (!webgl2) {
+        setStatus({
+          kind: 'error',
+          message: 'This browser does not provide a usable WebGL2 context.',
+        });
+        cleanup();
+        return undefined;
+      }
+
       renderer = new THREE.WebGLRenderer({
         canvas,
+        context: webgl2,
         alpha: true,
         antialias: true,
         powerPreference: 'low-power',
@@ -313,12 +538,23 @@ export function BrainModel({
       scene.add(fillLight);
 
       camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-      camera.position.set(0.12, 0.08, 4.4);
+      camera.position.copy(cameraDirection).multiplyScalar(OVERVIEW_VIEW.distance);
       camera.lookAt(0, 0, 0);
       modelRoot = new THREE.Group();
-      // A calm 3/4 view; users can rotate it horizontally when they choose.
-      modelRoot.rotation.set(0.1, -0.65, 0);
+      modelRoot.quaternion.copy(overviewQuaternion);
       scene.add(modelRoot);
+
+      markerRoot = new THREE.Group();
+      markerRoot.visible = false;
+      const markerGeometry = new THREE.SphereGeometry(0.045, 16, 10);
+      markerMaterial = new THREE.MeshBasicMaterial({
+        color: 0x63e6ed,
+        transparent: true,
+        opacity: 0.78,
+        depthTest: false,
+      });
+      markerRoot.add(new THREE.Mesh(markerGeometry, markerMaterial));
+      modelRoot.add(markerRoot);
 
       canvas.addEventListener('pointerdown', onPointerDown);
       canvas.addEventListener('pointermove', onPointerMove, { passive: false });
@@ -337,10 +573,12 @@ export function BrainModel({
           ([entry]) => {
             visible = entry.isIntersecting;
             if (visible) {
+              if (transition) transition.startedAt = performance.now();
               resize();
               render();
               startFrame();
             } else {
+              pauseTransition();
               stopFrame();
             }
           },
@@ -354,9 +592,8 @@ export function BrainModel({
         kind: 'error',
         message: `WebGL could not start: ${readableError(error)}`,
       });
-      return () => {
-        disposed = true;
-      };
+      cleanup();
+      return undefined;
     }
 
     loadSharedBrainAsset(modelUrl)
@@ -373,9 +610,8 @@ export function BrainModel({
           throw new Error('The uploaded brain model has no visible dimensions.');
         }
 
-        // The uploaded OBJ conversion is centered and normalized. This small
-        // fit step also keeps a future export with a different unit scale
-        // comfortably inside the camera without making the brain tiny.
+        // The normalized model's max dimension is 1.82. Domain targets are
+        // authored in max-dimension-2 coordinates and are scaled by .91 below.
         const normalized = new THREE.Group();
         const fitScale = 1.82 / maxDimension;
         normalized.position.copy(center).multiplyScalar(-fitScale);
@@ -384,6 +620,7 @@ export function BrainModel({
         modelRoot.add(normalized);
 
         modelReady = true;
+        applyFocus(getDomain(focusSectorRef.current), true);
         setStatus({ kind: 'ready' });
         resize();
         render();
@@ -398,31 +635,17 @@ export function BrainModel({
         });
       });
 
-    return () => {
-      disposed = true;
-      stopFrame();
-      resizeObserver?.disconnect();
-      intersectionObserver?.disconnect();
-      window.removeEventListener('resize', resize);
-      document.removeEventListener('visibilitychange', onDocumentVisibility);
-      canvas.removeEventListener('pointerdown', onPointerDown);
-      canvas.removeEventListener('pointermove', onPointerMove);
-      canvas.removeEventListener('pointerup', onPointerUp);
-      canvas.removeEventListener('pointercancel', onPointerCancel);
-      canvas.removeEventListener('webglcontextlost', onContextLost);
-      if (drag.pointerId !== -1 && canvas.hasPointerCapture(drag.pointerId)) {
-        canvas.releasePointerCapture(drag.pointerId);
-      }
-      // Do not traverse/dispose model resources: clones intentionally share
-      // GLTF geometry, materials, and textures in sharedAssetCache.
-      if (modelRoot?.parent) modelRoot.parent.remove(modelRoot);
-      renderer?.dispose();
-      renderer?.forceContextLoss();
-      renderer = null;
-    };
+    return cleanup;
   }, [gentleRotation, loadAttempt, modelUrl, retryKey]);
 
+  useEffect(() => {
+    controllerRef.current?.focus(focusSector);
+  }, [focusSector]);
+
   const retry = () => setLoadAttempt((attempt) => attempt + 1);
+  const focusLabel = domain
+    ? `Approximate focus · ${domain.region}`
+    : 'Overview';
 
   return (
     <div
@@ -430,14 +653,15 @@ export function BrainModel({
       className={`absolute inset-0 overflow-hidden ${className}`}
       data-brain-viewer="three"
     >
-      <canvas
-        ref={canvasRef}
-        className="block h-full w-full cursor-grab touch-pan-y select-none active:cursor-grabbing"
-        style={{ touchAction: 'pan-y', userSelect: 'none' }}
-        aria-label="Interactive 3D brain model"
-        tabIndex={-1}
-      />
-      <ViewerStatusMessage status={status} onRetry={retry} />
+      <ViewerStatusMessage status={status} domain={domain} onRetry={retry} />
+      <div
+        aria-live="polite"
+        className={`pointer-events-none absolute left-3 right-3 top-3 z-30 w-fit rounded-full bg-cream/95 px-3 py-1 text-[11px] font-semibold tracking-wide text-navy/80 shadow-sm ${
+          domain ? '' : 'sr-only'
+        }`}
+      >
+        {focusLabel}
+      </div>
     </div>
   );
 }

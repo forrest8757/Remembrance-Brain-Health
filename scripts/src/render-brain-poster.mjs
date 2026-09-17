@@ -5,10 +5,14 @@ import process from "node:process";
 import sharp from "sharp";
 import { Color } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { getBrainDomain } from "../../artifacts/remembrance/src/lib/brain-domains.ts";
 
 const SOURCE_DIR = path.resolve(process.env.BRAIN_SOURCE_DIR ?? "/tmp/brain-source");
 const OBJ_PATH = path.resolve(process.env.BRAIN_OBJ_PATH ?? path.join(SOURCE_DIR, "base.obj"));
 const USE_TEXTURES = process.env.BRAIN_USE_TEXTURES === "true";
+const focusDomain = getBrainDomain(
+  process.env.BRAIN_FOCUS_INDEX === undefined ? null : Number(process.env.BRAIN_FOCUS_INDEX),
+);
 const neutralColor = new Color(0.65, 0.59, 0.53).convertLinearToSRGB();
 const NEUTRAL_RGB = [neutralColor.r, neutralColor.g, neutralColor.b].map((value) => value * 255);
 const OUTPUT_PATH = path.resolve(
@@ -21,8 +25,8 @@ const SUPERSAMPLE = 2;
 const RASTER_WIDTH = WIDTH * SUPERSAMPLE;
 const RASTER_HEIGHT = HEIGHT * SUPERSAMPLE;
 const MODEL_MAX_DIMENSION = 2;
-const ROTATION_Y = -0.65;
-const ROTATION_X = 0.1;
+const ROTATION_Y = focusDomain?.view.rotation[1] ?? -0.65;
+const ROTATION_X = focusDomain?.view.rotation[0] ?? 0.1;
 const IMAGE_MARGIN = 0.08;
 const COS_Y = Math.cos(ROTATION_Y);
 const SIN_Y = Math.sin(ROTATION_Y);
@@ -306,10 +310,19 @@ function rasterize({ positions, normals, uvs, texture, vertexCount }) {
     Math.max(projectedWidth, projectedHeight);
   const projectedCenterX = (transformedMin[0] + transformedMax[0]) / 2;
   const projectedCenterY = (transformedMin[1] + transformedMax[1]) / 2;
-  const projectX = (value) =>
-    (value - projectedCenterX) * projectionScale + RASTER_WIDTH / 2;
-  const projectY = (value) =>
-    RASTER_HEIGHT / 2 - (value - projectedCenterY) * projectionScale;
+  const focusTarget = [0, 0, 0];
+  if (focusDomain) rotateNormalInto(...focusDomain.view.target, focusTarget);
+  const focalLength = RASTER_HEIGHT / (2 * Math.tan((28 * Math.PI) / 360));
+  // Match the live viewer: normalized mesh scale .91, 28-degree perspective
+  // camera, with the chosen surface area centered before dollying closer.
+  const projectX = (value, z) => focusDomain
+    ? RASTER_WIDTH / 2 + (value - focusTarget[0]) * 0.91 * focalLength /
+        (focusDomain.view.distance - (z - focusTarget[2]) * 0.91)
+    : (value - projectedCenterX) * projectionScale + RASTER_WIDTH / 2;
+  const projectY = (value, z) => focusDomain
+    ? RASTER_HEIGHT / 2 - (value - focusTarget[1]) * 0.91 * focalLength /
+        (focusDomain.view.distance - (z - focusTarget[2]) * 0.91)
+    : RASTER_HEIGHT / 2 - (value - projectedCenterY) * projectionScale;
 
   const light = normalizeVector(-0.48, 0.78, 0.9);
   const ambient = 0.62;
@@ -331,14 +344,14 @@ function rasterize({ positions, normals, uvs, texture, vertexCount }) {
     const p = vertex * 3;
     const t = vertex * 2;
 
-    positionA[0] = projectX(positions[p]);
-    positionA[1] = projectY(positions[p + 1]);
+    positionA[0] = projectX(positions[p], positions[p + 2]);
+    positionA[1] = projectY(positions[p + 1], positions[p + 2]);
     positionA[2] = positions[p + 2];
-    positionB[0] = projectX(positions[p + 3]);
-    positionB[1] = projectY(positions[p + 4]);
+    positionB[0] = projectX(positions[p + 3], positions[p + 5]);
+    positionB[1] = projectY(positions[p + 4], positions[p + 5]);
     positionB[2] = positions[p + 5];
-    positionC[0] = projectX(positions[p + 6]);
-    positionC[1] = projectY(positions[p + 7]);
+    positionC[0] = projectX(positions[p + 6], positions[p + 8]);
+    positionC[1] = projectY(positions[p + 7], positions[p + 8]);
     positionC[2] = positions[p + 8];
 
     const area =
@@ -365,15 +378,15 @@ function rasterize({ positions, normals, uvs, texture, vertexCount }) {
     uvC[0] = uvs[t + 4];
     uvC[1] = uvs[t + 5];
 
-    const minX = Math.max(0, Math.ceil(Math.min(positionA[0], positionB[0], positionC[0])));
+    const minX = Math.max(0, Math.ceil(Math.min(positionA[0], positionB[0], positionC[0]) - 0.5));
     const maxX = Math.min(
       RASTER_WIDTH - 1,
-      Math.floor(Math.max(positionA[0], positionB[0], positionC[0])),
+      Math.floor(Math.max(positionA[0], positionB[0], positionC[0]) - 0.5),
     );
-    const minY = Math.max(0, Math.ceil(Math.min(positionA[1], positionB[1], positionC[1])));
+    const minY = Math.max(0, Math.ceil(Math.min(positionA[1], positionB[1], positionC[1]) - 0.5));
     const maxY = Math.min(
       RASTER_HEIGHT - 1,
-      Math.floor(Math.max(positionA[1], positionB[1], positionC[1])),
+      Math.floor(Math.max(positionA[1], positionB[1], positionC[1]) - 0.5),
     );
     if (minX > maxX || minY > maxY) continue;
 
@@ -536,7 +549,10 @@ async function main() {
         sourceBounds: normalized.sourceBounds,
         normalizedBounds: normalized.transformedBounds,
         rotationRadians: { y: ROTATION_Y, x: ROTATION_X },
-        orientation: "Y-up source orientation retained; orthographic three-quarter view",
+        focus: focusDomain?.region ?? null,
+        orientation: focusDomain
+          ? "Y-up source orientation retained; perspective educational focus"
+          : "Y-up source orientation retained; orthographic three-quarter view",
         texture: diffuseInput ? `${diffuseInput.info.width}x${diffuseInput.info.height}` : "none — neutral matte",
         supersample: `${SUPERSAMPLE}x`,
         repairedInternalHoles: repairedPixels,
