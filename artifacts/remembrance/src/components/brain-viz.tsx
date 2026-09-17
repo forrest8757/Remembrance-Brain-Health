@@ -184,7 +184,7 @@ export function BrainVisualization({
   const hasDomainControls = showDomainControls && Boolean(onSectorClick || onSectorHover);
 
   return (
-    <div className={`relative mx-auto w-full max-w-[400px] ${className}`}>
+    <div className={`relative mx-auto w-full ${className || 'max-w-[400px]'}`}>
       <div className="relative aspect-square w-full" role="group" aria-label="Interactive 3D brain illustration">
         <div
           className={`pointer-events-none absolute inset-[8%] rounded-full border transition-all duration-500`}

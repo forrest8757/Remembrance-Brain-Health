@@ -101,7 +101,7 @@ function ViewerStatusMessage({
 }) {
   const poster = posterForDomain(domain);
   const focusDescription = domain
-    ? ` focused on approximate ${domain.region} region`
+    ? ` focused on the ${domain.title} wellness domain`
     : '';
 
   if (status.kind === 'ready') return null;
@@ -112,7 +112,7 @@ function ViewerStatusMessage({
           src={poster}
           alt={
             domain
-              ? `Still render of the brain model, approximate ${domain.region} focus`
+              ? `Still render of the brain model focused on the ${domain.title} wellness domain`
               : 'Still render of the overview anatomical brain model'
           }
           className="pointer-events-none absolute inset-0 h-full w-full object-contain"
@@ -133,7 +133,7 @@ function ViewerStatusMessage({
         src={poster}
         alt={
           domain
-            ? `Still render of the brain model, approximate ${domain.region} focus`
+            ? `Still render of the brain model focused on the ${domain.title} wellness domain`
             : 'Still render of the overview anatomical brain model'
         }
         className="absolute inset-0 h-full w-full object-contain"
@@ -648,10 +648,6 @@ export function BrainModel({
   }, [focusSector]);
 
   const retry = () => setLoadAttempt((attempt) => attempt + 1);
-  const focusLabel = domain
-    ? `Approximate focus · ${domain.region}`
-    : 'Overview';
-
   return (
     <div
       ref={hostRef}
@@ -659,14 +655,6 @@ export function BrainModel({
       data-brain-viewer="three"
     >
       <ViewerStatusMessage status={status} domain={domain} onRetry={retry} />
-      <div
-        aria-live="polite"
-        className={`pointer-events-none absolute left-3 right-3 top-3 z-30 w-fit rounded-full bg-cream/95 px-3 py-1 text-[11px] font-semibold tracking-wide text-navy/80 shadow-sm ${
-          domain ? '' : 'sr-only'
-        }`}
-      >
-        {focusLabel}
-      </div>
     </div>
   );
 }

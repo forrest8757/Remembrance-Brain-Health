@@ -49,14 +49,16 @@ export function BrainExplorer() {
   };
 
   return (
-    <div ref={containerRef} className="grid lg:grid-cols-2 gap-12 items-start bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-border">
+    <div ref={containerRef} className="grid items-start gap-12 rounded-3xl border border-border bg-white p-8 shadow-sm md:p-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
       {/* Interactive Visualization */}
       <div className="relative lg:sticky lg:top-24">
         <BrainVisualization
           activeSector={activeIdx}
           focusSector={activeIdx}
           showDomainControls={false}
-          className="max-w-[400px] w-full mx-auto lg:mx-0 lg:ml-auto"
+          className={`w-full mx-auto lg:mx-0 lg:ml-auto transition-[max-width] duration-300 ${
+            activeIdx === null ? 'max-w-[360px]' : 'max-w-[290px]'
+          }`}
         />
         {activeIdx === null && (
           <p className="text-center text-sm text-navy/50 font-medium mt-6 lg:hidden">
@@ -84,7 +86,7 @@ export function BrainExplorer() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: reducedMotion ? 0 : -20 }}
               transition={transitionProps}
-              className="flex flex-col gap-3 h-full justify-center outline-none"
+              className="flex h-full flex-col justify-center gap-5 outline-none"
             >
               <div className="mb-4">
                 <h3 className="text-2xl font-display font-bold text-navy mb-2">Brain Regions & Wellness</h3>
@@ -165,16 +167,6 @@ export function BrainExplorer() {
                   <h3 className="text-3xl md:text-4xl font-display font-bold text-navy mb-2">
                     {activeDomain.title}
                   </h3>
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full shadow-sm"
-                      style={{ backgroundColor: BRAIN_PALETTE[activeIdx].color }}
-                      aria-label={`Zone color: ${BRAIN_PALETTE[activeIdx].name}`}
-                    />
-                    <p className="text-sm font-bold text-navy/60 uppercase tracking-widest">
-                      {activeDomain.region}
-                    </p>
-                  </div>
                 </div>
 
                 <div className="space-y-6">
@@ -214,7 +206,7 @@ export function BrainExplorer() {
               </div>
 
               <div className="flex flex-col gap-5 mt-8 pt-6 border-t border-navy/5">
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                   {BRAIN_DOMAINS.map((domain, i) => {
                     const palette = BRAIN_PALETTE[i];
                     return (
