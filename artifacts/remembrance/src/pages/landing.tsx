@@ -28,7 +28,7 @@ export default function Landing() {
           <Hero />
 
         {/* 3. How it works */}
-        <section id="how-it-works" className="py-32 px-6">
+        <section id="how-it-works" className="py-32 px-6 bg-white">
           <div className="container mx-auto max-w-6xl space-y-20">
             <motion.div 
               className="text-center"
