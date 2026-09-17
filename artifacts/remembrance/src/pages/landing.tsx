@@ -69,7 +69,36 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* 5. The Remembrance Score, explained */}
+        {/* 5. The five areas — interactive explorer */}
+        <section id="areas" className="py-32 px-6">
+          <div className="container mx-auto max-w-6xl space-y-16">
+            <motion.div 
+              className="text-center max-w-2xl mx-auto"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={fadeUp}
+            >
+              <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight mb-6">
+                Understand every part of you
+              </h2>
+              <p className="text-xl text-navy/70 font-medium">
+                Explore the wellness domains to see how your brain supports your daily life.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={fadeUp}
+            >
+              <BrainExplorer />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 6. The Remembrance Score, explained */}
         <section className="py-32 px-6 bg-white border-y border-navy/5 overflow-hidden">
           <div className="container mx-auto max-w-5xl grid md:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -114,35 +143,6 @@ export default function Landing() {
               <p className="text-xl text-navy/70 leading-relaxed font-medium">
                 A simple way to follow your recorded results over time — with five key areas of brain health underneath it, explained in plain language. Scores can vary; this example is not a prediction of improvement.
               </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 6. The five areas — interactive explorer */}
-        <section id="areas" className="py-32 px-6">
-          <div className="container mx-auto max-w-6xl space-y-16">
-            <motion.div 
-              className="text-center max-w-2xl mx-auto"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-            >
-              <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight mb-6">
-                Understand every part of you
-              </h2>
-              <p className="text-xl text-navy/70 font-medium">
-                Explore the wellness domains to see how your brain supports your daily life.
-              </p>
-            </motion.div>
-            
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-            >
-              <BrainExplorer />
             </motion.div>
           </div>
         </section>
