@@ -5,6 +5,7 @@ import {
   OVERVIEW_VIEW,
   type BrainDomain,
 } from '../lib/brain-domains';
+import { BRAIN_PALETTE } from '../lib/brain-palette';
 
 export type BrainModelProps = {
   className?: string;
@@ -30,8 +31,8 @@ type ViewController = {
   focus: (index: number | null | undefined) => void;
 };
 
-const DEFAULT_MODEL_URL = `${import.meta.env.BASE_URL}models/brain.glb?v=neutral`;
-const OVERVIEW_POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png?v=neutral`;
+const DEFAULT_MODEL_URL = `${import.meta.env.BASE_URL}models/brain.glb?v=pastel-zones`;
+const OVERVIEW_POSTER_URL = `${import.meta.env.BASE_URL}models/brain-poster.png?v=pastel-zones`;
 const sharedAssetCache = new Map<string, Promise<SharedBrainAsset>>();
 
 function readableError(error: unknown): string {
@@ -85,7 +86,7 @@ function getDomain(index: number | null | undefined): BrainDomain | undefined {
 
 function posterForDomain(domain: BrainDomain | undefined): string {
   return domain
-    ? `${import.meta.env.BASE_URL}models/brain-focus-${domain.id}.png`
+    ? `${import.meta.env.BASE_URL}models/brain-focus-${domain.id}.png?v=pastel-zones`
     : OVERVIEW_POSTER_URL;
 }
 
@@ -343,8 +344,8 @@ export function BrainModel({
       render();
     };
 
-    const setMarker = (nextDomain: BrainDomain | undefined) => {
-      if (!markerRoot) return;
+    const setMarker = (nextDomain: BrainDomain | undefined, index: number | null | undefined) => {
+      if (!markerRoot || !markerMaterial) return;
       if (!nextDomain) {
         markerRoot.visible = false;
         return;
@@ -353,11 +354,15 @@ export function BrainModel({
       markerRoot.position
         .set(...nextDomain.view.target)
         .multiplyScalar(0.91);
+      if (typeof index === 'number' && BRAIN_PALETTE[index]) {
+        markerMaterial.color.set(BRAIN_PALETTE[index].color);
+      }
     };
 
-    const applyFocus = (nextDomain: BrainDomain | undefined, instantly = reducedMotion) => {
+    const applyFocus = (index: number | null | undefined, instantly = reducedMotion) => {
+      const nextDomain = getDomain(index);
       if (!modelRoot || !camera || !modelReady) return;
-      setMarker(nextDomain);
+      setMarker(nextDomain, index);
       const view = nextDomain?.view ?? OVERVIEW_VIEW;
       const targetQuaternion = new THREE.Quaternion().setFromEuler(
         new THREE.Euler(...view.rotation),
@@ -393,7 +398,7 @@ export function BrainModel({
     const focus = (index: number | null | undefined) => {
       // Resolve on every call so a rapid sequence always replaces the previous
       // destination, rather than queueing stale transitions.
-      applyFocus(getDomain(index));
+      applyFocus(index);
     };
     controllerRef.current = { focus };
 
@@ -620,7 +625,7 @@ export function BrainModel({
         modelRoot.add(normalized);
 
         modelReady = true;
-        applyFocus(getDomain(focusSectorRef.current), true);
+        applyFocus(focusSectorRef.current, true);
         setStatus({ kind: 'ready' });
         resize();
         render();

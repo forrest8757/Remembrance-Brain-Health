@@ -8,11 +8,13 @@ import { dedup, prune, quantize, simplify, weld } from "@gltf-transform/function
 import sharp from "sharp";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MeshoptSimplifier } from "meshoptimizer";
+import { brainZoneColor } from "../../artifacts/remembrance/src/lib/brain-palette.ts";
 
 const SOURCE_DIR = path.resolve(process.env.BRAIN_SOURCE_DIR ?? "/tmp/brain-source");
 const OBJ_PATH = path.resolve(process.env.BRAIN_OBJ_PATH ?? path.join(SOURCE_DIR, "base.obj"));
-// A standalone OBJ defaults to neutral matte geometry. Textures are opt-in.
+// Default to the shared pastel learning zones; neutral and source textures stay opt-in.
 const USE_TEXTURES = process.env.BRAIN_USE_TEXTURES === "true";
+const USE_ZONES = !USE_TEXTURES && process.env.BRAIN_COLOR_MODE !== "neutral";
 const OUTPUT_PATH = path.resolve(
   process.env.BRAIN_OUTPUT_PATH ??
     path.resolve(process.cwd(), "../artifacts/remembrance/public/models/brain.glb"),
@@ -215,9 +217,9 @@ async function main() {
     .setImage(metalRoughnessBytes) : null;
 
   const material = document
-    .createMaterial(USE_TEXTURES ? "brain multicolor matte" : "brain neutral matte")
+    .createMaterial(USE_TEXTURES ? "brain multicolor matte" : USE_ZONES ? "brain pastel learning zones" : "brain neutral matte")
     // Linear RGB; matches the warm-neutral sRGB material in the still renderer.
-    .setBaseColorFactor(USE_TEXTURES ? [1, 1, 1, 1] : [0.65, 0.59, 0.53, 1])
+    .setBaseColorFactor(USE_TEXTURES || USE_ZONES ? [1, 1, 1, 1] : [0.65, 0.59, 0.53, 1])
     .setBaseColorTexture(diffuseTexture)
     .setNormalTexture(normalTexture)
     .setNormalScale(0.65)
@@ -232,6 +234,20 @@ async function main() {
     .setAttribute("NORMAL", normal)
     .setAttribute("TEXCOORD_0", uv)
     .setMaterial(material);
+  if (USE_ZONES) {
+    const colors = new Float32Array(normalized.positions.length);
+    for (let p = 0; p < normalized.positions.length; p += 3) {
+      const rgb = brainZoneColor(
+        normalized.positions[p], normalized.positions[p + 1], normalized.positions[p + 2],
+      );
+      // glTF vertex colors use linear RGB, unlike CSS and our palette swatches.
+      for (let channel = 0; channel < 3; channel++) {
+        const value = rgb[channel];
+        colors[p + channel] = value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+      }
+    }
+    primitive.setAttribute("COLOR_0", makeAccessor(document, buffer, "COLOR_0", colors, Accessor.Type.VEC3));
+  }
   const mesh = document.createMesh("brain").addPrimitive(primitive);
   const node = document.createNode("brain").setMesh(mesh);
   const scene = document.createScene("brain scene").addChild(node);
@@ -293,6 +309,7 @@ async function main() {
       metalRoughnessBytes: metalRoughnessBytes?.byteLength,
     } : null,
     outputBytes: glb.byteLength,
+    colorMode: USE_ZONES ? "five illustrative pastel learning zones" : USE_TEXTURES ? "texture atlas" : "neutral",
     compression: "vertex weld + meshoptimizer simplification + KHR_mesh_quantization; no meshopt/draco decoder",
   };
   console.log(JSON.stringify(report, null, 2));

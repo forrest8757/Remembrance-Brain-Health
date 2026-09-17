@@ -7,6 +7,7 @@ import React, {
   type ErrorInfo,
   type ReactNode,
 } from 'react';
+import { BRAIN_PALETTE } from '@/lib/brain-palette';
 
 type BrainVisualizationProps = {
   className?: string;
@@ -117,12 +118,12 @@ function DomainControls({
   return (
     <div className="relative z-30 mt-3 w-full" aria-label="Wellness domains">
       <p className="mb-2 text-center text-xs font-medium leading-relaxed text-navy/55">
-        Choose a domain to explore. The single model is an illustration, not a map of
-        anatomical regions.
+        Choose a domain to explore. The illustrative colors do not reflect exact anatomical boundaries.
       </p>
       <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
         {DOMAINS.map((domain, index) => {
           const selected = activeSector === index;
+          const palette = BRAIN_PALETTE[index];
           return (
             <button
               key={domain}
@@ -132,16 +133,18 @@ function DomainControls({
               onClick={() => onSectorClick?.(index)}
               onMouseEnter={() => onSectorHover?.(index)}
               onFocus={() => onSectorHover?.(index)}
+              style={selected ? { backgroundColor: palette.color } : {}}
               className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border px-1 py-1.5 text-center text-[10px] font-bold leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 sm:text-[11px] ${
                 selected
-                  ? 'border-cyan/50 bg-cyan/15 text-navy shadow-sm'
+                  ? 'border-transparent text-navy shadow-sm'
                   : 'border-navy/10 bg-white/70 text-navy/65 hover:border-cyan/35 hover:bg-cyan/5'
               }`}
             >
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
-                  selected ? 'bg-cyan text-navy' : 'bg-navy/10 text-navy/70'
+                  selected ? 'bg-white/40 text-navy' : 'bg-navy/10 text-navy/70'
                 }`}
+                style={!selected ? { backgroundColor: palette.color } : {}}
                 aria-hidden="true"
               >
                 {index + 1}
@@ -184,11 +187,18 @@ export function BrainVisualization({
     <div className={`relative mx-auto w-full max-w-[400px] ${className}`}>
       <div className="relative aspect-square w-full" role="group" aria-label="Interactive 3D brain illustration">
         <div
-          className={`pointer-events-none absolute inset-[8%] rounded-full border transition-all duration-500 ${
-            activeDomain
-              ? 'border-cyan/45 shadow-[0_0_42px_rgba(27,206,223,0.22)]'
-              : 'border-cyan/20 shadow-[0_0_28px_rgba(27,206,223,0.12)]'
-          }`}
+          className={`pointer-events-none absolute inset-[8%] rounded-full border transition-all duration-500`}
+          style={
+            activeSector !== null && activeSector !== undefined && BRAIN_PALETTE[activeSector]
+              ? {
+                  borderColor: BRAIN_PALETTE[activeSector].color,
+                  boxShadow: `0 0 42px ${BRAIN_PALETTE[activeSector].color}44`,
+                }
+              : {
+                  borderColor: 'rgba(27,206,223,0.2)',
+                  boxShadow: '0 0 28px rgba(27,206,223,0.12)',
+                }
+          }
           aria-hidden="true"
         />
         <ViewerBoundary

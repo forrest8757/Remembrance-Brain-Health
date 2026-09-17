@@ -6,10 +6,12 @@ import sharp from "sharp";
 import { Color } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { getBrainDomain } from "../../artifacts/remembrance/src/lib/brain-domains.ts";
+import { brainZoneColor } from "../../artifacts/remembrance/src/lib/brain-palette.ts";
 
 const SOURCE_DIR = path.resolve(process.env.BRAIN_SOURCE_DIR ?? "/tmp/brain-source");
 const OBJ_PATH = path.resolve(process.env.BRAIN_OBJ_PATH ?? path.join(SOURCE_DIR, "base.obj"));
 const USE_TEXTURES = process.env.BRAIN_USE_TEXTURES === "true";
+const USE_ZONES = !USE_TEXTURES && process.env.BRAIN_COLOR_MODE !== "neutral";
 const focusDomain = getBrainDomain(
   process.env.BRAIN_FOCUS_INDEX === undefined ? null : Number(process.env.BRAIN_FOCUS_INDEX),
 );
@@ -290,6 +292,17 @@ function normalizeVector(x, y, z) {
 }
 
 function rasterize({ positions, normals, uvs, texture, vertexCount }) {
+  const zoneColors = USE_ZONES ? new Float32Array(positions.length) : null;
+  if (zoneColors) {
+    for (let p = 0; p < positions.length; p += 3) {
+      // Undo the view rotation to keep colors attached to the same mesh regions.
+      const x = positions[p];
+      const y = COS_X * positions[p + 1] + SIN_X * positions[p + 2];
+      const yawZ = -SIN_X * positions[p + 1] + COS_X * positions[p + 2];
+      const rgb = brainZoneColor(COS_Y * x - SIN_Y * yawZ, y, SIN_Y * x + COS_Y * yawZ);
+      zoneColors.set(rgb.map((value) => value * 255), p);
+    }
+  }
   const color = new Uint8ClampedArray(RASTER_WIDTH * RASTER_HEIGHT * 4);
   const depth = new Float32Array(RASTER_WIDTH * RASTER_HEIGHT);
   depth.fill(-Infinity);
@@ -422,7 +435,11 @@ function rasterize({ positions, normals, uvs, texture, vertexCount }) {
 
         const u = weightA * uvA[0] + weightB * uvB[0] + weightC * uvC[0];
         const v = weightA * uvA[1] + weightB * uvB[1] + weightC * uvC[1];
-        const texel = sampleDiffuse(texture, u, v);
+        const texel = zoneColors ? [0, 1, 2].map((channel) =>
+          weightA * zoneColors[p + channel] +
+          weightB * zoneColors[p + 3 + channel] +
+          weightC * zoneColors[p + 6 + channel],
+        ) : sampleDiffuse(texture, u, v);
         const nx = weightA * rotatedA[0] + weightB * rotatedB[0] + weightC * rotatedC[0];
         const ny = weightA * rotatedA[1] + weightB * rotatedB[1] + weightC * rotatedC[1];
         const nz = weightA * rotatedA[2] + weightB * rotatedB[2] + weightC * rotatedC[2];
@@ -553,7 +570,8 @@ async function main() {
         orientation: focusDomain
           ? "Y-up source orientation retained; perspective educational focus"
           : "Y-up source orientation retained; orthographic three-quarter view",
-        texture: diffuseInput ? `${diffuseInput.info.width}x${diffuseInput.info.height}` : "none — neutral matte",
+        texture: diffuseInput ? `${diffuseInput.info.width}x${diffuseInput.info.height}` : "none",
+        colorMode: USE_ZONES ? "five illustrative pastel learning zones" : USE_TEXTURES ? "texture atlas" : "neutral",
         supersample: `${SUPERSAMPLE}x`,
         repairedInternalHoles: repairedPixels,
         posterBytes: poster.byteLength,

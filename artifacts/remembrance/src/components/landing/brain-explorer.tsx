@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { BrainVisualization } from '@/components/brain-viz';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { BRAIN_DOMAINS } from '@/lib/brain-domains';
+import { BRAIN_PALETTE } from '@/lib/brain-palette';
 import { ArrowLeft, ArrowRight, Sparkles, Sun } from 'lucide-react';
 
 export function BrainExplorer() {
@@ -87,31 +88,53 @@ export function BrainExplorer() {
             >
               <div className="mb-4">
                 <h3 className="text-2xl font-display font-bold text-navy mb-2">Brain Regions & Wellness</h3>
-                <p className="text-navy/70">Select an area to discover how your brain supports your daily activities.</p>
+                <p className="text-navy/70 mb-4">Select an area to discover how your brain supports your daily activities.</p>
+                <div className="bg-navy/5 text-navy/60 text-xs font-medium px-3 py-2 rounded-lg flex items-start gap-2">
+                  <p>The illustrative colors represent functional learning zones, not exact anatomical boundaries.</p>
+                </div>
               </div>
 
-              {BRAIN_DOMAINS.map((domain, i) => (
-                <button
-                  key={domain.id}
-                  onClick={() => handleSelect(i)}
-                  className="group text-left p-5 rounded-2xl transition-all duration-300 bg-cream/40 hover:bg-cyan/5 border border-transparent hover:border-cyan/20 focus-visible:ring-2 focus-visible:ring-cyan outline-none w-full"
-                  data-testid={`button-domain-overview-${domain.id}`}
-                >
-                  <div className="flex justify-between items-center gap-4">
-                    <div>
-                      <h4 className="text-lg font-bold font-display text-navy mb-1 group-hover:text-cyan transition-colors">
-                        {domain.title}
-                      </h4>
-                      <p className="text-sm text-navy/70 font-medium">
-                        {domain.summary}
-                      </p>
+              {BRAIN_DOMAINS.map((domain, i) => {
+                const palette = BRAIN_PALETTE[i];
+                return (
+                  <button
+                    key={domain.id}
+                    onClick={() => handleSelect(i)}
+                    className="group text-left p-5 rounded-2xl transition-all duration-300 bg-cream/40 border focus-visible:ring-2 focus-visible:ring-cyan outline-none w-full"
+                    style={{ borderColor: 'transparent', '--hover-bg': `${palette.color}15`, '--hover-border': `${palette.color}40` } as React.CSSProperties}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = `${palette.color}15`;
+                      e.currentTarget.style.borderColor = `${palette.color}40`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '';
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }}
+                    data-testid={`button-domain-overview-${domain.id}`}
+                  >
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="flex gap-4 items-start">
+                        <div 
+                          className="flex-shrink-0 w-4 h-4 rounded-full mt-1 border border-navy/10 shadow-sm"
+                          style={{ backgroundColor: palette.color }}
+                          aria-label={`Zone color: ${palette.name}`}
+                        />
+                        <div>
+                          <h4 className="text-lg font-bold font-display text-navy mb-1 group-hover:opacity-80 transition-opacity">
+                            {domain.title}
+                          </h4>
+                          <p className="text-sm text-navy/70 font-medium">
+                            {domain.summary}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-all">
+                        <ArrowRight className="w-4 h-4 text-navy/70" />
+                      </div>
                     </div>
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-all">
-                      <ArrowRight className="w-4 h-4 text-cyan" />
-                    </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </motion.div>
           ) : (
             <motion.div
@@ -142,9 +165,16 @@ export function BrainExplorer() {
                   <h3 className="text-3xl md:text-4xl font-display font-bold text-navy mb-2">
                     {activeDomain.title}
                   </h3>
-                  <p className="text-sm font-bold text-cyan uppercase tracking-widest">
-                    {activeDomain.region}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full shadow-sm"
+                      style={{ backgroundColor: BRAIN_PALETTE[activeIdx].color }}
+                      aria-label={`Zone color: ${BRAIN_PALETTE[activeIdx].name}`}
+                    />
+                    <p className="text-sm font-bold text-navy/60 uppercase tracking-widest">
+                      {activeDomain.region}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
@@ -158,16 +188,22 @@ export function BrainExplorer() {
                   <div className="grid sm:grid-cols-2 gap-4 pt-4">
                     <div className="bg-white rounded-2xl p-5 border border-navy/5 shadow-sm">
                       <h4 className="font-bold text-navy text-sm mb-2 flex items-center gap-2">
-                        <Sun className="w-4 h-4 text-cyan" /> Everyday life
+                        <Sun className="w-4 h-4 text-navy/40" /> Everyday life
                       </h4>
                       <p className="text-sm text-navy/70 leading-relaxed">{activeDomain.everyday}</p>
                     </div>
 
-                    <div className="bg-cyan/10 rounded-2xl p-5 border border-cyan/10">
+                    <div 
+                      className="rounded-2xl p-5 border"
+                      style={{ 
+                        backgroundColor: `${BRAIN_PALETTE[activeIdx].color}35`, 
+                        borderColor: `${BRAIN_PALETTE[activeIdx].color}60` 
+                      }}
+                    >
                       <h4 className="font-bold text-navy text-sm mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-cyan" /> Try this
+                        <Sparkles className="w-4 h-4 text-navy/50" /> Try this
                       </h4>
-                      <p className="text-sm text-navy/70 leading-relaxed">{activeDomain.tryIt}</p>
+                      <p className="text-sm text-navy/80 leading-relaxed">{activeDomain.tryIt}</p>
                     </div>
                   </div>
 
@@ -179,22 +215,26 @@ export function BrainExplorer() {
 
               <div className="flex flex-col gap-5 mt-8 pt-6 border-t border-navy/5">
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {BRAIN_DOMAINS.map((domain, i) => (
-                    <button
-                      key={domain.id}
-                      onClick={() => handleSelect(i)}
-                      className={`flex items-center justify-center min-h-[44px] px-3 md:px-4 rounded-xl text-[11px] md:text-xs font-bold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-cyan outline-none border ${
-                        i === activeIdx 
-                          ? 'bg-cyan text-navy shadow-sm border-cyan/50' 
-                          : 'bg-navy/5 text-navy/70 hover:bg-navy/15 border-transparent hover:border-navy/10'
-                      }`}
-                      aria-label={`Go to ${domain.title}`}
-                      aria-pressed={i === activeIdx}
-                      data-testid={`button-jump-domain-${domain.id}`}
-                    >
-                      {domain.title}
-                    </button>
-                  ))}
+                  {BRAIN_DOMAINS.map((domain, i) => {
+                    const palette = BRAIN_PALETTE[i];
+                    return (
+                      <button
+                        key={domain.id}
+                        onClick={() => handleSelect(i)}
+                        className={`flex items-center justify-center min-h-[44px] px-3 md:px-4 rounded-xl text-[11px] md:text-xs font-bold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-cyan outline-none border ${
+                          i === activeIdx 
+                            ? 'text-navy shadow-sm' 
+                            : 'bg-navy/5 text-navy/70 hover:bg-navy/15 border-transparent hover:border-navy/10'
+                        }`}
+                        style={i === activeIdx ? { backgroundColor: palette.color, borderColor: `${palette.color}80` } : {}}
+                        aria-label={`Go to ${domain.title}`}
+                        aria-pressed={i === activeIdx}
+                        data-testid={`button-jump-domain-${domain.id}`}
+                      >
+                        {domain.title}
+                      </button>
+                    );
+                  })}
                 </div>
                 
                 <div className="flex justify-between items-center">
