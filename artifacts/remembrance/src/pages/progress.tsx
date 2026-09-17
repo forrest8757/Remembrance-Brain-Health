@@ -9,7 +9,7 @@ const DOMAINS: { id: DomainKey; name: string }[] = [
   { id: 'executive', name: 'Executive Function' },
   { id: 'memory', name: 'Memory' },
   { id: 'language', name: 'Language' },
-  { id: 'motor', name: 'Coordination' },
+  { id: 'motor', name: 'Perpetual Motor' },
 ];
 
 const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`);

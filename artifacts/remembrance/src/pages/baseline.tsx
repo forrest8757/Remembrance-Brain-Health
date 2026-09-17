@@ -8,7 +8,7 @@ const BASELINE_TASKS = [
   { id: 'executive', component: ConnectPath, label: "Area 2 of 5: Executive Function" },
   { id: 'memory', component: RecallChain, label: "Area 3 of 5: Memory" },
   { id: 'language', component: NameMatch, label: "Area 4 of 5: Language" },
-  { id: 'motor', component: DrawCopy, label: "Area 5 of 5: Coordination" },
+  { id: 'motor', component: DrawCopy, label: "Area 5 of 5: Perpetual Motor" },
 ];
 
 export default function Baseline() {

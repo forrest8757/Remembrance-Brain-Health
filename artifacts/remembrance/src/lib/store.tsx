@@ -202,7 +202,7 @@ function makeSnapshot(
 }
 
 function makeTakeaway(domain: DomainKey, score: number, cycleCompleted: boolean): string {
-  const label = domain === 'motor' ? 'coordination' : domain;
+  const label = domain === 'motor' ? 'Perpetual Motor' : domain;
   if (cycleCompleted) {
     return 'You completed all five areas. Your recorded snapshots are ready for a round-over-round comparison.';
   }

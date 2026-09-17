@@ -10,7 +10,7 @@ const DOMAINS: { id: DomainKey; name: string; duration: string }[] = [
   { id: 'executive', name: 'Executive Function', duration: '3 min' },
   { id: 'memory', name: 'Memory', duration: '3–4 min' },
   { id: 'language', name: 'Language', duration: '3 min' },
-  { id: 'motor', name: 'Coordination', duration: '3–5 min' },
+  { id: 'motor', name: 'Perpetual Motor', duration: '3–5 min' },
 ];
 
 export default function Dashboard() {

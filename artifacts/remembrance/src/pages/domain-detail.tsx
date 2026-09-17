@@ -26,7 +26,7 @@ const DOMAIN_INFO: Record<DomainKey, { name: string; desc: string; tip: string }
     tip: 'Reading something interesting or sharing a story with a friend can be a pleasant way to practice word finding.',
   },
   motor: {
-    name: 'Coordination',
+    name: 'Perpetual Motor',
     desc: 'Translating what you see into precise physical movements, such as drawing or navigating space.',
     tip: 'A familiar activity that combines movement and attention, such as dancing or gardening, may be an enjoyable choice.',
   },

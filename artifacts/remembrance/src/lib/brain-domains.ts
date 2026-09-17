@@ -63,7 +63,7 @@ export const BRAIN_DOMAINS: BrainDomain[] = [
   },
   {
     id: 'motor',
-    title: 'Coordination',
+    title: 'Perpetual Motor',
     region: 'Cerebellum',
     summary: 'Helping movement stay smooth, timed, and accurate.',
     explanation: 'The cerebellum helps fine-tune movement and balance by comparing intended movement with sensory feedback. It works with motor and sensory areas; visual–spatial skills also involve other networks.',

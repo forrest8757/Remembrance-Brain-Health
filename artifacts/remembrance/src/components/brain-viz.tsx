@@ -34,7 +34,7 @@ const DOMAINS = [
   'Executive function',
   'Memory',
   'Language',
-  'Coordination',
+  'Perpetual Motor',
 ] as const;
 
 function loadBrainModel() {

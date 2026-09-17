@@ -10,7 +10,7 @@ const DOMAIN_TASKS: Record<string, { component: any, name: string, desc: string,
   executive: { component: ConnectPath, name: "Executive Function", desc: "Planning and mental flexibility.", time: "3 min" },
   memory: { component: RecallChain, name: "Memory", desc: "Encoding and recalling information.", time: "3–4 min" },
   language: { component: NameMatch, name: "Language", desc: "Word finding and comprehension.", time: "3 min" },
-  motor: { component: DrawCopy, name: "Coordination", desc: "Visuospatial processing and drawing.", time: "3–5 min" },
+  motor: { component: DrawCopy, name: "Perpetual Motor", desc: "Visuospatial processing and drawing.", time: "3–5 min" },
 };
 
 export default function Assessment() {

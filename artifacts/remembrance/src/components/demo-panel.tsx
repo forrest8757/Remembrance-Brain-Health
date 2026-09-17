@@ -17,12 +17,12 @@ const JUMPS = [
   { path: '/domain/executive', label: 'Domain: Executive' },
   { path: '/domain/memory', label: 'Domain: Memory' },
   { path: '/domain/language', label: 'Domain: Language' },
-  { path: '/domain/motor', label: 'Domain: Coordination' },
+  { path: '/domain/motor', label: 'Domain: Perpetual Motor' },
   { path: '/assessment/attention', label: 'Test: Attention' },
   { path: '/assessment/executive', label: 'Test: Executive' },
   { path: '/assessment/memory', label: 'Test: Memory' },
   { path: '/assessment/language', label: 'Test: Language' },
-  { path: '/assessment/motor', label: 'Test: Coordination' },
+  { path: '/assessment/motor', label: 'Test: Perpetual Motor' },
   { path: '/voice', label: 'Voice Test (demo)' },
 ];
 
