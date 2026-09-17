@@ -8,7 +8,7 @@ import { Footer } from '@/components/landing/footer';
 import { ScoreOrb } from '@/components/landing/score-orb';
 import { WaitlistForm } from '@/components/landing/waitlist-form';
 import { FocusPreview } from '@/components/landing/focus-preview';
-import { Apple, Dumbbell, Moon, Users, Stethoscope, Lightbulb, Shield, LineChart } from 'lucide-react';
+import { Apple, ArrowDown, Dumbbell, Moon, Users, Stethoscope, Lightbulb, Shield, LineChart } from 'lucide-react';
 
 export default function Landing() {
   const reducedMotion = useReducedMotion();
@@ -173,6 +173,29 @@ export default function Landing() {
         {/* 7. Interactive "Try it" */}
         <section id="try-it" className="py-32 px-6">
           <div className="container mx-auto max-w-4xl space-y-12">
+            <motion.button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('memory-preview-heading');
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (el) el.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+              }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="mx-auto flex flex-col items-center gap-2 text-navy/40 hover:text-cyan transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan rounded p-2"
+              aria-label="Scroll to the 15-second memory sample"
+            >
+              <span className="text-sm font-semibold tracking-widest uppercase">Try it</span>
+              <motion.span
+                animate={reducedMotion ? {} : { y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ArrowDown size={20} />
+              </motion.span>
+            </motion.button>
+
             <motion.div
               initial="hidden"
               whileInView="visible"

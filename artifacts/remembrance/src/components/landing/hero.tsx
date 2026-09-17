@@ -2,7 +2,6 @@ import React from 'react';
 import { motion, useReducedMotion, Variants } from 'framer-motion';
 import { ScoreOrb } from './score-orb';
 import { WaitlistForm } from './waitlist-form';
-import { ArrowDown } from 'lucide-react';
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -18,12 +17,6 @@ export function Hero() {
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: reducedMotion ? 0 : 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
-  const scrollToTryIt = () => {
-    const el = document.getElementById('try-it');
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (el) el.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   };
 
   return (
@@ -71,23 +64,6 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Scroll Cue */}
-      <motion.button 
-        onClick={scrollToTryIt}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-navy/40 hover:text-cyan transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan rounded p-2"
-        aria-label="Scroll to interactive demo"
-      >
-        <span className="text-sm font-semibold tracking-widest uppercase">Try it</span>
-        <motion.div
-          animate={reducedMotion ? {} : { y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ArrowDown size={20} />
-        </motion.div>
-      </motion.button>
     </section>
   );
 }
