@@ -149,7 +149,7 @@
   transform: none;
   background: rgba(255, 253, 249, 0.94);
   box-shadow: 0 0 0 14px rgba(168, 217, 224, 0.12), 0 18px 64px rgba(30, 58, 95, 0.12);
-  animation: pentagon-brain-focus 820ms cubic-bezier(.16,.9,.2,1) 90ms both;
+  animation: pentagon-brain-focus 1050ms cubic-bezier(.16,.9,.2,1) 140ms both;
 }
 
 .pentagon-brain-image {
