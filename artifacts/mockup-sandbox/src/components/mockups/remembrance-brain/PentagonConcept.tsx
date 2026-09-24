@@ -51,7 +51,10 @@ export function PentagonConcept() {
   return (
     <main className="pentagon-concept">
       <section className="pentagon-shell" aria-labelledby="pentagon-title">
-        <header className="pentagon-header pentagon-reveal-header">
+        <header
+          className={`pentagon-header pentagon-reveal-header ${activeDomain ? 'is-detail' : ''}`}
+          aria-hidden={Boolean(activeDomain)}
+        >
           <div>
             <p className="pentagon-kicker pentagon-reveal-copy pentagon-reveal-copy--one">Explore the five areas</p>
             <h1 className="pentagon-title pentagon-reveal-copy pentagon-reveal-copy--two" id="pentagon-title">Brain Regions & Wellness</h1>
@@ -94,7 +97,7 @@ export function PentagonConcept() {
               aria-label="Return to the five domain overview"
               onClick={returnToOverview}
             >
-              <BrainImage activeIndex={activeIndex} />
+              <BrainImage activeIndex={null} />
               <span className="pentagon-brain-caption">Back to five areas</span>
             </button>
           ) : (
