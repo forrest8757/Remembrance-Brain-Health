@@ -111,16 +111,16 @@ export function PentagonConcept() {
                 ref={detailRef}
                 tabIndex={-1}
                 aria-labelledby="pentagon-detail-title"
-                initial={{ opacity: 0, y: reducedMotion ? 0 : 28, scale: reducedMotion ? 1 : 0.975 }}
+                initial={{ opacity: 0, y: reducedMotion ? 0 : 34, scale: reducedMotion ? 1 : 0.965 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: reducedMotion ? 0 : 12, scale: reducedMotion ? 1 : 0.99 }}
-                transition={{ delay: reducedMotion ? 0 : 0.32, duration: reducedMotion ? 0 : 0.46, ease: [0.2, 0.75, 0.2, 1] }}
+                transition={{ delay: reducedMotion ? 0 : 0.56, duration: reducedMotion ? 0 : 0.62, ease: [0.16, 0.84, 0.22, 1] }}
               >
                 <motion.div
                   className="pentagon-detail__top"
                   initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.47, duration: reducedMotion ? 0 : 0.3 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.78, duration: reducedMotion ? 0 : 0.42, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   <div>
                     <p className="pentagon-kicker">Domain {String(selectedIndex + 1).padStart(2, '0')}</p>
@@ -134,7 +134,7 @@ export function PentagonConcept() {
                   className="pentagon-detail__summary"
                   initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.55, duration: reducedMotion ? 0 : 0.3 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.9, duration: reducedMotion ? 0 : 0.4, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   {activeDomain.summary}
                 </motion.p>
@@ -142,7 +142,7 @@ export function PentagonConcept() {
                   className="pentagon-detail__body"
                   initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.62, duration: reducedMotion ? 0 : 0.3 }}
+                  transition={{ delay: reducedMotion ? 0 : 1.02, duration: reducedMotion ? 0 : 0.42, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   {activeDomain.explanation}
                 </motion.p>
@@ -150,7 +150,7 @@ export function PentagonConcept() {
                   className="pentagon-detail__columns"
                   initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.69, duration: reducedMotion ? 0 : 0.32 }}
+                  transition={{ delay: reducedMotion ? 0 : 1.16, duration: reducedMotion ? 0 : 0.46, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   <div className="pentagon-detail__tile">
                     <h3>Everyday life</h3>
@@ -166,7 +166,7 @@ export function PentagonConcept() {
                   style={{ fontSize: '0.78rem', fontStyle: 'italic', marginTop: 18 }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.76, duration: reducedMotion ? 0 : 0.3 }}
+                  transition={{ delay: reducedMotion ? 0 : 1.3, duration: reducedMotion ? 0 : 0.38, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   {activeDomain.context}
                 </motion.p>
@@ -174,7 +174,7 @@ export function PentagonConcept() {
                   className="pentagon-detail__footer"
                   initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reducedMotion ? 0 : 0.82, duration: reducedMotion ? 0 : 0.3 }}
+                  transition={{ delay: reducedMotion ? 0 : 1.4, duration: reducedMotion ? 0 : 0.42, ease: [0.16, 0.84, 0.22, 1] }}
                 >
                   <button className="pentagon-action" type="button" onClick={() => changeDomain(-1)} aria-label="Previous domain">
                     <ArrowLeft size={14} aria-hidden="true" /> Previous

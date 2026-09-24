@@ -80,7 +80,7 @@
   min-height: 720px;
   margin: 0 clamp(12px, 3vw, 44px);
   isolation: isolate;
-  transition: min-height 420ms cubic-bezier(.2,.75,.2,1);
+  transition: min-height 680ms cubic-bezier(.16,.84,.22,1);
 }
 
 .pentagon-stage.is-detail {
@@ -104,7 +104,7 @@
   background: rgba(255, 253, 249, 0.56);
   cursor: pointer;
   transform: translate(-50%, -50%);
-  transition: width 600ms cubic-bezier(.2,.75,.2,1), background-color 300ms ease, box-shadow 300ms ease;
+  transition: width 780ms cubic-bezier(.16,.84,.22,1), background-color 520ms ease, box-shadow 620ms ease;
 }
 
 .pentagon-brain-button--reveal {
@@ -137,7 +137,7 @@
   transform: none;
   background: rgba(255, 253, 249, 0.94);
   box-shadow: 0 0 0 14px rgba(168, 217, 224, 0.12), 0 18px 64px rgba(30, 58, 95, 0.12);
-  animation: pentagon-brain-focus 560ms cubic-bezier(.16,.9,.2,1) 70ms both;
+  animation: pentagon-brain-focus 820ms cubic-bezier(.16,.9,.2,1) 90ms both;
 }
 
 .pentagon-brain-image {
@@ -177,7 +177,7 @@
   background: rgba(255, 253, 249, 0.93);
   box-shadow: 0 14px 30px rgba(30, 58, 95, 0.08);
   cursor: pointer;
-  transition: opacity 350ms ease, transform 350ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition: opacity 540ms cubic-bezier(.16,.84,.22,1), transform 540ms cubic-bezier(.16,.84,.22,1), box-shadow 260ms ease, border-color 260ms ease;
 }
 
 .pentagon-card:hover {
@@ -190,9 +190,9 @@
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  transform: translateY(10px) scale(0.94);
+  transform: translateY(16px) scale(0.94);
   animation: none;
-  transition: opacity 350ms ease, transform 350ms ease, visibility 0s linear 350ms;
+  transition: opacity 540ms cubic-bezier(.16,.84,.22,1), transform 540ms cubic-bezier(.16,.84,.22,1), visibility 0s linear 540ms;
 }
 
 .pentagon-card--attention { top: 5%; left: 50%; transform: translateX(-50%); }
