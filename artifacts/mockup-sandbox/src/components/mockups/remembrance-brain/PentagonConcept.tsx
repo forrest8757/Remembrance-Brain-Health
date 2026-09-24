@@ -51,14 +51,14 @@ export function PentagonConcept() {
   return (
     <main className="pentagon-concept">
       <section className="pentagon-shell" aria-labelledby="pentagon-title">
-        <header className="pentagon-header">
+        <header className="pentagon-header pentagon-reveal-header">
           <div>
-            <p className="pentagon-kicker">Explore the five areas</p>
-            <h1 className="pentagon-title" id="pentagon-title">Brain Regions & Wellness</h1>
-            <p className="pentagon-intro">
+            <p className="pentagon-kicker pentagon-reveal-copy pentagon-reveal-copy--one">Explore the five areas</p>
+            <h1 className="pentagon-title pentagon-reveal-copy pentagon-reveal-copy--two" id="pentagon-title">Brain Regions & Wellness</h1>
+            <p className="pentagon-intro pentagon-reveal-copy pentagon-reveal-copy--three">
               Select an area to discover how your brain supports your daily activities.
             </p>
-            <p className="pentagon-note">The illustrative colors represent functional learning zones, not exact anatomical boundaries.</p>
+            <p className="pentagon-note pentagon-reveal-copy pentagon-reveal-copy--four">The illustrative colors represent functional learning zones, not exact anatomical boundaries.</p>
           </div>
         </header>
 
@@ -67,7 +67,7 @@ export function PentagonConcept() {
             const palette = BRAIN_PALETTE[index];
             return (
               <button
-                className={`pentagon-card pentagon-card--${domain.id}`}
+                className={`pentagon-card pentagon-card--${domain.id} pentagon-card--reveal-${index + 1}`}
                 key={domain.id}
                 type="button"
                 onClick={() => selectDomain(index)}
@@ -98,7 +98,7 @@ export function PentagonConcept() {
               <span className="pentagon-brain-caption">Back to five areas</span>
             </button>
           ) : (
-            <div className="pentagon-brain-button" role="img" aria-label="Illustrative brain image">
+            <div className="pentagon-brain-button pentagon-brain-button--reveal" role="img" aria-label="Illustrative brain image">
               <BrainImage activeIndex={null} />
               <span className="pentagon-brain-caption">Choose an area to explore</span>
             </div>
@@ -111,12 +111,17 @@ export function PentagonConcept() {
                 ref={detailRef}
                 tabIndex={-1}
                 aria-labelledby="pentagon-detail-title"
-                initial={{ opacity: 0, y: reducedMotion ? 0 : 22, scale: reducedMotion ? 1 : 0.98 }}
+                initial={{ opacity: 0, y: reducedMotion ? 0 : 28, scale: reducedMotion ? 1 : 0.975 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: reducedMotion ? 0 : 12, scale: reducedMotion ? 1 : 0.99 }}
-                transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.2, 0.75, 0.2, 1] }}
+                transition={{ delay: reducedMotion ? 0 : 0.32, duration: reducedMotion ? 0 : 0.46, ease: [0.2, 0.75, 0.2, 1] }}
               >
-                <div className="pentagon-detail__top">
+                <motion.div
+                  className="pentagon-detail__top"
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.47, duration: reducedMotion ? 0 : 0.3 }}
+                >
                   <div>
                     <p className="pentagon-kicker">Domain {String(selectedIndex + 1).padStart(2, '0')}</p>
                     <h2 id="pentagon-detail-title">{activeDomain.title}</h2>
@@ -124,10 +129,29 @@ export function PentagonConcept() {
                   <button className="pentagon-action" type="button" onClick={returnToOverview}>
                     <ArrowLeft size={14} aria-hidden="true" /> Back to whole brain
                   </button>
-                </div>
-                <p className="pentagon-detail__summary">{activeDomain.summary}</p>
-                <p className="pentagon-detail__body">{activeDomain.explanation}</p>
-                <div className="pentagon-detail__columns">
+                </motion.div>
+                <motion.p
+                  className="pentagon-detail__summary"
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.55, duration: reducedMotion ? 0 : 0.3 }}
+                >
+                  {activeDomain.summary}
+                </motion.p>
+                <motion.p
+                  className="pentagon-detail__body"
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.62, duration: reducedMotion ? 0 : 0.3 }}
+                >
+                  {activeDomain.explanation}
+                </motion.p>
+                <motion.div
+                  className="pentagon-detail__columns"
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.69, duration: reducedMotion ? 0 : 0.32 }}
+                >
                   <div className="pentagon-detail__tile">
                     <h3>Everyday life</h3>
                     <p>{activeDomain.everyday}</p>
@@ -136,9 +160,22 @@ export function PentagonConcept() {
                     <h3>Try this</h3>
                     <p>{activeDomain.tryIt}</p>
                   </div>
-                </div>
-                <p className="pentagon-detail__body" style={{ fontSize: '0.78rem', fontStyle: 'italic', marginTop: 18 }}>{activeDomain.context}</p>
-                <footer className="pentagon-detail__footer">
+                </motion.div>
+                <motion.p
+                  className="pentagon-detail__body"
+                  style={{ fontSize: '0.78rem', fontStyle: 'italic', marginTop: 18 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.76, duration: reducedMotion ? 0 : 0.3 }}
+                >
+                  {activeDomain.context}
+                </motion.p>
+                <motion.footer
+                  className="pentagon-detail__footer"
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reducedMotion ? 0 : 0.82, duration: reducedMotion ? 0 : 0.3 }}
+                >
                   <button className="pentagon-action" type="button" onClick={() => changeDomain(-1)} aria-label="Previous domain">
                     <ArrowLeft size={14} aria-hidden="true" /> Previous
                   </button>
@@ -160,7 +197,7 @@ export function PentagonConcept() {
                   <button className="pentagon-action" type="button" onClick={() => changeDomain(1)} aria-label="Next domain">
                     Next <ArrowRight size={14} aria-hidden="true" />
                   </button>
-                </footer>
+                </motion.footer>
               </motion.section>
             )}
           </AnimatePresence>

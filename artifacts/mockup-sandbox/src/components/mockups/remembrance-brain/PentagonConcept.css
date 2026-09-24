@@ -21,6 +21,7 @@
   border-radius: 32px;
   background: rgba(255, 253, 249, 0.86);
   box-shadow: 0 24px 70px rgba(30, 58, 95, 0.08);
+  animation: pentagon-shell-arrive 560ms cubic-bezier(.2,.75,.2,1) both;
 }
 
 .pentagon-header {
@@ -65,6 +66,15 @@
   line-height: 1.5;
 }
 
+.pentagon-reveal-copy {
+  animation: pentagon-copy-arrive 620ms cubic-bezier(.2,.75,.2,1) both;
+}
+
+.pentagon-reveal-copy--one { animation-delay: 130ms; }
+.pentagon-reveal-copy--two { animation-delay: 200ms; }
+.pentagon-reveal-copy--three { animation-delay: 300ms; }
+.pentagon-reveal-copy--four { animation-delay: 375ms; }
+
 .pentagon-stage {
   position: relative;
   min-height: 720px;
@@ -97,6 +107,10 @@
   transition: width 600ms cubic-bezier(.2,.75,.2,1), background-color 300ms ease, box-shadow 300ms ease;
 }
 
+.pentagon-brain-button--reveal {
+  animation: pentagon-brain-arrive 800ms cubic-bezier(.16,.9,.2,1) 330ms both;
+}
+
 .pentagon-brain-button:hover,
 .pentagon-brain-button:focus-visible {
   background: rgba(255, 253, 249, 0.86);
@@ -123,6 +137,7 @@
   transform: none;
   background: rgba(255, 253, 249, 0.94);
   box-shadow: 0 0 0 14px rgba(168, 217, 224, 0.12), 0 18px 64px rgba(30, 58, 95, 0.12);
+  animation: pentagon-brain-focus 560ms cubic-bezier(.16,.9,.2,1) 70ms both;
 }
 
 .pentagon-brain-image {
@@ -176,6 +191,7 @@
   pointer-events: none;
   visibility: hidden;
   transform: translateY(10px) scale(0.94);
+  animation: none;
   transition: opacity 350ms ease, transform 350ms ease, visibility 0s linear 350ms;
 }
 
@@ -185,6 +201,48 @@
 .pentagon-card--memory { right: 8%; bottom: 5%; }
 .pentagon-card--language { bottom: 5%; left: 8%; }
 .pentagon-card--motor { top: 23%; left: 1%; }
+
+.pentagon-card--reveal-1 { animation: pentagon-card-top-arrive 620ms cubic-bezier(.2,.75,.2,1) 500ms both; }
+.pentagon-card--reveal-2 { animation: pentagon-card-right-arrive 620ms cubic-bezier(.2,.75,.2,1) 580ms both; }
+.pentagon-card--reveal-3 { animation: pentagon-card-right-arrive 620ms cubic-bezier(.2,.75,.2,1) 660ms both; }
+.pentagon-card--reveal-4 { animation: pentagon-card-left-arrive 620ms cubic-bezier(.2,.75,.2,1) 740ms both; }
+.pentagon-card--reveal-5 { animation: pentagon-card-left-arrive 620ms cubic-bezier(.2,.75,.2,1) 820ms both; }
+
+@keyframes pentagon-shell-arrive {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pentagon-copy-arrive {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pentagon-brain-arrive {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 18px)) scale(.88); }
+  65% { opacity: 1; }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes pentagon-brain-focus {
+  from { opacity: .82; transform: translateY(38px) scale(.86); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pentagon-card-top-arrive {
+  from { opacity: .18; transform: translate(-50%, 18px) scale(.96); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+@keyframes pentagon-card-right-arrive {
+  from { opacity: .18; transform: translate(18px, 12px) scale(.96); }
+  to { opacity: 1; transform: translate(0) scale(1); }
+}
+
+@keyframes pentagon-card-left-arrive {
+  from { opacity: .18; transform: translate(-18px, 12px) scale(.96); }
+  to { opacity: 1; transform: translate(0) scale(1); }
+}
 
 .pentagon-card__eyebrow {
   display: flex;
@@ -357,6 +415,7 @@
     margin-top: -12px;
     margin-bottom: 14px;
     order: -2;
+    animation-name: pentagon-brain-focus;
   }
   .pentagon-brain-caption { bottom: 5%; }
   .pentagon-card,
@@ -372,6 +431,11 @@
     transform: none;
   }
   .pentagon-card:hover { transform: none; }
+  .pentagon-card--reveal-1,
+  .pentagon-card--reveal-2,
+  .pentagon-card--reveal-3,
+  .pentagon-card--reveal-4,
+  .pentagon-card--reveal-5 { animation-name: pentagon-card-mobile-arrive; }
   .pentagon-stage.is-detail .pentagon-card { display: none; }
   .pentagon-detail { width: 100%; margin: 0; }
   .pentagon-detail__top { display: block; }
@@ -381,7 +445,24 @@
   .pentagon-detail__nav { margin-top: 14px; }
 }
 
+@keyframes pentagon-card-mobile-arrive {
+  from { opacity: .18; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .pentagon-shell,
+  .pentagon-reveal-copy,
+  .pentagon-brain-button--reveal,
+  .pentagon-stage.is-detail .pentagon-brain-button,
+  .pentagon-card--reveal-1,
+  .pentagon-card--reveal-2,
+  .pentagon-card--reveal-3,
+  .pentagon-card--reveal-4,
+  .pentagon-card--reveal-5 {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
   .pentagon-brain-button,
   .pentagon-card { transition-duration: 0.01ms; }
 }
