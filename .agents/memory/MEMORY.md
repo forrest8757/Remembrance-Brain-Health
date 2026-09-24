@@ -1,2 +1,3 @@
 - [Landing storage verification](landing-storage-verification.md) — preview dev-banner reads can occur independently of application storage; distinguish their provenance.
 - [Brain preview compatibility](brain-preview-compatibility.md) — verification browsers may lack WebGL; keep a genuine model still and report GPU verification limits.
+- [Brain explorer interaction direction](brain-explorer-interaction.md) — user approved the five-around-brain layout and wants domain details to arrive in place, not by scrolling.

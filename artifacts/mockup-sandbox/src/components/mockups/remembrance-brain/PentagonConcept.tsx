@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { BRAIN_DOMAINS } from './brain-domains';
 import { BRAIN_PALETTE } from './brain-palette';
 import './_group.css';
@@ -22,10 +22,8 @@ function BrainImage({ activeIndex }: { activeIndex: number | null }) {
 
 export function PentagonConcept() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [immersive, setImmersive] = useState(false);
-  const detailRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLElement>(null);
   const brainButtonRef = useRef<HTMLButtonElement>(null);
-  const stageRef = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const activeDomain = activeIndex === null ? null : BRAIN_DOMAINS[activeIndex];
   const selectedIndex = activeIndex ?? 0;
@@ -33,16 +31,11 @@ export function PentagonConcept() {
   useEffect(() => {
     if (activeDomain && detailRef.current) {
       detailRef.current.focus({ preventScroll: true });
-      detailRef.current.scrollIntoView({
-        behavior: reducedMotion ? 'instant' : 'smooth',
-        block: 'start',
-      });
     }
-  }, [activeIndex, activeDomain, reducedMotion]);
+  }, [activeIndex, activeDomain]);
 
   const selectDomain = (index: number) => {
     setActiveIndex(index);
-    setImmersive(false);
   };
 
   const changeDomain = (direction: number) => {
@@ -52,7 +45,6 @@ export function PentagonConcept() {
 
   const returnToOverview = () => {
     setActiveIndex(null);
-    stageRef.current?.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' });
     requestAnimationFrame(() => brainButtonRef.current?.focus({ preventScroll: true }));
   };
 
@@ -70,27 +62,7 @@ export function PentagonConcept() {
           </div>
         </header>
 
-        <section ref={stageRef} className={`pentagon-stage ${immersive ? 'is-immersive' : ''}`} aria-label="Brain domain explorer">
-          <AnimatePresence>
-            {immersive && (
-              <motion.p
-                className="pentagon-immersive-label"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: reducedMotion ? 0 : 0.25 }}
-              >
-                Immersive brain view · tap to return
-              </motion.p>
-            )}
-          </AnimatePresence>
-
-          {immersive && (
-            <button className="pentagon-action pentagon-close" type="button" onClick={() => setImmersive(false)}>
-              <RotateCcw size={14} aria-hidden="true" /> Return to domains
-            </button>
-          )}
-
+        <section className={`pentagon-stage ${activeDomain ? 'is-detail' : ''}`} aria-label="Brain domain explorer">
           {BRAIN_DOMAINS.map((domain, index) => {
             const palette = BRAIN_PALETTE[index];
             return (
@@ -99,8 +71,8 @@ export function PentagonConcept() {
                 key={domain.id}
                 type="button"
                 onClick={() => selectDomain(index)}
-                aria-hidden={immersive}
-                tabIndex={immersive ? -1 : 0}
+                aria-hidden={Boolean(activeDomain)}
+                tabIndex={activeDomain ? -1 : 0}
                 style={{ '--domain-color': palette.color } as React.CSSProperties}
                 data-testid={`button-pentagon-domain-${domain.id}`}
               >
@@ -114,79 +86,85 @@ export function PentagonConcept() {
             );
           })}
 
-          <button
-            ref={brainButtonRef}
-            className="pentagon-brain-button"
-            type="button"
-            aria-label={immersive ? 'Return to the domain overview' : 'Enlarge the brain into immersive focus mode'}
-            aria-pressed={immersive}
-            onClick={() => setImmersive((value) => !value)}
-          >
-            <BrainImage activeIndex={activeIndex} />
-            <span className="pentagon-brain-caption">{immersive ? 'Return to overview' : 'Enter focus mode'}</span>
-          </button>
-        </section>
-
-        <AnimatePresence mode="wait">
-          {activeDomain && (
-            <motion.section
-              className="pentagon-detail"
-              ref={detailRef}
-              tabIndex={-1}
-              aria-labelledby="pentagon-detail-title"
-              initial={{ opacity: 0, y: reducedMotion ? 0 : 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: reducedMotion ? 0 : 18 }}
-              transition={{ duration: reducedMotion ? 0 : 0.3 }}
+          {activeDomain ? (
+            <button
+              ref={brainButtonRef}
+              className="pentagon-brain-button"
+              type="button"
+              aria-label="Return to the five domain overview"
+              onClick={returnToOverview}
             >
-              <div className="pentagon-detail__top">
-                <div>
-                  <p className="pentagon-kicker">Domain {String(selectedIndex + 1).padStart(2, '0')}</p>
-                  <h2 id="pentagon-detail-title">{activeDomain.title}</h2>
-                </div>
-                <button className="pentagon-action" type="button" onClick={returnToOverview}>
-                  <ArrowLeft size={14} aria-hidden="true" /> Back to whole brain
-                </button>
-              </div>
-              <p className="pentagon-detail__summary">{activeDomain.summary}</p>
-              <p className="pentagon-detail__body">{activeDomain.explanation}</p>
-              <div className="pentagon-detail__columns">
-                <div className="pentagon-detail__tile">
-                  <h3>Everyday life</h3>
-                  <p>{activeDomain.everyday}</p>
-                </div>
-                <div className="pentagon-detail__tile" style={{ borderColor: `${BRAIN_PALETTE[selectedIndex].color}90`, background: `${BRAIN_PALETTE[selectedIndex].color}35` }}>
-                  <h3>Try this</h3>
-                  <p>{activeDomain.tryIt}</p>
-                </div>
-              </div>
-              <p className="pentagon-detail__body" style={{ fontSize: '0.78rem', fontStyle: 'italic', marginTop: 18 }}>{activeDomain.context}</p>
-              <footer className="pentagon-detail__footer">
-                <button className="pentagon-action" type="button" onClick={() => changeDomain(-1)} aria-label="Previous domain">
-                  <ArrowLeft size={14} aria-hidden="true" /> Previous
-                </button>
-                <nav className="pentagon-detail__nav" aria-label="Navigate between brain domains">
-                  {BRAIN_DOMAINS.map((domain, index) => (
-                    <button
-                      className="pentagon-action"
-                      key={domain.id}
-                      type="button"
-                      aria-label={`Go to ${domain.title}`}
-                      aria-pressed={index === selectedIndex}
-                      onClick={() => selectDomain(index)}
-                      style={{ '--domain-color': BRAIN_PALETTE[index].color } as React.CSSProperties}
-                    >
-                      {domain.title}
-                    </button>
-                  ))}
-                </nav>
-                <button className="pentagon-action" type="button" onClick={() => changeDomain(1)} aria-label="Next domain">
-                  Next <ArrowRight size={14} aria-hidden="true" />
-                </button>
-              </footer>
-            </motion.section>
+              <BrainImage activeIndex={activeIndex} />
+              <span className="pentagon-brain-caption">Back to five areas</span>
+            </button>
+          ) : (
+            <div className="pentagon-brain-button" role="img" aria-label="Illustrative brain image">
+              <BrainImage activeIndex={null} />
+              <span className="pentagon-brain-caption">Choose an area to explore</span>
+            </div>
           )}
-        </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            {activeDomain && (
+              <motion.section
+                className="pentagon-detail"
+                ref={detailRef}
+                tabIndex={-1}
+                aria-labelledby="pentagon-detail-title"
+                initial={{ opacity: 0, y: reducedMotion ? 0 : 22, scale: reducedMotion ? 1 : 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: reducedMotion ? 0 : 12, scale: reducedMotion ? 1 : 0.99 }}
+                transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.2, 0.75, 0.2, 1] }}
+              >
+                <div className="pentagon-detail__top">
+                  <div>
+                    <p className="pentagon-kicker">Domain {String(selectedIndex + 1).padStart(2, '0')}</p>
+                    <h2 id="pentagon-detail-title">{activeDomain.title}</h2>
+                  </div>
+                  <button className="pentagon-action" type="button" onClick={returnToOverview}>
+                    <ArrowLeft size={14} aria-hidden="true" /> Back to whole brain
+                  </button>
+                </div>
+                <p className="pentagon-detail__summary">{activeDomain.summary}</p>
+                <p className="pentagon-detail__body">{activeDomain.explanation}</p>
+                <div className="pentagon-detail__columns">
+                  <div className="pentagon-detail__tile">
+                    <h3>Everyday life</h3>
+                    <p>{activeDomain.everyday}</p>
+                  </div>
+                  <div className="pentagon-detail__tile" style={{ borderColor: `${BRAIN_PALETTE[selectedIndex].color}90`, background: `${BRAIN_PALETTE[selectedIndex].color}35` }}>
+                    <h3>Try this</h3>
+                    <p>{activeDomain.tryIt}</p>
+                  </div>
+                </div>
+                <p className="pentagon-detail__body" style={{ fontSize: '0.78rem', fontStyle: 'italic', marginTop: 18 }}>{activeDomain.context}</p>
+                <footer className="pentagon-detail__footer">
+                  <button className="pentagon-action" type="button" onClick={() => changeDomain(-1)} aria-label="Previous domain">
+                    <ArrowLeft size={14} aria-hidden="true" /> Previous
+                  </button>
+                  <nav className="pentagon-detail__nav" aria-label="Navigate between brain domains">
+                    {BRAIN_DOMAINS.map((domain, index) => (
+                      <button
+                        className="pentagon-action"
+                        key={domain.id}
+                        type="button"
+                        aria-label={`Go to ${domain.title}`}
+                        aria-pressed={index === selectedIndex}
+                        onClick={() => selectDomain(index)}
+                        style={{ '--domain-color': BRAIN_PALETTE[index].color } as React.CSSProperties}
+                      >
+                        {domain.title}
+                      </button>
+                    ))}
+                  </nav>
+                  <button className="pentagon-action" type="button" onClick={() => changeDomain(1)} aria-label="Next domain">
+                    Next <ArrowRight size={14} aria-hidden="true" />
+                  </button>
+                </footer>
+              </motion.section>
+            )}
+          </AnimatePresence>
+        </section>
       </section>
     </main>
   );
