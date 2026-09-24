@@ -1,0 +1,312 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ArrowLeft, ArrowRight, Sparkles, Sun } from 'lucide-react';
+import { BRAIN_DOMAINS } from './brain-domains';
+import { BRAIN_PALETTE } from './brain-palette';
+import './_group.css';
+
+const BRAIN_POSTERS = [
+  'attention',
+  'executive',
+  'memory',
+  'language',
+  'motor',
+] as const;
+
+function BrainPoster({
+  activeSector,
+  className = '',
+}: {
+  activeSector: number | null;
+  className?: string;
+}) {
+  const poster = activeSector === null
+    ? 'brain-poster.png'
+    : `brain-focus-${BRAIN_POSTERS[activeSector]}.png`;
+  const activeDomain = activeSector === null ? null : BRAIN_DOMAINS[activeSector];
+
+  return (
+    <div className={`relative mx-auto w-full ${className}`}>
+      <div className="relative aspect-square w-full" role="group" aria-label="Interactive brain illustration">
+        <div
+          className="pointer-events-none absolute inset-[8%] z-10 rounded-full border transition-all duration-500"
+          style={
+            activeSector !== null && BRAIN_PALETTE[activeSector]
+              ? {
+                  borderColor: BRAIN_PALETTE[activeSector].color,
+                  boxShadow: `0 0 42px ${BRAIN_PALETTE[activeSector].color}44`,
+                }
+              : {
+                  borderColor: 'rgba(27,206,223,0.2)',
+                  boxShadow: '0 0 28px rgba(27,206,223,0.12)',
+                }
+          }
+          aria-hidden="true"
+        />
+        <img
+          src={`/__mockup/images/remembrance-brain/${poster}`}
+          alt=""
+          className="absolute inset-0 h-full w-full object-contain"
+          aria-hidden="true"
+        />
+        <p className="sr-only">
+          {activeDomain
+            ? `Selected wellness domain: ${activeDomain.title}. The illustration is a shared brain image and does not show anatomical regions.`
+            : 'The illustration is a shared brain image. It does not show anatomical regions.'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function Current() {
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [justSelected, setJustSelected] = useState(false);
+
+  const reducedMotion = useReducedMotion();
+  const activeDomain = activeIdx !== null ? BRAIN_DOMAINS[activeIdx] : null;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const overviewRef = useRef<HTMLDivElement>(null);
+  const pendingFocus = useRef<'overview' | 'detail' | null>(null);
+
+  const handleSelect = (idx: number | null) => {
+    if ((activeIdx === null) !== (idx === null)) {
+      pendingFocus.current = idx === null ? 'overview' : 'detail';
+    }
+    setActiveIdx(idx);
+    setJustSelected(true);
+  };
+
+  useEffect(() => {
+    if (justSelected) {
+      setJustSelected(false);
+
+      // Scroll management
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const offset = 80; // approximate sticky header offset
+
+        // Only scroll if top is above viewport (scrolled past it) or on mobile where content reflows heavily
+        if (rect.top < offset || (window.innerWidth < 1024 && rect.bottom > window.innerHeight)) {
+          window.scrollTo({
+            top: window.scrollY + rect.top - offset,
+            behavior: reducedMotion ? 'auto' : 'smooth',
+          });
+        }
+      }
+    }
+  }, [justSelected, activeIdx, reducedMotion]);
+
+  const transitionProps = {
+    duration: reducedMotion ? 0 : 0.3,
+  };
+
+  return (
+    <div className="min-h-screen bg-cream p-4 md:p-8 flex items-center justify-center">
+      <div ref={containerRef} className="grid w-full items-start gap-12 rounded-3xl border border-border bg-white p-8 shadow-sm md:p-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+        {/* Interactive Visualization */}
+        <div className="relative lg:sticky lg:top-24">
+          <BrainPoster
+            activeSector={activeIdx}
+            className={`w-full mx-auto lg:mx-0 lg:ml-auto transition-[max-width] duration-300 ${
+              activeIdx === null ? 'max-w-[360px]' : 'max-w-[290px]'
+            }`}
+          />
+          {activeIdx === null && (
+            <p className="text-center text-sm text-navy/50 font-medium mt-6 lg:hidden">
+              Select an area below to explore
+            </p>
+          )}
+        </div>
+
+        {/* Content Panel */}
+        <div className="flex flex-col min-h-[550px]">
+          <AnimatePresence mode="wait">
+            {activeIdx === null || !activeDomain ? (
+              <motion.div
+                key="overview"
+                ref={(node) => {
+                  overviewRef.current = node;
+                  // AnimatePresence mounts this after the outgoing panel exits.
+                  if (node && pendingFocus.current === 'overview') {
+                    node.focus({ preventScroll: true });
+                    pendingFocus.current = null;
+                  }
+                }}
+                tabIndex={-1}
+                initial={{ opacity: 0, x: reducedMotion ? 0 : -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: reducedMotion ? 0 : -20 }}
+                transition={transitionProps}
+                className="flex h-full flex-col justify-center gap-5 outline-none"
+              >
+                <div className="mb-4">
+                  <h3 className="text-2xl font-display font-bold text-navy mb-2">Brain Regions & Wellness</h3>
+                  <p className="text-navy/70 mb-4">Select an area to discover how your brain supports your daily activities.</p>
+                  <div className="bg-navy/5 text-navy/60 text-xs font-medium px-3 py-2 rounded-lg flex items-start gap-2">
+                    <p>The illustrative colors represent functional learning zones, not exact anatomical boundaries.</p>
+                  </div>
+                </div>
+
+                {BRAIN_DOMAINS.map((domain, i) => {
+                  const palette = BRAIN_PALETTE[i];
+                  return (
+                    <button
+                      key={domain.id}
+                      onClick={() => handleSelect(i)}
+                      className="group text-left p-5 rounded-2xl transition-all duration-300 bg-cream/40 border focus-visible:ring-2 focus-visible:ring-cyan outline-none w-full"
+                      style={{ borderColor: 'transparent', '--hover-bg': `${palette.color}15`, '--hover-border': `${palette.color}40` } as React.CSSProperties}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = `${palette.color}15`;
+                        e.currentTarget.style.borderColor = `${palette.color}40`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '';
+                        e.currentTarget.style.borderColor = 'transparent';
+                      }}
+                      data-testid={`button-domain-overview-${domain.id}`}
+                    >
+                      <div className="flex justify-between items-center gap-4">
+                        <div className="flex gap-4 items-start">
+                          <div
+                            className="flex-shrink-0 w-4 h-4 rounded-full mt-1 border border-navy/10 shadow-sm"
+                            style={{ backgroundColor: palette.color }}
+                            aria-label={`Zone color: ${palette.name}`}
+                          />
+                          <div>
+                            <h4 className="text-lg font-bold font-display text-navy mb-1 group-hover:opacity-80 transition-opacity">
+                              {domain.title}
+                            </h4>
+                            <p className="text-sm text-navy/70 font-medium">
+                              {domain.summary}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-all">
+                          <ArrowRight className="w-4 h-4 text-navy/70" />
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="detail"
+                initial={{ opacity: 0, x: reducedMotion ? 0 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: reducedMotion ? 0 : 20 }}
+                transition={transitionProps}
+                className="flex flex-col h-full outline-none"
+              >
+                <button
+                  ref={(node) => {
+                    backButtonRef.current = node;
+                    if (node && pendingFocus.current === 'detail') {
+                      node.focus({ preventScroll: true });
+                      pendingFocus.current = null;
+                    }
+                  }}
+                  onClick={() => handleSelect(null)}
+                  className="self-start text-sm font-bold text-navy/50 hover:text-navy flex items-center gap-2 mb-6 transition-colors focus-visible:ring-2 focus-visible:ring-cyan outline-none rounded-lg min-h-[44px] min-w-[44px] py-1 px-2 -ml-2"
+                  data-testid="button-back-to-brain"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Back to whole brain
+                </button>
+
+                <div className="flex-1">
+                  <div className="mb-6">
+                    <h3 className="text-3xl md:text-4xl font-display font-bold text-navy mb-2">
+                      {activeDomain.title}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    <p className="text-xl text-navy/90 font-medium leading-relaxed">
+                      {activeDomain.summary}
+                    </p>
+                    <p className="text-navy/70 leading-relaxed">
+                      {activeDomain.explanation}
+                    </p>
+
+                    <div className="grid sm:grid-cols-2 gap-4 pt-4">
+                      <div className="bg-white rounded-2xl p-5 border border-navy/5 shadow-sm">
+                        <h4 className="font-bold text-navy text-sm mb-2 flex items-center gap-2">
+                          <Sun className="w-4 h-4 text-navy/40" /> Everyday life
+                        </h4>
+                        <p className="text-sm text-navy/70 leading-relaxed">{activeDomain.everyday}</p>
+                      </div>
+
+                      <div
+                        className="rounded-2xl p-5 border"
+                        style={{
+                          backgroundColor: `${BRAIN_PALETTE[activeIdx].color}35`,
+                          borderColor: `${BRAIN_PALETTE[activeIdx].color}60`,
+                        }}
+                      >
+                        <h4 className="font-bold text-navy text-sm mb-2 flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-navy/50" /> Try this
+                        </h4>
+                        <p className="text-sm text-navy/80 leading-relaxed">{activeDomain.tryIt}</p>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-navy/50 italic leading-relaxed pt-2">
+                      {activeDomain.context}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-5 mt-8 pt-6 border-t border-navy/5">
+                  <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+                    {BRAIN_DOMAINS.map((domain, i) => {
+                      const palette = BRAIN_PALETTE[i];
+                      return (
+                        <button
+                          key={domain.id}
+                          onClick={() => handleSelect(i)}
+                          className={`flex items-center justify-center min-h-[44px] px-3 md:px-4 rounded-xl text-[11px] md:text-xs font-bold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-cyan outline-none border ${
+                            i === activeIdx
+                              ? 'text-navy shadow-sm'
+                              : 'bg-navy/5 text-navy/70 hover:bg-navy/15 border-transparent hover:border-navy/10'
+                          }`}
+                          style={i === activeIdx ? { backgroundColor: palette.color, borderColor: `${palette.color}80` } : {}}
+                          aria-label={`Go to ${domain.title}`}
+                          aria-pressed={i === activeIdx}
+                          data-testid={`button-jump-domain-${domain.id}`}
+                        >
+                          {domain.title}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={() => handleSelect((activeIdx - 1 + BRAIN_DOMAINS.length) % BRAIN_DOMAINS.length)}
+                      className="flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 rounded-full hover:bg-navy/5 text-navy/60 hover:text-navy transition-colors focus-visible:ring-2 focus-visible:ring-cyan outline-none text-sm font-bold"
+                      aria-label="Previous domain"
+                      data-testid="button-prev-domain"
+                    >
+                      <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Previous</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleSelect((activeIdx + 1) % BRAIN_DOMAINS.length)}
+                      className="flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 rounded-full hover:bg-navy/5 text-navy/60 hover:text-navy transition-colors focus-visible:ring-2 focus-visible:ring-cyan outline-none text-sm font-bold"
+                      aria-label="Next domain"
+                      data-testid="button-next-domain"
+                    >
+                      <span className="hidden sm:inline">Next</span> <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}

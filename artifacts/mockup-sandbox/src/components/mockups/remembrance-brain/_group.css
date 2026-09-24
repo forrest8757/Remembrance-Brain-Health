@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+@theme inline {
+  --color-navy: #1E3A5F;
+  --color-cyan: #1BCEDF;
+  --color-cream: #F5F1EA;
+  --font-sans: var(--app-font-sans);
+  --font-display: var(--app-font-display);
+  --font-serif: var(--app-font-serif);
+}
+
+:root {
+  --background: 38 28% 94%;
+  --foreground: 214 52% 25%;
+  --border: 38 20% 88%;
+  --input: 38 20% 88%;
+  --ring: 185 78% 49%;
+  --card: 0 0% 100%;
+  --card-foreground: 214 52% 25%;
+  --card-border: 38 20% 88%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 214 52% 25%;
+  --popover-border: 38 20% 88%;
+  --primary: 214 52% 25%;
+  --primary-foreground: 38 28% 94%;
+  --secondary: 185 78% 49%;
+  --secondary-foreground: 214 52% 25%;
+  --muted: 38 20% 88%;
+  --muted-foreground: 214 20% 45%;
+  --accent: 185 78% 49%;
+  --accent-foreground: 214 52% 25%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
+  --app-font-display: 'Playfair Display', serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: Menlo, monospace;
+  --radius: 1rem;
+}
+
+.dark {
+  --background: 214 52% 25%;
+  --foreground: 38 28% 94%;
+  --border: 214 30% 35%;
+  --input: 214 30% 35%;
+  --ring: 185 78% 49%;
+  --card: 214 45% 20%;
+  --card-foreground: 38 28% 94%;
+  --card-border: 214 30% 35%;
+  --popover: 214 45% 20%;
+  --popover-foreground: 38 28% 94%;
+  --popover-border: 214 30% 35%;
+  --primary: 38 28% 94%;
+  --primary-foreground: 214 52% 25%;
+  --secondary: 185 78% 49%;
+  --secondary-foreground: 214 52% 25%;
+  --muted: 214 30% 35%;
+  --muted-foreground: 38 20% 70%;
+  --accent: 185 78% 49%;
+  --accent-foreground: 214 52% 25%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 38 28% 94%;
+}

@@ -1,0 +1,384 @@
+.pentagon-concept {
+  --pc-ink: #1e3a5f;
+  --pc-cream: #f5f1ea;
+  --pc-paper: #fffdf9;
+  --pc-line: rgba(30, 58, 95, 0.12);
+  --pc-cyan: #1bcedf;
+  min-height: 100dvh;
+  padding: clamp(16px, 3vw, 40px);
+  color: var(--pc-ink);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(168, 217, 224, 0.18), transparent 34rem),
+    var(--pc-cream);
+  font-family: var(--app-font-sans, 'Plus Jakarta Sans', sans-serif);
+}
+
+.pentagon-shell {
+  width: min(100%, 1320px);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--pc-line);
+  border-radius: 32px;
+  background: rgba(255, 253, 249, 0.86);
+  box-shadow: 0 24px 70px rgba(30, 58, 95, 0.08);
+}
+
+.pentagon-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  padding: clamp(24px, 4vw, 52px) clamp(22px, 5vw, 72px) 18px;
+}
+
+.pentagon-kicker {
+  margin: 0 0 10px;
+  color: rgba(30, 58, 95, 0.52);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.pentagon-title {
+  max-width: 670px;
+  margin: 0;
+  font-family: var(--app-font-display, 'Playfair Display', serif);
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.pentagon-intro {
+  max-width: 390px;
+  margin: 12px 0 0;
+  color: rgba(30, 58, 95, 0.68);
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.pentagon-note {
+  max-width: 520px;
+  margin: 8px 0 0;
+  color: rgba(30, 58, 95, 0.52);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.pentagon-stage {
+  position: relative;
+  min-height: 720px;
+  margin: 0 clamp(12px, 3vw, 44px);
+  isolation: isolate;
+}
+
+.pentagon-brain-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: clamp(260px, 32vw, 420px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 253, 249, 0.56);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: width 600ms cubic-bezier(.2,.75,.2,1), background-color 300ms ease, box-shadow 300ms ease;
+}
+
+.pentagon-brain-button:hover,
+.pentagon-brain-button:focus-visible {
+  background: rgba(255, 253, 249, 0.86);
+  box-shadow: 0 0 0 10px rgba(27, 206, 223, 0.1);
+}
+
+.pentagon-brain-button:focus-visible,
+.pentagon-card:focus-visible,
+.pentagon-action:focus-visible {
+  outline: 3px solid var(--pc-cyan);
+  outline-offset: 4px;
+}
+
+.pentagon-stage.is-immersive .pentagon-brain-button {
+  width: min(72vw, 650px);
+  background: rgba(255, 253, 249, 0.94);
+  box-shadow: 0 0 0 18px rgba(168, 217, 224, 0.12), 0 22px 80px rgba(30, 58, 95, 0.14);
+}
+
+.pentagon-brain-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.pentagon-brain-caption {
+  position: absolute;
+  right: 50%;
+  bottom: 8%;
+  width: max-content;
+  max-width: 90%;
+  padding: 7px 12px;
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  border-radius: 999px;
+  color: rgba(30, 58, 95, 0.66);
+  background: rgba(255, 253, 249, 0.9);
+  font-size: 0.72rem;
+  font-weight: 700;
+  transform: translateX(50%);
+}
+
+.pentagon-card {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  width: min(265px, 24vw);
+  min-height: 142px;
+  padding: 19px;
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  border-radius: 22px;
+  color: var(--pc-ink);
+  text-align: left;
+  background: rgba(255, 253, 249, 0.93);
+  box-shadow: 0 14px 30px rgba(30, 58, 95, 0.08);
+  cursor: pointer;
+  transition: opacity 350ms ease, transform 350ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.pentagon-card:hover {
+  border-color: var(--domain-color);
+  box-shadow: 0 18px 36px rgba(30, 58, 95, 0.13);
+  transform: translateY(-5px);
+}
+
+.pentagon-stage.is-immersive .pentagon-card {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: translateY(22px) scale(0.92);
+  transition: opacity 350ms ease, transform 350ms ease, visibility 0s linear 350ms;
+}
+
+.pentagon-card--attention { top: 5%; left: 50%; transform: translateX(-50%); }
+.pentagon-card--attention:hover { transform: translate(-50%, -5px); }
+.pentagon-card--executive { top: 23%; right: 1%; }
+.pentagon-card--memory { right: 8%; bottom: 5%; }
+.pentagon-card--language { bottom: 5%; left: 8%; }
+.pentagon-card--motor { top: 23%; left: 1%; }
+
+.pentagon-card__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: rgba(30, 58, 95, 0.54);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pentagon-card__dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--domain-color);
+}
+
+.pentagon-card h3 {
+  margin: 0 0 7px;
+  font-family: var(--app-font-display, 'Playfair Display', serif);
+  font-size: 1.28rem;
+  line-height: 1.05;
+}
+
+.pentagon-card p {
+  margin: 0;
+  color: rgba(30, 58, 95, 0.68);
+  font-size: 0.79rem;
+  line-height: 1.45;
+}
+
+.pentagon-immersive-label {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  z-index: 5;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: 0;
+  color: rgba(30, 58, 95, 0.6);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.pentagon-close {
+  position: absolute;
+  top: 8%;
+  right: 2%;
+  z-index: 6;
+}
+
+.pentagon-action {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgba(30, 58, 95, 0.14);
+  border-radius: 999px;
+  color: var(--pc-ink);
+  background: rgba(255, 253, 249, 0.94);
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pentagon-detail {
+  scroll-margin-top: 24px;
+  margin: 0 clamp(22px, 5vw, 72px) clamp(28px, 5vw, 64px);
+  padding: clamp(22px, 4vw, 40px);
+  border: 1px solid var(--pc-line);
+  border-radius: 26px;
+  background: rgba(255, 253, 249, 0.9);
+}
+
+.pentagon-detail__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: start;
+}
+
+.pentagon-detail h2 {
+  margin: 0;
+  font-family: var(--app-font-display, 'Playfair Display', serif);
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1;
+}
+
+.pentagon-detail__region {
+  margin: 8px 0 0;
+  color: rgba(30, 58, 95, 0.52);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pentagon-detail__summary {
+  max-width: 720px;
+  margin: 24px 0 8px;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.pentagon-detail__body {
+  max-width: 780px;
+  color: rgba(30, 58, 95, 0.7);
+  line-height: 1.7;
+}
+
+.pentagon-detail__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.pentagon-detail__tile {
+  padding: 18px;
+  border: 1px solid rgba(30, 58, 95, 0.1);
+  border-radius: 18px;
+  background: rgba(245, 241, 234, 0.62);
+}
+
+.pentagon-detail__tile h3 {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pentagon-detail__tile p {
+  margin: 0;
+  color: rgba(30, 58, 95, 0.72);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.pentagon-detail__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(30, 58, 95, 0.1);
+}
+
+.pentagon-detail__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pentagon-detail__nav button[aria-pressed="true"] {
+  background: var(--domain-color);
+}
+
+@media (max-width: 800px) {
+  .pentagon-header { display: block; }
+  .pentagon-intro { max-width: 520px; }
+  .pentagon-stage {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 14px;
+    margin: 0;
+    padding: 18px 16px 24px;
+  }
+  .pentagon-brain-button {
+    position: relative;
+    top: auto;
+    left: auto;
+    align-self: center;
+    width: min(80vw, 360px);
+    transform: none;
+    order: -1;
+  }
+  .pentagon-stage.is-immersive .pentagon-brain-button { width: min(88vw, 510px); }
+  .pentagon-brain-caption { bottom: 5%; }
+  .pentagon-card,
+  .pentagon-card--attention,
+  .pentagon-card--executive,
+  .pentagon-card--memory,
+  .pentagon-card--language,
+  .pentagon-card--motor {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    min-height: 0;
+    transform: none;
+  }
+  .pentagon-card:hover { transform: none; }
+  .pentagon-stage.is-immersive .pentagon-card { display: none; }
+  .pentagon-immersive-label { top: 2%; }
+  .pentagon-close { top: 2%; right: 16px; }
+  .pentagon-detail { margin: 0 16px 24px; }
+  .pentagon-detail__top { display: block; }
+  .pentagon-detail__top .pentagon-action { margin-top: 18px; }
+  .pentagon-detail__columns { grid-template-columns: 1fr; }
+  .pentagon-detail__footer { display: block; }
+  .pentagon-detail__nav { margin-top: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pentagon-brain-button,
+  .pentagon-card { transition-duration: 0.01ms; }
+}
