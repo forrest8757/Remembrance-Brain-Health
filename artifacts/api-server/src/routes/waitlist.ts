@@ -1,8 +1,8 @@
-import { Router, type IRouter } from "express";
+import { Router } from "express";
 import { db, waitlistTable } from "@workspace/db";
 import { JoinWaitlistBody, JoinWaitlistResponse } from "@workspace/api-zod";
 
-const router: IRouter = Router();
+const router = Router();
 const attempts = new Map<string, { count: number; expires: number }>();
 const WINDOW = 60_000;
 const cleanup = setInterval(() => {
