@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: norms
+    description: Comparison with other participants (Remembrance-internal norms)
 paths:
   /waitlist:
     post:
@@ -34,6 +36,35 @@ paths:
           description: Please wait before retrying
         "503":
           description: Temporarily unavailable
+  /norms/compare:
+    post:
+      operationId: compareWithNorms
+      tags: [norms]
+      summary: Compare a result with other participants of the same age and sex
+      description: >
+        Stores the participant's first completed administration of a test as a
+        de-identified reference result (later ones are ignored), then compares the
+        submitted score fields with the participant's age/sex group. Groups
+        smaller than minCohort are reported as insufficient.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NormSubmission"
+      responses:
+        "200":
+          description: Comparison (and whether this result was added to the reference)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NormComparison"
+        "400":
+          description: Invalid submission
+        "429":
+          description: Please wait before retrying
+        "503":
+          description: Comparison unavailable (no database configured)
   /healthz:
     get:
       operationId: healthCheck
@@ -49,6 +80,85 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    NormSubmission:
+      type: object
+      required: [participantId, testId, formId, specVersion, scorerVersion, equated, channel, administrationNumber, completed, birthYear, sex, fields]
+      properties:
+        participantId:
+          type: string
+          minLength: 1
+          maxLength: 128
+        testId:
+          type: string
+          maxLength: 64
+        formId:
+          type: string
+          maxLength: 64
+        specVersion:
+          type: string
+          maxLength: 32
+        scorerVersion:
+          type: string
+          maxLength: 32
+        equated:
+          type: boolean
+        channel:
+          type: string
+          enum: [web, phone]
+        administrationNumber:
+          type: integer
+          minimum: 1
+        completed:
+          type: boolean
+        birthYear:
+          type: integer
+          minimum: 1900
+          maximum: 2100
+        sex:
+          type: string
+          enum: [female, male, undisclosed]
+        educationYears:
+          type: integer
+          minimum: 0
+          maximum: 30
+        fields:
+          type: object
+          additionalProperties:
+            type: [number, "null"]
+    NormComparison:
+      type: object
+      required: [stored, cohort, minCohort, results]
+      properties:
+        stored:
+          type: boolean
+          description: True when this result was added to the reference (first completed administration).
+        cohort:
+          type: string
+          description: Plain-language group, e.g. "women aged 60–69".
+        minCohort:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/NormFieldComparison"
+    NormFieldComparison:
+      type: object
+      required: [field, label, value, n, percentile, median]
+      properties:
+        field:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+        n:
+          type: integer
+          description: People in the group with this score.
+        percentile:
+          type: [integer, "null"]
+          description: Percent of the group this result is better than (lower times are better; ties count half); null when the group is too small.
+        median:
+          type: [number, "null"]
     WaitlistInput:
       type: object
       required: [email]

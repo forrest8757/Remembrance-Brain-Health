@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="958" viewBox="0 0 820 958" font-family="Inter, system-ui, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1E3A5F"/></marker></defs>
+<rect width="100%" height="100%" fill="#F5F1EA"/>
+<text x="40" y="40" font-size="20" font-weight="700" fill="#1E3A5F">Oral Trail Making</text>
+<text x="40" y="64" font-size="12" fill="#34495E">oral-trails · spec 2.0.0 · generated from the compiled XState machine</text>
+<rect x="570" y="28" width="14" height="14" rx="3" fill="#E8EEF6" stroke="#1E3A5F"/><text x="590" y="40" font-size="12" fill="#34495E">protocol zone</text>
+<rect x="690" y="28" width="14" height="14" rx="3" fill="#E6F9FB" stroke="#129FAD"/><text x="710" y="40" font-size="12" fill="#34495E">chrome zone</text>
+<rect x="40" y="96" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="120" font-size="15" font-weight="700" fill="#1E3A5F">1. aIntro</text>
+<text x="544" y="120" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="140" font-size="12" fill="#34495E">say &quot;aIntro&quot;</text>
+<line x1="300" y1="156" x2="300" y2="178" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="180" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="204" font-size="15" font-weight="700" fill="#1E3A5F">2. partA</text>
+<text x="544" y="204" font-size="12" text-anchor="end" fill="#34495E">sequenceTask · protocol</text>
+<text x="56" y="224" font-size="12" fill="#34495E">live sequence &quot;partA&quot; ≤ 100 s · errors corrected (grace 800 ms) · 5 s → keep going · 15 s → discontinue (996)</text>
+<rect x="56" y="234" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="234" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<line x1="300" y1="266" x2="300" y2="288" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="290" width="520" height="60" rx="12" fill="#E6F9FB" stroke="#129FAD" stroke-width="2"/>
+<text x="56" y="314" font-size="15" font-weight="700" fill="#1E3A5F">3. pretestAsk</text>
+<text x="544" y="314" font-size="12" text-anchor="end" fill="#34495E">say · chrome</text>
+<text x="56" y="334" font-size="12" fill="#34495E">say &quot;pretest&quot;</text>
+<line x1="300" y1="350" x2="300" y2="372" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="374" width="520" height="86" rx="12" fill="#E6F9FB" stroke="#129FAD" stroke-width="2"/>
+<text x="56" y="398" font-size="15" font-weight="700" fill="#1E3A5F">4. pretest</text>
+<text x="544" y="398" font-size="12" text-anchor="end" fill="#34495E">practice · chrome</text>
+<text x="56" y="418" font-size="12" fill="#34495E">practice a-b-c-d-e-f-g-h-i-j-k-l · 2 attempts · feedback if wrong · fail → skip to end (997)</text>
+<rect x="56" y="428" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="97.4" y="442" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="428" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="186.20000000000002" y="442" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="428" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="267.8" y="442" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<rect x="308" y="428" width="54" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="335" y="442" font-size="11" text-anchor="middle" fill="#1E3A5F">retry</text>
+<rect x="368" y="428" width="46.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="391.4" y="442" font-size="11" text-anchor="middle" fill="#1E3A5F">gate</text>
+<line x1="300" y1="460" x2="300" y2="482" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="484" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="508" font-size="15" font-weight="700" fill="#1E3A5F">5. bIntro</text>
+<text x="544" y="508" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="528" font-size="12" fill="#34495E">say &quot;bIntro&quot;</text>
+<line x1="300" y1="544" x2="300" y2="566" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="568" width="520" height="112" rx="12" fill="#E6F9FB" stroke="#129FAD" stroke-width="2"/>
+<text x="56" y="592" font-size="15" font-weight="700" fill="#1E3A5F">6. bPractice</text>
+<text x="544" y="592" font-size="12" text-anchor="end" fill="#34495E">practice · chrome</text>
+<text x="56" y="612" font-size="12" fill="#34495E">practice 1-a-2-b-3-c-4 · 3 attempts · feedback if wrong · fail → skip to end (996)</text>
+<rect x="56" y="622" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="97.4" y="636" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="622" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="186.20000000000002" y="636" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="622" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="267.8" y="636" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<rect x="308" y="622" width="111.60000000000001" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="363.8" y="636" font-size="11" text-anchor="middle" fill="#1E3A5F">retryFeedback</text>
+<rect x="425.6" y="622" width="54" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="452.6" y="636" font-size="11" text-anchor="middle" fill="#1E3A5F">retry</text>
+<rect x="56" y="648" width="75.6" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="93.8" y="662" font-size="11" text-anchor="middle" fill="#1E3A5F">feedback</text>
+<rect x="137.6" y="648" width="46.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="161" y="662" font-size="11" text-anchor="middle" fill="#1E3A5F">gate</text>
+<line x1="300" y1="680" x2="300" y2="702" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="704" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="728" font-size="15" font-weight="700" fill="#1E3A5F">7. bGo</text>
+<text x="544" y="728" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="748" font-size="12" fill="#34495E">say &quot;bGo&quot;</text>
+<line x1="300" y1="764" x2="300" y2="786" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="788" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="812" font-size="15" font-weight="700" fill="#1E3A5F">8. partB</text>
+<text x="544" y="812" font-size="12" text-anchor="end" fill="#34495E">sequenceTask · protocol</text>
+<text x="56" y="832" font-size="12" fill="#34495E">live sequence &quot;partB&quot; ≤ 300 s · errors corrected (grace 800 ms) · 5 s → keep going · 15 s → discontinue (996)</text>
+<rect x="56" y="842" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="856" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="842" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="856" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<line x1="300" y1="874" x2="300" y2="896" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="230" y="898" width="140" height="36" rx="18" fill="#1E3A5F"/>
+<text x="300" y="921" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">complete (final)</text>
+<line x1="596" y1="126" x2="596" y2="831" stroke="#34495E" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="560" y1="126" x2="596" y2="126" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="223" x2="596" y2="223" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="320" x2="596" y2="320" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="417" x2="596" y2="417" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="514" x2="596" y2="514" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="624" x2="596" y2="624" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="734" x2="596" y2="734" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="831" x2="596" y2="831" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="608" y="430.5" width="180" height="96" rx="12" fill="#FFFFFF" stroke="#34495E" stroke-width="2"/>
+<text x="698" y="456.5" font-size="13" font-weight="700" text-anchor="middle" fill="#1E3A5F">paused</text>
+<text x="698" y="476.5" font-size="11" text-anchor="middle" fill="#34495E">PAUSE from any step</text>
+<text x="698" y="494.5" font-size="11" text-anchor="middle" fill="#34495E">RESUME → same step</text>
+<text x="698" y="512.5" font-size="11" text-anchor="middle" fill="#34495E">ABORT → complete</text>
+</svg>

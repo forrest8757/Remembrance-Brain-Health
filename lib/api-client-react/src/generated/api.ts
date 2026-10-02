@@ -21,6 +21,8 @@ import type {
 
 import type {
   HealthStatus,
+  NormComparison,
+  NormSubmission,
   WaitlistInput,
   WaitlistResult
 } from './api.schemas';
@@ -138,6 +140,95 @@ export const useJoinWaitlist = <TError = ErrorType<void>,
         TContext
       > => {
       return useMutation(getJoinWaitlistMutationOptions(options));
+    }
+
+export const getCompareWithNormsUrl = () => {
+
+
+
+
+  return `/api/norms/compare`
+}
+
+/**
+ * Stores the participant's first completed administration of a test as a de-identified reference result (later ones are ignored), then compares the submitted score fields with the participant's age/sex group. Groups smaller than minCohort are reported as insufficient.
+ * @summary Compare a result with other participants of the same age and sex
+ */
+export const compareWithNorms = async (normSubmission: NormSubmission, options?: Parameters<typeof customFetch>[1]): Promise<NormComparison> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<NormComparison>(getCompareWithNormsUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(normSubmission)
+  }
+);}
+
+
+
+
+
+export const getCompareWithNormsMutationKey = () => ['compareWithNorms'] as const;
+
+export const getCompareWithNormsMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareWithNorms>>, TError,CompareWithNormsMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof compareWithNorms>>, TError,CompareWithNormsMutationVariables, TContext> => {
+
+const mutationKey = getCompareWithNormsMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof compareWithNorms>>, CompareWithNormsMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  compareWithNorms(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompareWithNormsMutationResult = NonNullable<Awaited<ReturnType<typeof compareWithNorms>>>
+    export type CompareWithNormsMutationBody = BodyType<NormSubmission>
+    export type CompareWithNormsMutationError = ErrorType<void>
+    export type CompareWithNormsMutationVariables = {data: BodyType<NormSubmission>}
+
+    /**
+ * @summary Compare a result with other participants of the same age and sex
+ */
+export const useCompareWithNorms = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareWithNorms>>, TError,CompareWithNormsMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof compareWithNorms>>,
+        TError,
+        CompareWithNormsMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCompareWithNormsMutationOptions(options));
     }
 
 export const getHealthCheckUrl = () => {

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "after-memory-dark-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-dark-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-light-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-light-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-dark-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-dark-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-light-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  },
+  {
+    "name": "after-memory-light-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false
+  }
+]

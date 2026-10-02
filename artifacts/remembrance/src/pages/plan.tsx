@@ -1,16 +1,19 @@
-import React from 'react';
-import { useLocation } from 'wouter';
-import { useDemoState } from '@/lib/store';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, X, RefreshCw, Apple, Heart, Stethoscope, Moon, Users, Brain } from 'lucide-react';
+// Plan (redesign Phase 3, rollout 6): small everyday steps. Accepted steps
+// first, each with a one-tap "Done today"; then ideas to try, where "Not for
+// me" offers one alternative and a second "Not for me" retires the idea for
+// this cycle (decision logic unchanged from the original page). General
+// wellness ideas, never medical advice.
+import { AppShell, CheckIcon, ThemeRoot } from '@workspace/ui';
+import { localDateKey, useDemoState } from '@/lib/store';
+import { APP_NAV } from '@/pages/dashboard';
 
 const CATEGORIES = [
-  { id: 'diet', name: 'Diet', icon: Apple, color: 'text-green-500', bg: 'bg-green-500/10' },
-  { id: 'aerobic', name: 'Aerobic & Exercise', icon: Heart, color: 'text-red-500', bg: 'bg-red-500/10' },
-  { id: 'checkups', name: 'Health Checkups', icon: Stethoscope, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  { id: 'sleep', name: 'Sleep', icon: Moon, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-  { id: 'social', name: 'Social Engagement', icon: Users, color: 'text-orange-500', bg: 'bg-orange-500/10' },
-  { id: 'cognitive', name: 'Cognitive Training', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { id: 'diet', name: 'Food and drink' },
+  { id: 'aerobic', name: 'Moving more' },
+  { id: 'checkups', name: 'Health checkups' },
+  { id: 'sleep', name: 'Sleep' },
+  { id: 'social', name: 'Time with people' },
+  { id: 'cognitive', name: 'Keeping your mind busy' },
 ];
 
 const MOCK_GOALS: Record<string, { primary: string; alt: string }> = {
@@ -23,8 +26,8 @@ const MOCK_GOALS: Record<string, { primary: string; alt: string }> = {
 };
 
 export default function CarePlan() {
-  const [, setLocation] = useLocation();
-  const { state, addGoal, updateGoal } = useDemoState();
+  const { state, addGoal, updateGoal, toggleGoalCompletion } = useDemoState();
+  const today = localDateKey();
 
   const goalFor = (categoryId: string, categoryName: string) =>
     state.goals.find((goal) => goal.categoryId === categoryId || goal.category === categoryName);
@@ -86,91 +89,113 @@ export default function CarePlan() {
     }
   };
 
+  const rows = CATEGORIES.map((cat) => {
+    const goal = goalFor(cat.id, cat.name);
+    return {
+      cat,
+      goal,
+      accepted: Boolean(goal?.accepted && !goal.declined && !goal.resolved),
+      resolved: Boolean(goal?.resolved),
+      alternative: Boolean(goal?.swapUsed && goal.declined && !goal.accepted && !goal.resolved),
+      text: goal?.title || MOCK_GOALS[cat.id]!.primary,
+    };
+  });
+  const active = rows.filter((r) => r.accepted);
+  const ideas = rows.filter((r) => !r.accepted && !r.resolved);
+  const later = rows.filter((r) => r.resolved);
+  const doneToday = active.filter((r) => r.goal?.completedDates?.includes(today)).length;
+
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="bg-white border-b border-border/50 sticky top-0 z-30">
-        <div className="container mx-auto px-4 h-16 flex items-center">
-          <button onClick={() => setLocation('/dashboard')} className="p-2 -ml-2 text-navy hover:bg-navy/5 rounded-full transition-colors">
-            <ArrowLeft />
-          </button>
-          <span className="ml-2 text-lg font-bold text-navy flex-1">Your Care Plan</span>
-        </div>
-      </header>
+    <ThemeRoot>
+      <AppShell nav={APP_NAV} current="plan">
+        <div className="flex flex-col gap-6">
+          <header>
+            <p className="ds-label">Small everyday steps</p>
+            <h1 className="mt-1 text-[2rem] font-semibold leading-tight">Your plan</h1>
+            <p className="mt-2 text-[1.2rem]">Pick the steps that suit you. You can change them anytime.</p>
+          </header>
 
-      <main className="container mx-auto max-w-2xl px-6 py-8 space-y-8">
-        <div className="space-y-4">
-          <h1 className="text-3xl font-extrabold text-navy tracking-tight">Personalized guidance.</h1>
-          <p className="text-lg text-navy/70 font-medium">
-            Here are a few gentle starting points across six everyday wellness categories. Choose what feels useful to you.
-          </p>
-        </div>
+          <section className="ds-card flex flex-col gap-3" aria-labelledby="today-title">
+            <h2 id="today-title" className="ds-title">
+              Your steps
+            </h2>
+            {active.length ? (
+              <>
+                <p className="ds-secondary">
+                  {doneToday === 0 ? 'Tap a step when you have done it today.' : `${doneToday} of ${active.length} done today. Nicely done.`}
+                </p>
+                <ul className="flex flex-col gap-3">
+                  {active.map(({ cat, goal, text }) => {
+                    const done = Boolean(goal?.completedDates?.includes(today));
+                    return (
+                      <li key={cat.id}>
+                        <button
+                          type="button"
+                          aria-pressed={done}
+                          onClick={() => goal && toggleGoalCompletion(goal.id)}
+                          className="ds-tap flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-left"
+                          style={{ border: `${done ? 3 : 2}px solid ${done ? 'var(--steady)' : 'var(--track)'}`, background: done ? 'var(--elevated)' : 'transparent' }}
+                        >
+                          <span
+                            aria-hidden
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                            style={{ border: `2.5px solid ${done ? 'var(--steady)' : 'var(--text-2)'}`, background: done ? 'var(--steady)' : 'transparent' }}
+                          >
+                            {done && <CheckIcon color="var(--surface)" />}
+                          </span>
+                          <span className="flex min-w-0 flex-col break-words">
+                            <span className="ds-label" style={{ letterSpacing: '0.04em' }}>
+                              {cat.name}
+                            </span>
+                            <span className="font-semibold">{text}</span>
+                            <span className="ds-secondary" style={{ fontSize: '1rem' }}>
+                              {done ? 'Done today' : 'Not done yet today'}
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            ) : (
+              <p className="ds-secondary">No steps yet. Choose one or two from the ideas below. Small steps add up.</p>
+            )}
+          </section>
 
-        <div className="space-y-6">
-          {CATEGORIES.map((cat) => {
-            const recommendation = MOCK_GOALS[cat.id];
-            const existingGoal = goalFor(cat.id, cat.name);
-            const isAccepted = existingGoal?.accepted && !existingGoal.declined && !existingGoal.resolved;
-            const isResolved = existingGoal?.resolved;
-            const isAlternative = Boolean(existingGoal?.swapUsed && existingGoal.declined && !existingGoal.accepted && !existingGoal.resolved);
-            const currentGoalText = existingGoal?.title || recommendation.primary;
-
-            return (
-              <div key={cat.id} className="bg-white rounded-3xl p-6 border border-border shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${cat.bg} ${cat.color}`}>
-                    <cat.icon size={20} strokeWidth={2.5} />
+          {ideas.length > 0 && (
+            <section className="flex flex-col gap-4" aria-labelledby="ideas-title">
+              <h2 id="ideas-title" className="ds-title">
+                Ideas to try
+              </h2>
+              {ideas.map(({ cat, alternative, text }) => (
+                <article key={cat.id} className="ds-card flex flex-col gap-3" aria-label={cat.name}>
+                  <p className="ds-label">{cat.name}</p>
+                  {alternative && <p className="ds-secondary">Here's another idea instead:</p>}
+                  <p className="text-[1.2rem] font-semibold">{text}</p>
+                  <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr))]">
+                    <button type="button" className="ds-button ds-button-secondary" style={{ borderColor: 'var(--accent-text)', color: 'var(--accent-text)' }} onClick={() => handleAccept(cat.id, cat.name, text)}>
+                      Add to my plan
+                    </button>
+                    {/* The quieter choice: no box, same size target. */}
+                    <button type="button" className="ds-tap rounded-2xl px-4 font-semibold underline underline-offset-4" style={{ color: 'var(--text-2)' }} onClick={() => handleDecline(cat.id, cat.name)}>
+                      {alternative ? 'Not this one either' : 'Not for me'}
+                    </button>
                   </div>
-                  <h2 className="font-bold text-navy text-lg">{cat.name}</h2>
-                </div>
+                </article>
+              ))}
+            </section>
+          )}
 
-                {isAccepted ? (
-                  <div className="bg-cyan/10 border border-cyan/20 rounded-2xl p-4 flex gap-3">
-                    <Check className="text-cyan shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-navy">{existingGoal.title}</p>
-                      <p className="text-xs text-navy/55 font-medium mt-1">Active in your daily plan</p>
-                    </div>
-                  </div>
-                ) : isResolved ? (
-                  <div className="bg-navy/5 border border-border rounded-2xl p-4 flex gap-3">
-                    <Check className="text-navy/40 shrink-0 mt-0.5" />
-                    <p className="text-navy/55 font-medium text-sm">Thanks for the feedback. We’ll suggest a different option next cycle.</p>
-                  </div>
-                ) : (
-                  <div className="bg-background rounded-2xl p-5 border border-border animate-in fade-in">
-                    {isAlternative && (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-cyan mb-2">
-                        <RefreshCw size={12} /> One alternative
-                      </span>
-                    )}
-                    <p className="text-navy font-bold text-lg leading-snug mb-6">{currentGoalText}</p>
+          {later.length > 0 && (
+            <p className="ds-secondary">
+              Set aside for now: {later.map((r) => r.cat.name.toLowerCase()).join(', ')}. We'll suggest something different next time.
+            </p>
+          )}
 
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        className="flex-1 h-12 border-border text-navy hover:bg-navy/5 rounded-xl font-bold"
-                        onClick={() => handleDecline(cat.id, cat.name)}
-                      >
-                        <X className="mr-1 h-4 w-4" /> {isAlternative ? 'Decline' : 'Not for me'}
-                      </Button>
-                      <Button
-                        className="flex-1 h-12 bg-navy hover:bg-navy/90 text-white rounded-xl font-bold shadow-md"
-                        onClick={() => handleAccept(cat.id, cat.name, currentGoalText)}
-                      >
-                        <Check className="mr-1 h-4 w-4 text-cyan" /> Accept
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          <p style={{ fontSize: '1rem' }}>General wellness ideas, not medical advice. Check with your doctor before changing your exercise, diet or medicines.</p>
         </div>
-
-        <div className="pt-8 text-xs text-navy/40 text-center font-medium max-w-sm mx-auto">
-          General wellness guidance, not medical advice. These demo recommendations are simulated and are not a substitute for professional care.
-        </div>
-      </main>
-    </div>
+      </AppShell>
+    </ThemeRoot>
   );
 }

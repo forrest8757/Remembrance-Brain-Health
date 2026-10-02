@@ -47,3 +47,14 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Secrets (API keys). Never commit.
+.env
+.env.*
+!.env.example
+
+# Redesign screenshot runs: every variant stays local (hundreds of MB). The
+# evidence set in git (before shots + latest dark/light 390/1280 captures) is
+# force-added; see design/rollout/README.md.
+design/rollout/**/*.png
+!design/rollout/**/before-*.png

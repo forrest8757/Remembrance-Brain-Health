@@ -1,0 +1,58 @@
+[
+  {
+    "name": "pass1-dark-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-dark-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-light-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-light-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-dark-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-dark-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-light-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "pass1-light-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  }
+]

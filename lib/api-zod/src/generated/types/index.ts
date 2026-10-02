@@ -7,5 +7,11 @@
  */
 
 export * from './healthStatus';
+export * from './normComparison';
+export * from './normFieldComparison';
+export * from './normSubmission';
+export * from './normSubmissionChannel';
+export * from './normSubmissionFields';
+export * from './normSubmissionSex';
 export * from './waitlistInput';
 export * from './waitlistResult';

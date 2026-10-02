@@ -25,6 +25,60 @@ export const JoinWaitlistResponse = zod.object({
 
 
 /**
+ * Stores the participant's first completed administration of a test as a de-identified reference result (later ones are ignored), then compares the submitted score fields with the participant's age/sex group. Groups smaller than minCohort are reported as insufficient.
+ * @summary Compare a result with other participants of the same age and sex
+ */
+export const compareWithNormsBodyParticipantIdMax = 128;
+
+export const compareWithNormsBodyTestIdMax = 64;
+
+export const compareWithNormsBodyFormIdMax = 64;
+
+export const compareWithNormsBodySpecVersionMax = 32;
+
+export const compareWithNormsBodyScorerVersionMax = 32;
+
+
+export const compareWithNormsBodyBirthYearMin = 1900;
+export const compareWithNormsBodyBirthYearMax = 2100;
+
+export const compareWithNormsBodyEducationYearsMin = 0;
+export const compareWithNormsBodyEducationYearsMax = 30;
+
+
+
+export const CompareWithNormsBody = zod.object({
+  "participantId": zod.string().min(1).max(compareWithNormsBodyParticipantIdMax),
+  "testId": zod.string().max(compareWithNormsBodyTestIdMax),
+  "formId": zod.string().max(compareWithNormsBodyFormIdMax),
+  "specVersion": zod.string().max(compareWithNormsBodySpecVersionMax),
+  "scorerVersion": zod.string().max(compareWithNormsBodyScorerVersionMax),
+  "equated": zod.boolean(),
+  "channel": zod.enum(['web', 'phone']),
+  "administrationNumber": zod.number().int().min(1),
+  "completed": zod.boolean(),
+  "birthYear": zod.number().int().min(compareWithNormsBodyBirthYearMin).max(compareWithNormsBodyBirthYearMax),
+  "sex": zod.enum(['female', 'male', 'undisclosed']),
+  "educationYears": zod.number().int().min(compareWithNormsBodyEducationYearsMin).max(compareWithNormsBodyEducationYearsMax).optional(),
+  "fields": zod.record(zod.string(), zod.number().nullable())
+})
+
+export const CompareWithNormsResponse = zod.object({
+  "stored": zod.boolean().describe('True when this result was added to the reference (first completed administration).'),
+  "cohort": zod.string().describe('Plain-language group, e.g. "women aged 60–69".'),
+  "minCohort": zod.number().int(),
+  "results": zod.array(zod.object({
+  "field": zod.string(),
+  "label": zod.string(),
+  "value": zod.number(),
+  "n": zod.number().int().describe('People in the group with this score.'),
+  "percentile": zod.number().int().nullable().describe('Percent of the group this result is better than (lower times are better; ties count half); null when the group is too small.'),
+  "median": zod.number().nullable()
+}))
+})
+
+
+/**
  * Returns server health status
  * @summary Health check
  */

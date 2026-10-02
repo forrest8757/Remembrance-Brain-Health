@@ -75,5 +75,16 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "@workspace/asr": "workspace:*",
+    "@workspace/audio": "workspace:*",
+    "@workspace/capture": "workspace:*",
+    "@workspace/battery": "workspace:*",
+    "@workspace/engine": "workspace:*",
+    "@workspace/forms": "workspace:*",
+    "@workspace/scoring": "workspace:*",
+    "@workspace/test-spec": "workspace:*",
+    "@workspace/ui": "workspace:*"
   }
 }

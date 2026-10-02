@@ -1,0 +1,22 @@
+{
+  "name": "@workspace/forms",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "validate": "tsx ./scripts/validate.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:",
+    "@workspace/test-spec": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "tsx": "catalog:",
+    "fast-check": "^4.10.2"
+  }
+}

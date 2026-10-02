@@ -1,0 +1,58 @@
+[
+  {
+    "name": "final-dark-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-dark-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-light-390-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-light-390-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-dark-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-dark-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-light-1280-100",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  },
+  {
+    "name": "final-light-1280-200",
+    "violations": [],
+    "smallTargets": [],
+    "overflowX": false,
+    "clipped": []
+  }
+]

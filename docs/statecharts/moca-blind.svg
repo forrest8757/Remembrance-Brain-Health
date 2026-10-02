@@ -1,0 +1,378 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="3984" viewBox="0 0 820 3984" font-family="Inter, system-ui, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1E3A5F"/></marker></defs>
+<rect width="100%" height="100%" fill="#F5F1EA"/>
+<text x="40" y="40" font-size="20" font-weight="700" fill="#1E3A5F">MoCA-Blind</text>
+<text x="40" y="64" font-size="12" fill="#34495E">moca-blind · spec 1.0.0 · generated from the compiled XState machine</text>
+<rect x="570" y="28" width="14" height="14" rx="3" fill="#E8EEF6" stroke="#1E3A5F"/><text x="590" y="40" font-size="12" fill="#34495E">protocol zone</text>
+<rect x="690" y="28" width="14" height="14" rx="3" fill="#E6F9FB" stroke="#129FAD"/><text x="710" y="40" font-size="12" fill="#34495E">chrome zone</text>
+<rect x="40" y="96" width="520" height="60" rx="12" fill="#E6F9FB" stroke="#129FAD" stroke-width="2"/>
+<text x="56" y="120" font-size="15" font-weight="700" fill="#1E3A5F">1. howItWorks</text>
+<text x="544" y="120" font-size="12" text-anchor="end" fill="#34495E">break · chrome</text>
+<text x="56" y="140" font-size="12" fill="#34495E">break card → CONTINUE</text>
+<line x1="300" y1="156" x2="300" y2="178" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="180" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="204" font-size="15" font-weight="700" fill="#1E3A5F">2. memIntro</text>
+<text x="544" y="204" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="224" font-size="12" fill="#34495E">say &quot;memIntro&quot;</text>
+<line x1="300" y1="240" x2="300" y2="262" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="264" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="288" font-size="15" font-weight="700" fill="#1E3A5F">3. words1</text>
+<text x="544" y="288" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="308" font-size="12" fill="#34495E">present words @ 1500 ms</text>
+<line x1="300" y1="324" x2="300" y2="346" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="348" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="372" font-size="15" font-weight="700" fill="#1E3A5F">4. registration1</text>
+<text x="544" y="372" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="392" font-size="12" fill="#34495E">respond ≤ 90 s · judged live</text>
+<rect x="56" y="402" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="416" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="402" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="416" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="402" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="416" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="434" x2="300" y2="456" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="458" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="482" font-size="15" font-weight="700" fill="#1E3A5F">5. memTrial2</text>
+<text x="544" y="482" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="502" font-size="12" fill="#34495E">say &quot;memTrial2&quot;</text>
+<line x1="300" y1="518" x2="300" y2="540" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="542" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="566" font-size="15" font-weight="700" fill="#1E3A5F">6. words2</text>
+<text x="544" y="566" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="586" font-size="12" fill="#34495E">present words @ 1500 ms · misheard words emphasized</text>
+<line x1="300" y1="602" x2="300" y2="624" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="626" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="650" font-size="15" font-weight="700" fill="#1E3A5F">7. registration2</text>
+<text x="544" y="650" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="670" font-size="12" fill="#34495E">respond ≤ 90 s · judged live</text>
+<rect x="56" y="680" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="694" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="680" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="694" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="680" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="694" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="712" x2="300" y2="734" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="736" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="760" font-size="15" font-weight="700" fill="#1E3A5F">8. memLater</text>
+<text x="544" y="760" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="780" font-size="12" fill="#34495E">say &quot;memLater&quot;</text>
+<line x1="300" y1="796" x2="300" y2="818" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="820" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="844" font-size="15" font-weight="700" fill="#1E3A5F">9. digitsFwdIntro</text>
+<text x="544" y="844" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="864" font-size="12" fill="#34495E">say &quot;digitsFwdIntro&quot;</text>
+<line x1="300" y1="880" x2="300" y2="902" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="904" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="928" font-size="15" font-weight="700" fill="#1E3A5F">10. digitsFwd</text>
+<text x="544" y="928" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="948" font-size="12" fill="#34495E">present digitsForward[0] @ 1000 ms</text>
+<line x1="300" y1="964" x2="300" y2="986" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="988" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1012" font-size="15" font-weight="700" fill="#1E3A5F">11. digitsForward</text>
+<text x="544" y="1012" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="1032" font-size="12" fill="#34495E">respond ≤ 30 s</text>
+<rect x="56" y="1042" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="1056" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="1042" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="1056" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="1042" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="1056" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="1074" x2="300" y2="1096" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1098" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1122" font-size="15" font-weight="700" fill="#1E3A5F">12. digitsBwdIntro</text>
+<text x="544" y="1122" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="1142" font-size="12" fill="#34495E">say &quot;digitsBwdIntro&quot;</text>
+<line x1="300" y1="1158" x2="300" y2="1180" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1182" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1206" font-size="15" font-weight="700" fill="#1E3A5F">13. digitsBwd</text>
+<text x="544" y="1206" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="1226" font-size="12" fill="#34495E">present digitsBackward[0] @ 1000 ms</text>
+<line x1="300" y1="1242" x2="300" y2="1264" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1266" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1290" font-size="15" font-weight="700" fill="#1E3A5F">14. digitsBackward</text>
+<text x="544" y="1290" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="1310" font-size="12" fill="#34495E">respond ≤ 30 s</text>
+<rect x="56" y="1320" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="1334" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="1320" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="1334" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="1320" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="1334" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="1352" x2="300" y2="1374" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1376" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1400" font-size="15" font-weight="700" fill="#1E3A5F">15. vigIntro</text>
+<text x="544" y="1400" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="1420" font-size="12" fill="#34495E">say &quot;vigIntro&quot;</text>
+<line x1="300" y1="1436" x2="300" y2="1458" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1460" width="520" height="112" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1484" font-size="15" font-weight="700" fill="#1E3A5F">16. vigilance</text>
+<text x="544" y="1484" font-size="12" text-anchor="end" fill="#34495E">tapTask · protocol</text>
+<text x="56" y="1504" font-size="12" fill="#34495E">tap check, then &quot;letters&quot; @ 2000 ms · taps timestamped · undetectable → reason 97</text>
+<rect x="56" y="1514" width="54" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="83" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">check</text>
+<rect x="116" y="1514" width="75.6" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="153.8" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">awaitTap</text>
+<rect x="197.6" y="1514" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="231.8" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">recheck</text>
+<rect x="272" y="1514" width="61.2" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="302.6" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">settle</text>
+<rect x="339.2" y="1514" width="90" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="384.2" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">presenting</text>
+<rect x="435.2" y="1514" width="46.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="458.59999999999997" y="1528" font-size="11" text-anchor="middle" fill="#1E3A5F">tail</text>
+<rect x="56" y="1540" width="104.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="108.2" y="1554" font-size="11" text-anchor="middle" fill="#1E3A5F">undetectable</text>
+<line x1="300" y1="1572" x2="300" y2="1594" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1596" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1620" font-size="15" font-weight="700" fill="#1E3A5F">17. serialIntro</text>
+<text x="544" y="1620" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="1640" font-size="12" fill="#34495E">say &quot;serialIntro&quot;</text>
+<line x1="300" y1="1656" x2="300" y2="1678" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1680" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1704" font-size="15" font-weight="700" fill="#1E3A5F">18. serial7</text>
+<text x="544" y="1704" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="1724" font-size="12" fill="#34495E">respond ≤ 90 s · stops after 5</text>
+<rect x="56" y="1734" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="1748" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="1734" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="1748" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="1734" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="1748" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="1766" x2="300" y2="1788" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1790" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1814" font-size="15" font-weight="700" fill="#1E3A5F">19. sentence1Intro</text>
+<text x="544" y="1814" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="1834" font-size="12" fill="#34495E">say &quot;sentence1Intro&quot;</text>
+<line x1="300" y1="1850" x2="300" y2="1872" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1874" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1898" font-size="15" font-weight="700" fill="#1E3A5F">20. sentence1Read</text>
+<text x="544" y="1898" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="1918" font-size="12" fill="#34495E">present sentences[0] @ 1000 ms</text>
+<line x1="300" y1="1934" x2="300" y2="1956" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="1958" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="1982" font-size="15" font-weight="700" fill="#1E3A5F">21. sentence1</text>
+<text x="544" y="1982" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="2002" font-size="12" fill="#34495E">respond ≤ 30 s</text>
+<rect x="56" y="2012" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="2026" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="2012" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="2026" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="2012" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="2026" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="2044" x2="300" y2="2066" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2068" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2092" font-size="15" font-weight="700" fill="#1E3A5F">22. sentence2Intro</text>
+<text x="544" y="2092" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="2112" font-size="12" fill="#34495E">say &quot;sentence2Intro&quot;</text>
+<line x1="300" y1="2128" x2="300" y2="2150" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2152" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2176" font-size="15" font-weight="700" fill="#1E3A5F">23. sentence2Read</text>
+<text x="544" y="2176" font-size="12" text-anchor="end" fill="#34495E">present · protocol</text>
+<text x="56" y="2196" font-size="12" fill="#34495E">present sentences[1] @ 1000 ms</text>
+<line x1="300" y1="2212" x2="300" y2="2234" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2236" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2260" font-size="15" font-weight="700" fill="#1E3A5F">24. sentence2</text>
+<text x="544" y="2260" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="2280" font-size="12" fill="#34495E">respond ≤ 30 s</text>
+<rect x="56" y="2290" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="2304" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="2290" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="2304" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="2290" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="2304" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="2322" x2="300" y2="2344" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2346" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2370" font-size="15" font-weight="700" fill="#1E3A5F">25. fluencyIntro</text>
+<text x="544" y="2370" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="2390" font-size="12" fill="#34495E">say &quot;fluencyIntro&quot;</text>
+<line x1="300" y1="2406" x2="300" y2="2428" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2430" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2454" font-size="15" font-weight="700" fill="#1E3A5F">26. fluencyGo</text>
+<text x="544" y="2454" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="2474" font-size="12" fill="#34495E">say &quot;fluencyGo&quot;</text>
+<line x1="300" y1="2490" x2="300" y2="2512" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2514" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2538" font-size="15" font-weight="700" fill="#1E3A5F">27. fluency</text>
+<text x="544" y="2538" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="2558" font-size="12" fill="#34495E">respond ≤ 60 s · &quot;Stop.&quot; at limit</text>
+<rect x="56" y="2568" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="2582" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="2568" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="2582" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="2568" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="2582" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="2600" x2="300" y2="2622" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2624" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2648" font-size="15" font-weight="700" fill="#1E3A5F">28. absPracticeQ</text>
+<text x="544" y="2648" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="2668" font-size="12" fill="#34495E">say &quot;absPractice&quot;</text>
+<line x1="300" y1="2684" x2="300" y2="2706" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2708" width="520" height="86" rx="12" fill="#E6F9FB" stroke="#129FAD" stroke-width="2"/>
+<text x="56" y="2732" font-size="15" font-weight="700" fill="#1E3A5F">29. absPractice</text>
+<text x="544" y="2732" font-size="12" text-anchor="end" fill="#34495E">practice · chrome</text>
+<text x="56" y="2752" font-size="12" fill="#34495E">practice fruit · 2 attempts · feedback if wrong</text>
+<rect x="56" y="2762" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="97.4" y="2776" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="2762" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="186.20000000000002" y="2776" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="2762" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="267.8" y="2776" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<rect x="308" y="2762" width="54" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="335" y="2776" font-size="11" text-anchor="middle" fill="#1E3A5F">retry</text>
+<rect x="368" y="2762" width="75.6" height="20" rx="10" fill="#FFFFFF" stroke="#129FAD"/>
+<text x="405.8" y="2776" font-size="11" text-anchor="middle" fill="#1E3A5F">feedback</text>
+<line x1="300" y1="2794" x2="300" y2="2816" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2818" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2842" font-size="15" font-weight="700" fill="#1E3A5F">30. abs1Q</text>
+<text x="544" y="2842" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="2862" font-size="12" fill="#34495E">say &quot;abs1&quot;</text>
+<line x1="300" y1="2878" x2="300" y2="2900" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="2902" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="2926" font-size="15" font-weight="700" fill="#1E3A5F">31. abstraction1</text>
+<text x="544" y="2926" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="2946" font-size="12" fill="#34495E">respond ≤ 45 s</text>
+<rect x="56" y="2956" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="2970" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="2956" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="2970" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="2956" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="2970" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="2988" x2="300" y2="3010" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3012" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3036" font-size="15" font-weight="700" fill="#1E3A5F">32. abs2Q</text>
+<text x="544" y="3036" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="3056" font-size="12" fill="#34495E">say &quot;abs2&quot;</text>
+<line x1="300" y1="3072" x2="300" y2="3094" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3096" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3120" font-size="15" font-weight="700" fill="#1E3A5F">33. abstraction2</text>
+<text x="544" y="3120" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="3140" font-size="12" fill="#34495E">respond ≤ 45 s</text>
+<rect x="56" y="3150" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="3164" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="3150" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="3164" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="3150" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="3164" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="3182" x2="300" y2="3204" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3206" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3230" font-size="15" font-weight="700" fill="#1E3A5F">34. delayedIntro</text>
+<text x="544" y="3230" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="3250" font-size="12" fill="#34495E">say &quot;delayedIntro&quot;</text>
+<line x1="300" y1="3266" x2="300" y2="3288" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3290" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3314" font-size="15" font-weight="700" fill="#1E3A5F">35. delayedFree</text>
+<text x="544" y="3314" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="3334" font-size="12" fill="#34495E">respond ≤ 90 s · judged live</text>
+<rect x="56" y="3344" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="3358" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="3344" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="3358" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="3344" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="3358" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="3376" x2="300" y2="3398" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3400" width="520" height="112" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3424" font-size="15" font-weight="700" fill="#1E3A5F">36. delayedCues</text>
+<text x="544" y="3424" font-size="12" text-anchor="end" fill="#34495E">cuedRecall · protocol</text>
+<text x="56" y="3444" font-size="12" fill="#34495E">missed words only: category cue → multiple choice (after &quot;delayedFree&quot;)</text>
+<rect x="56" y="3454" width="46.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="79.4" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">next</text>
+<rect x="108.8" y="3454" width="39.6" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="128.6" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">cue</text>
+<rect x="154.4" y="3454" width="104.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="206.60000000000002" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">cueListening</text>
+<rect x="264.8" y="3454" width="104.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="317" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">cueCapturing</text>
+<rect x="375.20000000000005" y="3454" width="90" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="420.20000000000005" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">cueJudging</text>
+<rect x="471.20000000000005" y="3454" width="61.2" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="501.80000000000007" y="3468" font-size="11" text-anchor="middle" fill="#1E3A5F">choice</text>
+<rect x="56" y="3480" width="126" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="119" y="3494" font-size="11" text-anchor="middle" fill="#1E3A5F">choiceListening</text>
+<rect x="188" y="3480" width="126" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="251" y="3494" font-size="11" text-anchor="middle" fill="#1E3A5F">choiceCapturing</text>
+<rect x="320" y="3480" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="354.2" y="3494" font-size="11" text-anchor="middle" fill="#1E3A5F">advance</text>
+<line x1="300" y1="3512" x2="300" y2="3534" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3536" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3560" font-size="15" font-weight="700" fill="#1E3A5F">37. dateQ</text>
+<text x="544" y="3560" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="3580" font-size="12" fill="#34495E">say &quot;dateQ&quot;</text>
+<line x1="300" y1="3596" x2="300" y2="3618" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3620" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3644" font-size="15" font-weight="700" fill="#1E3A5F">38. orientDate</text>
+<text x="544" y="3644" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="3664" font-size="12" fill="#34495E">respond ≤ 45 s · judged live · one follow-up</text>
+<rect x="56" y="3674" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="3688" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="3674" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="3688" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="3674" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="3688" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<rect x="308" y="3674" width="75.6" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="345.8" y="3688" font-size="11" text-anchor="middle" fill="#1E3A5F">followUp</text>
+<line x1="300" y1="3706" x2="300" y2="3728" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3730" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3754" font-size="15" font-weight="700" fill="#1E3A5F">39. placeQ</text>
+<text x="544" y="3754" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="3774" font-size="12" fill="#34495E">say &quot;placeQ&quot;</text>
+<line x1="300" y1="3790" x2="300" y2="3812" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="3814" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="3838" font-size="15" font-weight="700" fill="#1E3A5F">40. orientPlace</text>
+<text x="544" y="3838" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="3858" font-size="12" fill="#34495E">respond ≤ 45 s</text>
+<rect x="56" y="3868" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="3882" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="3868" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="3882" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="3868" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="3882" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<line x1="300" y1="3900" x2="300" y2="3922" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="230" y="3924" width="140" height="36" rx="18" fill="#1E3A5F"/>
+<text x="300" y="3947" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">complete (final)</text>
+<line x1="596" y1="126" x2="596" y2="3857" stroke="#34495E" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="560" y1="126" x2="596" y2="126" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="210" x2="596" y2="210" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="294" x2="596" y2="294" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="391" x2="596" y2="391" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="488" x2="596" y2="488" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="572" x2="596" y2="572" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="669" x2="596" y2="669" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="766" x2="596" y2="766" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="850" x2="596" y2="850" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="934" x2="596" y2="934" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1031" x2="596" y2="1031" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1128" x2="596" y2="1128" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1212" x2="596" y2="1212" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1309" x2="596" y2="1309" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1406" x2="596" y2="1406" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1516" x2="596" y2="1516" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1626" x2="596" y2="1626" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1723" x2="596" y2="1723" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1820" x2="596" y2="1820" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="1904" x2="596" y2="1904" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2001" x2="596" y2="2001" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2098" x2="596" y2="2098" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2182" x2="596" y2="2182" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2279" x2="596" y2="2279" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2376" x2="596" y2="2376" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2460" x2="596" y2="2460" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2557" x2="596" y2="2557" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2654" x2="596" y2="2654" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2751" x2="596" y2="2751" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2848" x2="596" y2="2848" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="2945" x2="596" y2="2945" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3042" x2="596" y2="3042" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3139" x2="596" y2="3139" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3236" x2="596" y2="3236" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3333" x2="596" y2="3333" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3456" x2="596" y2="3456" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3566" x2="596" y2="3566" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3663" x2="596" y2="3663" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3760" x2="596" y2="3760" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="3857" x2="596" y2="3857" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="608" y="1943.5" width="180" height="96" rx="12" fill="#FFFFFF" stroke="#34495E" stroke-width="2"/>
+<text x="698" y="1969.5" font-size="13" font-weight="700" text-anchor="middle" fill="#1E3A5F">paused</text>
+<text x="698" y="1989.5" font-size="11" text-anchor="middle" fill="#34495E">PAUSE from any step</text>
+<text x="698" y="2007.5" font-size="11" text-anchor="middle" fill="#34495E">RESUME → same step</text>
+<text x="698" y="2025.5" font-size="11" text-anchor="middle" fill="#34495E">ABORT → complete</text>
+</svg>

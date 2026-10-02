@@ -1,0 +1,110 @@
+{
+ "rm.profile": {
+  "firstName": "Margaret",
+  "city": "Provo",
+  "location": "home",
+  "educationYears": 16,
+  "birthYear": 1950,
+  "sex": "female"
+ },
+ "rm.session": {
+  "version": 1,
+  "batteryId": "lean",
+  "title": "Weekly check-in",
+  "startedAt": 1790961400401,
+  "items": [
+   {
+    "testId": "story-immediate",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "number-span",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "category-fluency",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "oral-trails",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "phonemic-fluency",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "story-delayed",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   }
+  ],
+  "clocks": {},
+  "filler": null,
+  "visit": 0,
+  "visitEndedAt": null,
+  "interruptions": [],
+  "log": [
+   {
+    "at": 1790961400401,
+    "type": "session_started"
+   }
+  ]
+ },
+ "rm.shell": {
+  "version": 1,
+  "stage": "identity",
+  "returning": false,
+  "hearing": {
+   "troubleUsually": null,
+   "hearsWell": null,
+   "usesDevice": null,
+   "deviceInPlace": null,
+   "rounds": 0,
+   "passed": null,
+   "boosted": false
+  },
+  "environment": {},
+  "caregiverHandoff": false,
+  "consent": null,
+  "integrityVersion": null,
+  "selfReport": null,
+  "ended": null,
+  "log": [
+   {
+    "at": 1790961400401,
+    "type": "shell_started",
+    "detail": "first visit"
+   }
+  ]
+ }
+}

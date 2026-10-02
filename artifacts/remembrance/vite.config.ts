@@ -67,6 +67,10 @@ export default defineConfig({
   server: {
     port,
     strictPort: true,
+    // Local dev: send /api (incl. the ASR WebSocket) to the API server.
+    proxy: {
+      '/api': { target: process.env.API_PROXY_TARGET ?? 'http://localhost:8080', ws: true, changeOrigin: true },
+    },
     host: '0.0.0.0',
     allowedHosts: true,
     fs: {

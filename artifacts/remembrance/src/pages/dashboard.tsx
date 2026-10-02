@@ -1,209 +1,118 @@
-import React from 'react';
-import { useLocation } from 'wouter';
-import { localDateKey, useDemoState, DomainKey } from '@/lib/store';
-import { BrainVisualization } from '@/components/brain-viz';
-import { CheckCircle2, ChevronRight, Activity, ClipboardEdit, Brain, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// Home (redesign Phase 3, design/DESIGN_LANGUAGE.md; direction "Oura Calm" with
+// mini domain rings). One hero number, one primary action (Start your session),
+// a calm vertical feed. Scores are SAMPLE data until the Remembrance Score is
+// computed from real sessions (home/home-data.ts).
+import { useDemoState } from '@/lib/store';
+import {
+  AppShell,
+  CheckInCard,
+  ContextRow,
+  DomainRow,
+  InsightCard,
+  NAV_ICONS,
+  ScoreRing,
+  SessionCard,
+  StatusChip,
+  StreakMeter,
+  ThemeRoot,
+  type NavItem,
+} from '@workspace/ui';
+import { homeData, SAMPLE_DOMAINS, SAMPLE_SCORE } from '@/home/home-data';
 
-const DOMAINS: { id: DomainKey; name: string; duration: string }[] = [
-  { id: 'attention', name: 'Attention', duration: '2 min' },
-  { id: 'executive', name: 'Executive Function', duration: '3 min' },
-  { id: 'memory', name: 'Memory', duration: '3–4 min' },
-  { id: 'language', name: 'Language', duration: '3 min' },
-  { id: 'motor', name: 'Perpetual Motor', duration: '3–5 min' },
+const base = import.meta.env.BASE_URL;
+const to = (path: string) => `${base}${path.replace(/^\//, '')}`;
+
+export const APP_NAV: NavItem[] = [
+  { key: 'home', label: 'Home', href: to('/dashboard'), icon: NAV_ICONS.home },
+  { key: 'trends', label: 'Trends', href: to('/progress'), icon: NAV_ICONS.trends },
+  { key: 'session', label: 'Session', href: to('/assess/session'), icon: NAV_ICONS.session },
+  { key: 'plan', label: 'Plan', href: to('/plan'), icon: NAV_ICONS.plan },
+  { key: 'settings', label: 'Settings', href: to('/settings'), icon: NAV_ICONS.settings },
 ];
 
+/** Temporary: every test, one tap away, while the suite is being built. */
+const PREVIEW_LINKS = [
+  { href: '/assess/session', name: 'Weekly check-in (all tests in a row)' },
+  { href: '/assess/story-immediate', name: 'A Short Story' },
+  { href: '/assess/story-delayed', name: 'The Story Again' },
+  { href: '/assess/phonemic-fluency', name: 'Words by Letter' },
+  { href: '/assess/oral-trails', name: 'Counting Quickly' },
+  { href: '/assess/category-fluency', name: 'Naming Things' },
+  { href: '/assess/number-span', name: 'Number Span' },
+  { href: '/assess/toy-colors', name: 'Say three colors' },
+];
+
+function lastResult(href: string): string | null {
+  try {
+    return (JSON.parse(localStorage.getItem(`rm.${href.split('/').pop()}.lastResult`) ?? 'null') as { summary?: string } | null)?.summary ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Dashboard() {
-  const [, setLocation] = useLocation();
-  const { state, toggleGoalCompletion } = useDemoState();
-  const { profile, scores, goals, checkIns } = state;
-  const firstName = profile.firstName || 'friend';
-  const today = localDateKey();
-
-  const activeGoals = goals.filter((goal) => goal.accepted && !goal.declined && !goal.resolved);
-  const todayCheckIn = checkIns.some((checkIn) => checkIn.date === today);
-  const completedGoalCount = activeGoals.filter((goal) => goal.completedDates?.includes(today)).length;
-  const nextDomain = DOMAINS.find((domain) => domain.id === state.currentWeekDomain) || DOMAINS[0];
-  const snapshots = state.scoreHistory.filter((snapshot) => snapshot.composite !== null);
-  const latestSnapshot = snapshots[snapshots.length - 1];
-  const previousSnapshot = snapshots[snapshots.length - 2];
-  const snapshotDelta = latestSnapshot && previousSnapshot && latestSnapshot.composite === scores.composite
-    ? (latestSnapshot.composite as number) - (previousSnapshot.composite as number)
-    : null;
-
-  const statusFor = (domain: DomainKey) => {
-    if (scores.domains[domain] === null) return 'Not recorded yet';
-    const domainSnapshots = state.scoreHistory.filter((snapshot) => snapshot.domains[domain] !== null);
-    return domainSnapshots.length > 1 ? 'Updated recently' : 'Baseline recorded';
-  };
-
+  const { state } = useDemoState();
+  const h = homeData(state);
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="bg-white border-b border-border/50 sticky top-0 z-30">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-navy to-cyan bg-clip-text text-transparent">
-            Remembrance
-          </span>
-          <div className="w-8 h-8 rounded-full bg-navy/10 flex items-center justify-center text-navy font-bold text-sm">
-            {firstName.charAt(0).toUpperCase()}
-          </div>
-        </div>
-      </header>
+    <ThemeRoot>
+      <AppShell nav={APP_NAV} current="home">
+        <div className="flex flex-col gap-6">
+          <header>
+            <p className="ds-label">{h.date}</p>
+            <h1 className="mt-1 text-[2rem] font-semibold leading-tight">
+              {h.greeting}
+              {h.name ? `, ${h.name}` : ''}.
+            </h1>
+          </header>
 
-      <main className="container mx-auto max-w-2xl px-6 py-8 space-y-6">
-        <h1 className="text-2xl font-bold text-navy mb-2">Good morning, {firstName}.</h1>
-
-        <div className="bg-navy rounded-3xl p-6 text-white relative overflow-hidden shadow-md">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan/20 blur-[80px] rounded-full pointer-events-none" />
-          <div className="flex justify-between items-center relative z-10">
-            <div className="space-y-1">
-              <h2 className="text-white/70 font-bold uppercase tracking-wider text-xs">Remembrance Score</h2>
-              <div className="flex items-baseline gap-1">
-                <span className="text-6xl font-extrabold tracking-tighter">
-                  {scores.composite === null ? '--' : scores.composite}
-                </span>
-                <span className="text-xl text-white/50 font-bold">/100</span>
-              </div>
-              <div className="inline-flex items-center gap-1 text-white/65 text-xs font-medium bg-white/10 px-2 py-1 rounded-md mt-2">
-                {snapshotDelta === null
-                  ? 'Your first recorded snapshot'
-                  : `Since previous saved result: ${snapshotDelta > 0 ? '+' : ''}${snapshotDelta}`}
-              </div>
-            </div>
-            <div className="w-32 h-32 relative flex items-center justify-center -mr-4">
-              <BrainVisualization className="absolute inset-0 scale-75" />
-            </div>
-          </div>
-          <p className="relative z-10 text-white/50 text-xs mt-5">
-            Demo scores are simulated snapshots for wellness tracking, not clinical measurements.
-          </p>
-        </div>
-
-        {state.lastCompletion && (
-          <div className="bg-cyan/10 border border-cyan/20 rounded-2xl p-5">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="text-cyan shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="font-bold text-navy">Nice work completing your {state.lastCompletion.domain} check-in.</p>
-                <p className="text-sm text-navy/70 font-medium mt-1">{state.lastCompletion.takeaway}</p>
-                {state.lastCompletion.cycleCompleted && (
-                  <button
-                    onClick={() => setLocation('/progress')}
-                    className="text-sm text-cyan font-bold mt-3 hover:text-cyan/80"
-                  >
-                    View your completed-round report →
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => setLocation('/check-in')}
-            className={`text-left rounded-2xl p-5 border transition-all ${
-              todayCheckIn
-                ? 'bg-cyan/5 border-cyan/20'
-                : 'bg-white border-border hover:border-navy/20 hover:bg-navy/5 shadow-sm'
-            }`}
-          >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center mb-3 bg-white shadow-sm">
-              {todayCheckIn ? <CheckCircle2 className="text-cyan" /> : <ClipboardEdit className="text-navy" />}
-            </div>
-            <h3 className="font-bold text-navy">{todayCheckIn ? 'Checked in ✓' : 'Daily check-in'}</h3>
-            <p className="text-sm text-navy/60 mt-1 font-medium">
-              {todayCheckIn ? 'Update today’s note' : 'Take 10 seconds'}
+          <section className="flex flex-col items-center gap-4 py-4 text-center" aria-labelledby="score-label">
+            <ScoreRing score={SAMPLE_SCORE.score} status={SAMPLE_SCORE.status} />
+            <p id="score-label" className="ds-label">
+              Remembrance Score
             </p>
-          </button>
+            <StatusChip status={SAMPLE_SCORE.status} />
+            <p className="text-[1.4rem] font-medium" style={{ maxWidth: '26rem' }}>
+              {SAMPLE_SCORE.sentence}
+            </p>
+            <p style={{ fontSize: '1rem' }}>
+              Sample scores for now. Yours appear after your first full session. A wellness measure, not a medical test.
+            </p>
+          </section>
 
-          <button
-            onClick={() => setLocation(`/assessment/${nextDomain.id}`)}
-            className="text-left bg-white rounded-2xl p-5 border border-border hover:border-navy/20 hover:bg-navy/5 shadow-sm transition-all"
-          >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center mb-3 bg-cyan/10 text-cyan">
-              <Activity />
-            </div>
-            <h3 className="font-bold text-navy">Next test</h3>
-            <p className="text-sm text-navy/60 mt-1 font-medium">{nextDomain.name} • {nextDomain.duration}</p>
-          </button>
-        </div>
+          <SessionCard state={h.session} minutes={25} href={to('/assess/session')} />
 
-        <div className="bg-white rounded-2xl p-6 border border-border shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="font-bold text-navy text-lg">Today’s Goals</h3>
-              {activeGoals.length > 0 && (
-                <p className="text-xs text-navy/50 font-medium mt-1">
-                  {completedGoalCount} of {activeGoals.length} checked off today
-                </p>
-              )}
-            </div>
-            <button onClick={() => setLocation('/plan')} className="text-cyan font-bold text-sm hover:text-cyan/80">
-              View Plan
-            </button>
-          </div>
+          <section className="ds-card ds-rise flex flex-col gap-2" aria-labelledby="areas-title">
+            <h2 id="areas-title" className="ds-title">
+              Your five areas
+            </h2>
+            {SAMPLE_DOMAINS.map((d) => (
+              <DomainRow key={d.key} d={d} href={to(`/domain/${d.key}`)} />
+            ))}
+          </section>
 
-          {activeGoals.length > 0 ? (
-            <div className="space-y-3">
-              {activeGoals.map((goal) => {
-                const isComplete = goal.completedDates?.includes(today) || false;
+          <CheckInCard done={h.checkedInToday} href={to('/check-in')} />
+          <InsightCard text={h.insight} />
+          <ContextRow items={h.context} />
+          <StreakMeter done={h.streak.done} of={h.streak.of} />
+
+          <details className="ds-card">
+            <summary className="ds-tap flex cursor-pointer items-center font-semibold">Preview tools (testing only)</summary>
+            <ul className="mt-3 flex flex-col gap-2">
+              {PREVIEW_LINKS.map((l) => {
+                const last = lastResult(l.href);
                 return (
-                  <div
-                    key={goal.id}
-                    className={`flex items-start gap-3 p-3 rounded-xl bg-background border border-border/50 ${
-                      isComplete ? 'opacity-70' : ''
-                    }`}
-                  >
-                    <button
-                      onClick={() => toggleGoalCompletion(goal.id, today)}
-                      aria-label={isComplete ? `Uncheck ${goal.title}` : `Complete ${goal.title}`}
-                      className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors ${
-                        isComplete ? 'border-cyan bg-cyan text-navy' : 'border-border hover:border-cyan'
-                      }`}
-                    >
-                      {isComplete && <Check size={14} strokeWidth={3} />}
-                    </button>
-                    <div>
-                      <p className={`font-bold text-navy text-sm ${isComplete ? 'line-through' : ''}`}>{goal.title}</p>
-                      <p className="text-xs text-navy/50 font-medium">{goal.category}</p>
-                    </div>
-                  </div>
+                  <li key={l.href}>
+                    <a href={to(l.href)} className="ds-tap flex flex-col justify-center rounded-2xl px-4 py-2" style={{ background: 'var(--elevated)' }}>
+                      <span className="font-semibold">{l.name}</span>
+                      {last && <span className="ds-secondary" style={{ fontSize: '1rem' }}>Last result: {last}</span>}
+                    </a>
+                  </li>
                 );
               })}
-            </div>
-          ) : (
-            <div className="text-center py-6 bg-background rounded-xl border border-dashed border-border">
-              <p className="text-navy/60 font-medium text-sm mb-3">No active goals yet.</p>
-              <Button variant="outline" onClick={() => setLocation('/plan')} className="rounded-full">Review Care Plan</Button>
-            </div>
-          )}
+            </ul>
+          </details>
         </div>
-
-        <div>
-          <h3 className="font-bold text-navy text-lg mb-4">Explore your areas</h3>
-          <div className="space-y-3">
-            {DOMAINS.map((domain) => (
-              <button
-                key={domain.id}
-                onClick={() => setLocation(`/domain/${domain.id}`)}
-                className="w-full flex items-center justify-between p-4 bg-white rounded-2xl border border-border hover:border-navy/20 hover:bg-navy/5 transition-all shadow-sm"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-navy/5 flex items-center justify-center">
-                    <Brain className="text-navy/50" size={20} />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-bold text-navy">{domain.name}</p>
-                    <p className="text-xs text-navy/50 font-medium">{statusFor(domain.id)}</p>
-                  </div>
-                </div>
-                <ChevronRight className="text-border" />
-              </button>
-            ))}
-          </div>
-        </div>
-      </main>
-    </div>
+      </AppShell>
+    </ThemeRoot>
   );
 }

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="350" viewBox="0 0 820 350" font-family="Inter, system-ui, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1E3A5F"/></marker></defs>
+<rect width="100%" height="100%" fill="#F5F1EA"/>
+<text x="40" y="40" font-size="20" font-weight="700" fill="#1E3A5F">Story Recall (delayed)</text>
+<text x="40" y="64" font-size="12" fill="#34495E">story-delayed · spec 1.0.0 · generated from the compiled XState machine</text>
+<rect x="570" y="28" width="14" height="14" rx="3" fill="#E8EEF6" stroke="#1E3A5F"/><text x="590" y="40" font-size="12" fill="#34495E">protocol zone</text>
+<rect x="690" y="28" width="14" height="14" rx="3" fill="#E6F9FB" stroke="#129FAD"/><text x="710" y="40" font-size="12" fill="#34495E">chrome zone</text>
+<rect x="40" y="96" width="520" height="60" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="120" font-size="15" font-weight="700" fill="#1E3A5F">1. intro</text>
+<text x="544" y="120" font-size="12" text-anchor="end" fill="#34495E">say · protocol</text>
+<text x="56" y="140" font-size="12" fill="#34495E">say &quot;intro&quot;</text>
+<line x1="300" y1="156" x2="300" y2="178" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="40" y="180" width="520" height="86" rx="12" fill="#E8EEF6" stroke="#1E3A5F" stroke-width="2"/>
+<text x="56" y="204" font-size="15" font-weight="700" fill="#1E3A5F">2. recall</text>
+<text x="544" y="204" font-size="12" text-anchor="end" fill="#34495E">respond · protocol</text>
+<text x="56" y="224" font-size="12" fill="#34495E">respond ≤ 180 s · judged live · one follow-up</text>
+<rect x="56" y="234" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="97.4" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">listening</text>
+<rect x="144.8" y="234" width="82.8" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="186.20000000000002" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">capturing</text>
+<rect x="233.60000000000002" y="234" width="68.4" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="267.8" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">judging</text>
+<rect x="308" y="234" width="75.6" height="20" rx="10" fill="#FFFFFF" stroke="#1E3A5F"/>
+<text x="345.8" y="248" font-size="11" text-anchor="middle" fill="#1E3A5F">followUp</text>
+<line x1="300" y1="266" x2="300" y2="288" stroke="#1E3A5F" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="230" y="290" width="140" height="36" rx="18" fill="#1E3A5F"/>
+<text x="300" y="313" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">complete (final)</text>
+<line x1="596" y1="126" x2="596" y2="223" stroke="#34495E" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="560" y1="126" x2="596" y2="126" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<line x1="560" y1="223" x2="596" y2="223" stroke="#34495E" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="608" y="126.5" width="180" height="96" rx="12" fill="#FFFFFF" stroke="#34495E" stroke-width="2"/>
+<text x="698" y="152.5" font-size="13" font-weight="700" text-anchor="middle" fill="#1E3A5F">paused</text>
+<text x="698" y="172.5" font-size="11" text-anchor="middle" fill="#34495E">PAUSE from any step</text>
+<text x="698" y="190.5" font-size="11" text-anchor="middle" fill="#34495E">RESUME → same step</text>
+<text x="698" y="208.5" font-size="11" text-anchor="middle" fill="#34495E">ABORT → complete</text>
+</svg>

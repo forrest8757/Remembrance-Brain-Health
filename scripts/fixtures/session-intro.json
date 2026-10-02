@@ -1,0 +1,12 @@
+{
+ "rm.profile": {
+  "firstName": "Margaret",
+  "city": "Provo",
+  "location": "home",
+  "educationYears": 16,
+  "birthYear": 1950,
+  "sex": "female"
+ },
+ "rm.session": null,
+ "rm.shell": null
+}

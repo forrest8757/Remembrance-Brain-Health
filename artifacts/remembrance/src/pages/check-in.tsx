@@ -1,111 +1,121 @@
-import React, { useState } from 'react';
-import { useLocation } from 'wouter';
+// Daily check-in (redesign Phase 3, rollout 4). About a minute: mood, sleep,
+// an optional note. One-tap answers in words (rule 9: no sliders or drags;
+// rule 2: never color alone). Stored as before ({mood 1–5, sleep hours}) so
+// Home's context chips and insight keep working.
+import { useState } from 'react';
+import { AppShell, ChoiceGroup, StatusIcon, ThemeRoot, TopBar, type Choice } from '@workspace/ui';
 import { localDateKey, useDemoState } from '@/lib/store';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, Moon, Sun, Cloud, CloudRain, CloudLightning } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
+import { APP_NAV } from '@/pages/dashboard';
 
-const MOODS = [
-  { val: 1, icon: CloudLightning, color: 'text-red-500' },
-  { val: 2, icon: CloudRain, color: 'text-orange-500' },
-  { val: 3, icon: Cloud, color: 'text-gray-500' },
-  { val: 4, icon: Sun, color: 'text-yellow-500' },
-  { val: 5, icon: Sun, color: 'text-yellow-500' }, // using same icon but bigger/brighter for max
+const home = `${import.meta.env.BASE_URL}dashboard`;
+
+const MOODS: Choice<number>[] = [
+  { value: 5, label: 'Great' },
+  { value: 4, label: 'Good' },
+  { value: 3, label: 'Okay' },
+  { value: 2, label: 'A bit low' },
+  { value: 1, label: 'Low' },
 ];
 
+/** Hours are stored as the middle of each band (Home reads ≥ 7 as rested). */
+const SLEEP: Choice<number>[] = [
+  { value: 8.5, label: 'More than 8 hours' },
+  { value: 7.5, label: '7 to 8 hours' },
+  { value: 6.5, label: '6 to 7 hours' },
+  { value: 5.5, label: '5 to 6 hours' },
+  { value: 4.5, label: 'Less than 5 hours' },
+];
+const sleepBand = (h: number) => (h >= 8 ? 8.5 : h >= 7 ? 7.5 : h >= 6 ? 6.5 : h >= 5 ? 5.5 : 4.5);
+
 export default function CheckIn() {
-  const [, setLocation] = useLocation();
   const { state, addCheckIn } = useDemoState();
   const today = localDateKey();
-  const existing = state.checkIns.find((checkIn) => checkIn.date === today);
+  const existing = state.checkIns.find((c) => c.date === today);
+  const [mood, setMood] = useState<number | null>(existing?.mood ?? null);
+  const [sleep, setSleep] = useState<number | null>(existing ? sleepBand(existing.sleep) : null);
+  const [notes, setNotes] = useState(existing?.notes ?? '');
+  const [saved, setSaved] = useState(false);
+  const [missing, setMissing] = useState<string[]>([]);
 
-  const [mood, setMood] = useState(existing?.mood || 4);
-  const [sleep, setSleep] = useState(existing?.sleep || 7);
-  const [notes, setNotes] = useState(existing?.notes || '');
-
-  const handleSubmit = () => {
-    addCheckIn({
-      date: today,
-      mood,
-      sleep,
-      notes
-    });
-    setLocation('/dashboard');
+  const save = () => {
+    const gaps = [mood === null && 'how you feel', sleep === null && 'how long you slept'].filter(Boolean) as string[];
+    setMissing(gaps);
+    if (gaps.length) return;
+    addCheckIn({ date: today, mood: mood!, sleep: sleep!, notes: notes.trim() });
+    setSaved(true);
+    window.scrollTo(0, 0);
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="bg-white border-b border-border/50 sticky top-0 z-30">
-        <div className="container mx-auto px-4 h-16 flex items-center">
-          <button onClick={() => setLocation('/dashboard')} className="p-2 -ml-2 text-navy hover:bg-navy/5 rounded-full transition-colors">
-            <ArrowLeft />
-          </button>
-          <span className="ml-2 text-lg font-bold text-navy flex-1">Daily Check-in</span>
-        </div>
-      </header>
-
-      <main className="container mx-auto max-w-md px-6 py-12 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        
-        {/* Mood */}
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-navy text-center">How are you feeling today?</h2>
-          <div className="flex justify-between px-4">
-            {[1, 2, 3, 4, 5].map(val => (
-              <button
-                key={val}
-                onClick={() => setMood(val)}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-                  mood === val ? 'bg-cyan text-navy scale-110 shadow-md' : 'bg-white border border-border text-navy/40 hover:bg-navy/5'
-                }`}
-              >
-                <span className="font-bold text-lg">{val}</span>
-              </button>
-            ))}
+    <ThemeRoot>
+      <AppShell nav={APP_NAV} current="home">
+        {saved ? (
+          <div className="flex flex-col gap-6">
+            <TopBar backHref={home} backLabel="Back to Home" />
+            <section className="flex flex-col items-center gap-3 py-4 text-center" aria-labelledby="saved-title">
+              <span className="flex h-24 w-24 items-center justify-center rounded-full" style={{ border: '6px solid var(--ring-arc)' }}>
+                <StatusIcon status="steady" size={40} />
+              </span>
+              <h1 id="saved-title" className="text-[2rem] font-semibold leading-tight" tabIndex={-1} ref={(el) => el?.focus()}>
+                Thanks. Today's check-in is saved.
+              </h1>
+              <p className="text-[1.2rem]" style={{ maxWidth: '30rem' }}>
+                Sleep and mood can nudge your scores up or down, so this helps us read your results fairly.
+              </p>
+            </section>
+            <a href={home} className="ds-button ds-button-primary">
+              Back to Home
+            </a>
+            <button type="button" className="ds-button ds-button-secondary" onClick={() => setSaved(false)}>
+              Change my answers
+            </button>
           </div>
-          <div className="flex justify-between px-6 text-xs font-bold text-navy/40 uppercase tracking-wider">
-            <span>Rough</span>
-            <span>Great</span>
-          </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            <TopBar backHref={home} backLabel="Back to Home" />
+            <header>
+              <p className="ds-label">About 1 minute</p>
+              <h1 className="mt-1 text-[2rem] font-semibold leading-tight">Daily check-in</h1>
+              <p className="mt-2 text-[1.2rem]">{existing ? 'You checked in earlier today. You can change your answers.' : 'Two quick questions about today.'}</p>
+            </header>
 
-        {/* Sleep */}
-        <div className="space-y-6 pt-6 border-t border-border/50">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-navy">Sleep</h2>
-            <span className="text-2xl font-extrabold text-cyan">{sleep} <span className="text-sm text-navy/40 font-bold">hrs</span></span>
-          </div>
-          <div className="px-2 pt-4 pb-2">
-            <Slider 
-              value={[sleep]} 
-              min={3} 
-              max={12} 
-              step={0.5} 
-              onValueChange={([val]) => setSleep(val)} 
-              className="[&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:border-cyan [&_[role=slider]]:bg-white [&>.relative>.absolute]:bg-cyan"
-            />
-          </div>
-        </div>
+            <section className="ds-card">
+              <ChoiceGroup name="mood" legend="How are you feeling today?" options={MOODS} value={mood} onChange={setMood} />
+            </section>
 
-        {/* Notes */}
-        <div className="space-y-4 pt-6 border-t border-border/50">
-          <h2 className="text-lg font-bold text-navy">Anything on your mind? <span className="text-navy/40 font-normal text-sm ml-2">(Optional)</span></h2>
-          <textarea 
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-white border border-border rounded-2xl p-4 text-navy min-h-[120px] focus:outline-none focus:ring-2 focus:ring-cyan resize-none"
-            placeholder="Just a quick note about today..."
-          />
-        </div>
+            <section className="ds-card">
+              <ChoiceGroup name="sleep" legend="How long did you sleep last night?" options={SLEEP} value={sleep} onChange={setSleep} />
+            </section>
 
-        <div className="pt-8">
-          <Button 
-            onClick={handleSubmit}
-            className="w-full h-16 text-xl bg-navy hover:bg-navy/90 text-white font-bold rounded-2xl shadow-md transition-all"
-          >
-            <Check className="mr-2 text-cyan" /> Complete Check-in
-          </Button>
-        </div>
-      </main>
-    </div>
+            <section className="ds-card flex flex-col gap-3">
+              <label htmlFor="notes" className="ds-title">
+                Anything else about today?
+              </label>
+              <p id="notes-hint" className="ds-secondary -mt-1">
+                Optional. For example, a busy morning or a new medicine.
+              </p>
+              <textarea
+                id="notes"
+                aria-describedby="notes-hint"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                className="ds-tap w-full resize-y rounded-2xl p-4"
+                style={{ background: 'var(--bg)', color: 'var(--text)', border: '2px solid var(--text-2)' }}
+              />
+            </section>
+
+            {missing.length > 0 && (
+              <p role="alert" className="ds-card" style={{ borderColor: 'var(--watch)' }}>
+                Please choose {missing.join(' and ')} first.
+              </p>
+            )}
+            <button type="button" className="ds-button ds-button-primary" onClick={save}>
+              Save check-in
+            </button>
+          </div>
+        )}
+      </AppShell>
+    </ThemeRoot>
   );
 }

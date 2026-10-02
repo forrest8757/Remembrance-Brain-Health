@@ -1,0 +1,1413 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-01T19:18:47.601Z",
+  "voice": {
+    "provider": "macos-say",
+    "voiceId": "Samantha",
+    "modelId": "say-170wpm",
+    "devOnly": true
+  },
+  "targetLufs": -16,
+  "clips": [
+    {
+      "clipId": "toy-colors.intro",
+      "kind": "line",
+      "text": "Let's try a short practice activity together.",
+      "file": "toy-colors.intro.wav",
+      "durationMs": 2595,
+      "sha256": "3491897aa8eebbf9e9d058b15a54d1137c9c71d45750e7b704dec105448907dd",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "toy-colors.instruction",
+      "kind": "line",
+      "text": "I am going to say three colors. When I am through, say them back to me.",
+      "file": "toy-colors.instruction.wav",
+      "durationMs": 4253,
+      "sha256": "68b83ff5390888227a7242b17b053ccee818f7c11c5b4872c3f31d4eb9947838",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "toy-colors.yourTurn",
+      "kind": "line",
+      "text": "Now, tell me the colors.",
+      "file": "toy-colors.yourTurn.wav",
+      "durationMs": 1699,
+      "sha256": "a5e264f2a6d42f96535a9c65e2b8f45296999c1a61eed9c00b846c3fcdcf1e63",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "toy-colors.encourage",
+      "kind": "line",
+      "text": "Just do the best you can.",
+      "file": "toy-colors.encourage.wav",
+      "durationMs": 1448,
+      "sha256": "e9fedab315d42c037e465fc8d11e0ac62859d0a3995527e8240d7ee39b9a0162",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "toy-colors.thanks",
+      "kind": "line",
+      "text": "Thank you.",
+      "file": "toy-colors.thanks.wav",
+      "durationMs": 629,
+      "sha256": "490c08c805c327b1cbe58e813e4553f1b7be4fdf71e394c915df0990e44c8e2f",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.red",
+      "kind": "token",
+      "text": "red",
+      "file": "tok.red.wav",
+      "durationMs": 323,
+      "sha256": "903af933f8aec3db4672783b7b69c6c44b1c5e499c90d02f44f5db4ae193f736",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.blue",
+      "kind": "token",
+      "text": "blue",
+      "file": "tok.blue.wav",
+      "durationMs": 348,
+      "sha256": "665c29bb2aacce8c0ca2fc79d087ddfef4ddbe91eb31b3ad007c0f046aeebd1b",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.yellow",
+      "kind": "token",
+      "text": "yellow",
+      "file": "tok.yellow.wav",
+      "durationMs": 464,
+      "sha256": "4c7842beaef4287dd905e55fa564fb1592f41b1409b30fa88525925bf4eac3e9",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.green",
+      "kind": "token",
+      "text": "green",
+      "file": "tok.green.wav",
+      "durationMs": 416,
+      "sha256": "f8fd0e7473560520668e93a7e0db86c7ab9639116f351e18f866506fa86f4134",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.pink",
+      "kind": "token",
+      "text": "pink",
+      "file": "tok.pink.wav",
+      "durationMs": 376,
+      "sha256": "3724383da0e9312c5c684d17bd266902f69bab829a68a80c3ef5ea681cab5266",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.orange",
+      "kind": "token",
+      "text": "orange",
+      "file": "tok.orange.wav",
+      "durationMs": 495,
+      "sha256": "0f85d4fbbf369cbdcf25aadc3920029015fd483f979fb5d84382ee197433153a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.brown",
+      "kind": "token",
+      "text": "brown",
+      "file": "tok.brown.wav",
+      "durationMs": 446,
+      "sha256": "b33c6ae57d404916f8d2c8ce4ae70b183379695b243ad86791db9a1b49a0c476",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.white",
+      "kind": "token",
+      "text": "white",
+      "file": "tok.white.wav",
+      "durationMs": 394,
+      "sha256": "5a1d28f074af46b8a1fbaaa2a7eaa8c47f229ee83171f3cb356f6b07fef63cd1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.purple",
+      "kind": "token",
+      "text": "purple",
+      "file": "tok.purple.wav",
+      "durationMs": 445,
+      "sha256": "a8f248e87c10ffc646d689aa1f08d9a0a14175a08474e281a4472b6ba547e3b4",
+      "lufs": -16,
+      "peakLimited": true
+    },
+    {
+      "clipId": "number-span.fwdIntro",
+      "kind": "line",
+      "text": "Next, I'll say some numbers, and I'd like you to say them back to me. Please wait until I've finished, then say them in the same order. For example, if I say 6, 1, 4, you'd say 6, 1, 4. Let's try one. If I say 3, 9, 5, what would you say?",
+      "file": "number-span.fwdIntro.wav",
+      "durationMs": 18196,
+      "sha256": "666fc5c6a3343b28041ee6edb84c6c5a7031ecca4edda18430f8e26b5a60bf00",
+      "lufs": -16.3,
+      "peakLimited": true
+    },
+    {
+      "clipId": "number-span.fwdFeedback",
+      "kind": "line",
+      "text": "That one would be 3, 9, 5.",
+      "file": "number-span.fwdFeedback.wav",
+      "durationMs": 2410,
+      "sha256": "5ffe76766f9eabe0453c604e25159746f6118febefba4b27449296e98f3dfdb4",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "number-span.fwdOnly",
+      "kind": "line",
+      "text": "From now on, just say the numbers back to me each time.",
+      "file": "number-span.fwdOnly.wav",
+      "durationMs": 3277,
+      "sha256": "5f50456c88182dbef07b23df9ab616e19f1a75dc4ce0f67f49861131b0f3fd81",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "number-span.ready",
+      "kind": "line",
+      "text": "Ready?",
+      "file": "number-span.ready.wav",
+      "durationMs": 400,
+      "sha256": "aae825c5d4db484c0c165eee56a08841232638dd6f4a50fd511d142206f45061",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "number-span.bwdIntro",
+      "kind": "line",
+      "text": "This time, I'll say some numbers, and I'd like you to say them back in reverse order, starting with the last number. Please wait until I've finished. For example, if I say 4, 9, 2, you'd say 2, 9, 4. Let's try one. If I say 7, 1, 5, what would you say?",
+      "file": "number-span.bwdIntro.wav",
+      "durationMs": 18580,
+      "sha256": "c030cb1852fefb2c6657782b5f823e8835c671f2e1e99f5fb89c6727405d8994",
+      "lufs": -16.2,
+      "peakLimited": true
+    },
+    {
+      "clipId": "number-span.bwdFeedback",
+      "kind": "line",
+      "text": "That one would be 5, 1, 7.",
+      "file": "number-span.bwdFeedback.wav",
+      "durationMs": 2420,
+      "sha256": "9037f9e16dad08c3a9a79819d9ce6ef9e0d22494eb8365320c5cbc77ff945db7",
+      "lufs": -16,
+      "peakLimited": true
+    },
+    {
+      "clipId": "number-span.bwdOnly",
+      "kind": "line",
+      "text": "From now on, just say the numbers back to me in reverse order each time.",
+      "file": "number-span.bwdOnly.wav",
+      "durationMs": 4111,
+      "sha256": "0ee2ec1a95109e554521fb48ad44e998ba7ccda0c931768b8d271f542134a490",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "number-span.bwdReminder",
+      "kind": "line",
+      "text": "Remember, say the numbers in reverse order, starting with the last one. Ready?",
+      "file": "number-span.bwdReminder.wav",
+      "durationMs": 4641,
+      "sha256": "f7fcef3fa27b82b566a14d1f439dd1c6d74849496ec2ff90017396dee240b366",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "number-span.doBest",
+      "kind": "line",
+      "text": "Just do your best.",
+      "file": "number-span.doBest.wav",
+      "durationMs": 1111,
+      "sha256": "47e0904499b0335711e9e543b206f1305767764a7efa2fbc193b120f0b9590a5",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.2",
+      "kind": "token",
+      "text": "2",
+      "file": "tok.2.wav",
+      "durationMs": 359,
+      "sha256": "980ee45f4a2543c0305270c67f381aaf52fe207f9524bc1e2d900d80d0004dec",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.6",
+      "kind": "token",
+      "text": "6",
+      "file": "tok.6.wav",
+      "durationMs": 519,
+      "sha256": "6c9b390efeb1c52a00937551d7a045452bf8db6badb97510e046b21419220da9",
+      "lufs": -17.7,
+      "peakLimited": true
+    },
+    {
+      "clipId": "tok.8",
+      "kind": "token",
+      "text": "8",
+      "file": "tok.8.wav",
+      "durationMs": 344,
+      "sha256": "6c1200abbe89f59fffe273485f258ebcea3a5cd70284ef523ae9e401c106ed39",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.9",
+      "kind": "token",
+      "text": "9",
+      "file": "tok.9.wav",
+      "durationMs": 455,
+      "sha256": "51144c20996d237c195f3daa33bd423dfda0c6f8ad24fac2ef6ade10d82bf799",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.1",
+      "kind": "token",
+      "text": "1",
+      "file": "tok.1.wav",
+      "durationMs": 408,
+      "sha256": "6acdb9936ee1602878bde3b0d56886f7f27a2f2349f9fe0e89e1510c03224fb0",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.3",
+      "kind": "token",
+      "text": "3",
+      "file": "tok.3.wav",
+      "durationMs": 418,
+      "sha256": "25734ed99a7caf6f96e9ca13cb78d84bba34733379f470b288f03d3a24f55133",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.7",
+      "kind": "token",
+      "text": "7",
+      "file": "tok.7.wav",
+      "durationMs": 474,
+      "sha256": "bc9e98f54b308f4a8174ff8107da45da966030401fcebbca2468f42c2c3b54fd",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "tok.4",
+      "kind": "token",
+      "text": "4",
+      "file": "tok.4.wav",
+      "durationMs": 402,
+      "sha256": "32525837f6ec8f85ccb747f7efae7bed7d52bd0e000d7dae66a6735a236f7736",
+      "lufs": -16.5,
+      "peakLimited": true
+    },
+    {
+      "clipId": "tok.5",
+      "kind": "token",
+      "text": "5",
+      "file": "tok.5.wav",
+      "durationMs": 441,
+      "sha256": "49290e0d2efae6fcf480ef9ac396528282d00baa8f880d64839ac90dbf578264",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.practiceIntro",
+      "kind": "line",
+      "text": "In this activity, I'll name a category, and you'll tell me as many things that belong to it as you can, as fast as you can. For example, for clothing you could say sock, jacket, or belt. Can you name a couple of other kinds of clothing?",
+      "file": "category-fluency.practiceIntro.wav",
+      "durationMs": 13992,
+      "sha256": "d2c7b403f0e86fd82813c7b9749914f28b55c23f957b05a1a3686f6e482912be",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode0",
+      "kind": "line",
+      "text": "Some others would be a scarf or a sweater.",
+      "file": "category-fluency.pCode0.wav",
+      "durationMs": 1990,
+      "sha256": "bef9a7fd462db20093e5fb9f8314a09d5cc77deb9e0b7055aad8374248352495",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode1one",
+      "kind": "line",
+      "text": "That one isn't a kind of clothing. Some others would be a scarf or a sweater.",
+      "file": "category-fluency.pCode1one.wav",
+      "durationMs": 3961,
+      "sha256": "623798262e2086c1acebb685e8ab3e699f0ef145baef66532264668c01177b01",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode1many",
+      "kind": "line",
+      "text": "Those aren't kinds of clothing. Some others would be a scarf or a sweater.",
+      "file": "category-fluency.pCode1many.wav",
+      "durationMs": 3672,
+      "sha256": "e5748f0c578940c8ee6b45cc87f3759b15e6cf470dfadfcf7357cd8731750e14",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode2",
+      "kind": "line",
+      "text": "That's right. A scarf or a sweater would work too.",
+      "file": "category-fluency.pCode2.wav",
+      "durationMs": 2696,
+      "sha256": "8da962672240cd411e4da4bd4ffbc1588fd51bd4838f42696135e9cf846115d6",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode3",
+      "kind": "line",
+      "text": "Some of those are clothing, but not all of them. A scarf or a sweater would work too.",
+      "file": "category-fluency.pCode3.wav",
+      "durationMs": 4603,
+      "sha256": "24225149f0b41ab1005359b47ece79aed5ffd0b9ccda1de3bc8e537ffb0b95b1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.pCode4",
+      "kind": "line",
+      "text": "That's right.",
+      "file": "category-fluency.pCode4.wav",
+      "durationMs": 637,
+      "sha256": "315d4a8a076fa34e3782faebb05f8fb7b128b59311319b6d2cbf447f6889fb24",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.animalsGo",
+      "kind": "line",
+      "text": "Now for real. Your category is animals. You'll have one minute. Name as many animals as you can. Ready? Go.",
+      "file": "category-fluency.animalsGo.wav",
+      "durationMs": 7094,
+      "sha256": "75db2ede859ad3ba0ab473e96b1b02a7845d56117800b9638ec5fd194f63b93c",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.animalsPrompt",
+      "kind": "line",
+      "text": "Any other animals you can think of?",
+      "file": "category-fluency.animalsPrompt.wav",
+      "durationMs": 1813,
+      "sha256": "bcdc42148f000f86399c26fdd9abe5770fc028a8fa2998881a864be1f5a258b1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.animalsRepeat",
+      "kind": "line",
+      "text": "Name as many animals as you can in one minute.",
+      "file": "category-fluency.animalsRepeat.wav",
+      "durationMs": 2348,
+      "sha256": "eec6f2dabfa7310d1489186248f6bc36f46577e82f1fa1ed2ea763c1b8a3ec5b",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondGo.here-s-another-category-vegetables-you-l-19onv49",
+      "kind": "line",
+      "text": "Here's another category: Vegetables. You'll have one minute again. Name as many vegetables as you can. Ready? Go.",
+      "file": "category-fluency.secondGo.here-s-another-category-vegetables-you-l-19onv49.wav",
+      "durationMs": 7293,
+      "sha256": "ea92188cef0f7a696479d299889a6a2bd44134f5455ab59cb6fffcc8e325323a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondPrompt.any-other-vegetables-you-can-think-of",
+      "kind": "line",
+      "text": "Any other vegetables you can think of?",
+      "file": "category-fluency.secondPrompt.any-other-vegetables-you-can-think-of.wav",
+      "durationMs": 1892,
+      "sha256": "412f1107beccb5ba956a847ee92a3d6081ecda6681f32f406e87d8bf051e9bf2",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondRepeat.name-as-many-vegetables-as-you-can-in-one-minute",
+      "kind": "line",
+      "text": "Name as many vegetables as you can in one minute.",
+      "file": "category-fluency.secondRepeat.name-as-many-vegetables-as-you-can-in-one-minute.wav",
+      "durationMs": 2459,
+      "sha256": "05cf30b3d0b7b5701b3d0480c084f2b8af4a040cc436ab19e2fdc6586b387259",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.yes",
+      "kind": "line",
+      "text": "Yes.",
+      "file": "category-fluency.yes.wav",
+      "durationMs": 466,
+      "sha256": "88b5fc25a0395d4a6b803457e54bd36ff39629e00617134b7993a54499a6ed83",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.stop",
+      "kind": "line",
+      "text": "Stop.",
+      "file": "category-fluency.stop.wav",
+      "durationMs": 504,
+      "sha256": "ef6030f9d53326f32dcb86c56c2f11cbfbc58c12ba6ddc0e5cd7aae8b652b703",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondGo.here-s-another-category-fruits-you-ll-ha-1ml31oz",
+      "kind": "line",
+      "text": "Here's another category: Fruits. You'll have one minute again. Name as many fruits as you can. Ready? Go.",
+      "file": "category-fluency.secondGo.here-s-another-category-fruits-you-ll-ha-1ml31oz.wav",
+      "durationMs": 6844,
+      "sha256": "96cf53f3fbe707d98453ea44c0fc20193aef404d976af0a8f8ac216e6ce66f29",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondPrompt.any-other-fruits-you-can-think-of",
+      "kind": "line",
+      "text": "Any other fruits you can think of?",
+      "file": "category-fluency.secondPrompt.any-other-fruits-you-can-think-of.wav",
+      "durationMs": 1628,
+      "sha256": "2574f937d28ae9ade2f39aae47de25887e4b43e8f5b9da33fa39e69d0f781b44",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondRepeat.name-as-many-fruits-as-you-can-in-one-minute",
+      "kind": "line",
+      "text": "Name as many fruits as you can in one minute.",
+      "file": "category-fluency.secondRepeat.name-as-many-fruits-as-you-can-in-one-minute.wav",
+      "durationMs": 2184,
+      "sha256": "c41cfcb3427fe40af0637f3a631b2bc03d50e5566c234d66aa11c78454f11326",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondGo.here-s-another-category-jobs-or-occupati-15wepp9",
+      "kind": "line",
+      "text": "Here's another category: Jobs or occupations. You'll have one minute again. Name as many jobs or occupations as you can. Ready? Go.",
+      "file": "category-fluency.secondGo.here-s-another-category-jobs-or-occupati-15wepp9.wav",
+      "durationMs": 8500,
+      "sha256": "cccbbe44878d2a77a7a8cc086c99b5811350820b9065aa0d00a0f440e070ca8c",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondPrompt.any-other-jobs-or-occupations-you-can-think-of",
+      "kind": "line",
+      "text": "Any other jobs or occupations you can think of?",
+      "file": "category-fluency.secondPrompt.any-other-jobs-or-occupations-you-can-think-of.wav",
+      "durationMs": 2506,
+      "sha256": "104e8281eeaba3b1d27cb8858ac93c0e5c000da1e7ca95eb2315e6920ba82ec8",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "category-fluency.secondRepeat.name-as-many-jobs-or-occupations-as-you--4hleva",
+      "kind": "line",
+      "text": "Name as many jobs or occupations as you can in one minute.",
+      "file": "category-fluency.secondRepeat.name-as-many-jobs-or-occupations-as-you--4hleva.wav",
+      "durationMs": 3057,
+      "sha256": "1e2ecc9eaf03a5ac3755160828d1d6bfa9b668c4fff28a60f9b236265b3403c9",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aIntro",
+      "kind": "line",
+      "text": "Here's something different. Please count out loud from 1 to 25 as fast as you can: 1, 2, 3, and so on. Ready? Go.",
+      "file": "oral-trails.aIntro.wav",
+      "durationMs": 8835,
+      "sha256": "d985d30fef772461773542c42b83d933a15af0bff0cbcf162fd1f55bb02147a6",
+      "lufs": -16.2,
+      "peakLimited": true
+    },
+    {
+      "clipId": "oral-trails.keepGoing",
+      "kind": "line",
+      "text": "Please keep going.",
+      "file": "oral-trails.keepGoing.wav",
+      "durationMs": 993,
+      "sha256": "ff0e98f2e658199a9e7976f31ca52967f243ff5678b79b294c3c20d37f25f700",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.pretest",
+      "kind": "line",
+      "text": "Please say the alphabet for me, starting from ay.",
+      "file": "oral-trails.pretest.wav",
+      "durationMs": 2757,
+      "sha256": "6736bbd10a2d19a32fe1c16250c4fff15882637c237d41c460cd2fc9c6bf6b3f",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bIntro",
+      "kind": "line",
+      "text": "Now let's mix numbers and letters. Go back and forth, a number and then a letter: 1, ay, 2, bee, and so on, as fast as you can. First a short practice: go up to the number 4, switching between numbers and letters. Ready? Go.",
+      "file": "oral-trails.bIntro.wav",
+      "durationMs": 15590,
+      "sha256": "98fef421216d01e2567a13ce83af0527895ed71ea0a5f7c9c888ecd0b2ec5a93",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bPracticeWrong",
+      "kind": "line",
+      "text": "Not quite. It goes 1, ay, 2, bee, 3, see, 4.",
+      "file": "oral-trails.bPracticeWrong.wav",
+      "durationMs": 5186,
+      "sha256": "f2f2e2e8ab5e7827709db44c00cb6fe5d92f42693d45daf98bc562f58ec55e42",
+      "lufs": -17.4,
+      "peakLimited": true
+    },
+    {
+      "clipId": "oral-trails.bPracticeAgain",
+      "kind": "line",
+      "text": "Let's try that again. Go up to the number 4, switching between numbers and letters. Ready? Go.",
+      "file": "oral-trails.bPracticeAgain.wav",
+      "durationMs": 6009,
+      "sha256": "3abdffb6d2f44a57a9db228762afe5c77e536016a4d3a3bf1a477a1935716784",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bGo",
+      "kind": "line",
+      "text": "Now for real. Switch between numbers and letters, 1, ay, 2, bee, 3, see, and keep going until you reach 13. Ready? Go.",
+      "file": "oral-trails.bGo.wav",
+      "durationMs": 9773,
+      "sha256": "af257be68d454b7e42089a2832d2a9b1bd44ca70590754a626a9e2e3332a86f2",
+      "lufs": -16,
+      "peakLimited": true
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-1-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 1. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-1-carry-on-from-there.wav",
+      "durationMs": 2096,
+      "sha256": "b5590bbb797361edfa864c31a62115b414c8342a2e7784f2001c7a0c1c4128f8",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-2-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 2. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-2-carry-on-from-there.wav",
+      "durationMs": 2061,
+      "sha256": "021d32fcce68cb2775ea9e065c529b48241b38f4f132aa526bf8e6e347c37065",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-3-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 3. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-3-carry-on-from-there.wav",
+      "durationMs": 2106,
+      "sha256": "f98a867053252e749a938aa176cb5b639f3165f3c5e8b63d6ee06142abd4a963",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-4-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 4. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-4-carry-on-from-there.wav",
+      "durationMs": 2071,
+      "sha256": "f51842eb98d826fb7a1a57a9abcb5988a9b84f17e4efa3c2f9fc059e98bbde49",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-5-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 5. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-5-carry-on-from-there.wav",
+      "durationMs": 2126,
+      "sha256": "44a42208f372d7c92f828c7127cc00a3c305fc1de2200ee326e71bb0f5018b00",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-6-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 6. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-6-carry-on-from-there.wav",
+      "durationMs": 2180,
+      "sha256": "eb0ea010093f99c7907415fc36ad308409d86afe15868b5759674c8ad99fa4c4",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-7-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 7. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-7-carry-on-from-there.wav",
+      "durationMs": 2136,
+      "sha256": "db5bd357477d1f2cec0c23487b0febb14ffd6f093980fb2a0f281595f5c8138c",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-8-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 8. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-8-carry-on-from-there.wav",
+      "durationMs": 2006,
+      "sha256": "016e64ef603c13e8cba4cef923f559f6ad8de88d5d9fb3bc1b3f62e9a0c5beb8",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-9-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 9. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-9-carry-on-from-there.wav",
+      "durationMs": 2146,
+      "sha256": "55b97630c9f52fb30d8e45763004a75a1cc86bd8c7b33e04f890f074799ef274",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-10-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 10. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-10-carry-on-from-there.wav",
+      "durationMs": 2116,
+      "sha256": "c81142d886e48883ded76367d47d9e81e1fb93c30aab4316831d826643be8893",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-11-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 11. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-11-carry-on-from-there.wav",
+      "durationMs": 2205,
+      "sha256": "791861afc1e66caec697e28d49b5bc8cfa749f0c716d2e82f92e06972e8e1d3a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-12-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 12. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-12-carry-on-from-there.wav",
+      "durationMs": 2156,
+      "sha256": "92d432cfd8e61df47dfe63ad735f9de3c3c35f5d42cc91ff89c73e44f06029bf",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-13-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 13. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-13-carry-on-from-there.wav",
+      "durationMs": 2310,
+      "sha256": "6309c75889c3975e92e21939f1d02947f0cb2890cad6be01ba34f579d0dfd697",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-14-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 14. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-14-carry-on-from-there.wav",
+      "durationMs": 2390,
+      "sha256": "6925929aa824a20fffb99d80bb318d7d2ed76f1aa2d27813ab7bcfc3949a99be",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-15-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 15. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-15-carry-on-from-there.wav",
+      "durationMs": 2330,
+      "sha256": "b829231309f7ad6df2ea41d8aad1fead49817ae312c157c0b4cc8493e20ef95d",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-16-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 16. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-16-carry-on-from-there.wav",
+      "durationMs": 2390,
+      "sha256": "81e31014f3ed8ca49fc2f2869cc1cb2e6670742cba64bf8dc3087e0f20cf72aa",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-17-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 17. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-17-carry-on-from-there.wav",
+      "durationMs": 2470,
+      "sha256": "e1a87165e14dd20c2c3c907bc89e25a82e041c1af9c0a6a007bc87ea0b7a8fa1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-18-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 18. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-18-carry-on-from-there.wav",
+      "durationMs": 2295,
+      "sha256": "6c4fdb1b52d76af4be3cae40fe91310cc8045e4cfbe73e23bdb505eadede227c",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-19-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 19. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-19-carry-on-from-there.wav",
+      "durationMs": 2375,
+      "sha256": "30c5d4f39ce3c73aa27264eccc378f83326eb27a79641d5abd382b09880cd65d",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-20-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 20. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-20-carry-on-from-there.wav",
+      "durationMs": 2121,
+      "sha256": "286af47c943930d4d454d3d83cbb0e9b612fe596d851c8f6a87ef43f33e97220",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-21-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 21. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-21-carry-on-from-there.wav",
+      "durationMs": 2355,
+      "sha256": "6f0d0069668ff9ae0c583ec7886604032595a52c2d38bbefd2f17eef11172ed4",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-22-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 22. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-22-carry-on-from-there.wav",
+      "durationMs": 2350,
+      "sha256": "96cb6cc9004187f0e452e27c1f068fd008f6ea867ee7e2c85b92d46e0b38b70e",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-23-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 23. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-23-carry-on-from-there.wav",
+      "durationMs": 2385,
+      "sha256": "61436fff768a3f0ed8486b8bc2fbcdbf972d39f5badc8c6f3483f2c15130881a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.aCorrection.you-were-at-24-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 24. Carry on from there.",
+      "file": "oral-trails.aCorrection.you-were-at-24-carry-on-from-there.wav",
+      "durationMs": 2340,
+      "sha256": "afd50c380db7f98067e5bf6c3084a82a36c40d5cd3fc43f04f60f4704448f383",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.correctionStart.start-with-1",
+      "kind": "line",
+      "text": "Start with 1.",
+      "file": "oral-trails.correctionStart.start-with-1.wav",
+      "durationMs": 976,
+      "sha256": "08933935e377220321b735f7d0b4ec08593ab4ecec1fbfe46c2ec14b20293404",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-1-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 1 Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-1-carry-on-from-there.wav",
+      "durationMs": 1707,
+      "sha256": "c92fd7ad83fa580d5caaa3370e9aa9969f99ee35b90493fa92e1c8168dd75c56",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-1-a-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 1, A. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-1-a-carry-on-from-there.wav",
+      "durationMs": 2315,
+      "sha256": "e572434a775f2b828ce37b7de08a6ce482e25e8267b60898f704b99100e435c6",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-2-b-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 2, B. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-2-b-carry-on-from-there.wav",
+      "durationMs": 2225,
+      "sha256": "96652a83a49546e60a66faf6319247816a9eb08ec187efe76842dd280afaa4d5",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-3-c-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 3, C. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-3-c-carry-on-from-there.wav",
+      "durationMs": 2360,
+      "sha256": "c936da882fbdc4a2f2c44ab6fdf342a54813edbbcaa9aa73bbae14d86e6b961c",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-4-d-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 4, D. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-4-d-carry-on-from-there.wav",
+      "durationMs": 2275,
+      "sha256": "efb5f5d0d4dc229952002c414dd000b836563e23fd1dd0b9e41c85e3052ead2a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-5-e-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 5, E. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-5-e-carry-on-from-there.wav",
+      "durationMs": 2265,
+      "sha256": "bd0a7d57b457ba50bf636ac3b7117725d4513ba9d0a5786fee479f98519cec81",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-6-f-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 6, F. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-6-f-carry-on-from-there.wav",
+      "durationMs": 2380,
+      "sha256": "84a1140f49585e7ec6dbfc9581be357240292907918f0276a7e15b9ff8ceec26",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-7-g-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 7, G. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-7-g-carry-on-from-there.wav",
+      "durationMs": 2365,
+      "sha256": "5ad898d91a2456d7889e38cc460f2d72ff2c23bc7314f3d6e6864f62129d95af",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-8-h-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 8, H. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-8-h-carry-on-from-there.wav",
+      "durationMs": 2260,
+      "sha256": "5c46c503688eb6bcc05ab144f6b7a6386220911fad8963f23b78c3c3075b8f86",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-9-i-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 9, I. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-9-i-carry-on-from-there.wav",
+      "durationMs": 2280,
+      "sha256": "c5b8cf56ab2224e9a7ee0f03de467d9f2a865388b41ce797a7397c26e61cda96",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-10-j-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 10, J. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-10-j-carry-on-from-there.wav",
+      "durationMs": 2365,
+      "sha256": "53d809b720ec0ccf09cbfdb302db233db2284aa2c4731e0b595c051491c4d5d2",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-11-k-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 11, K. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-11-k-carry-on-from-there.wav",
+      "durationMs": 2460,
+      "sha256": "6cea452943bf102711edf41af25e24078588576136f0a5740e8d08e24d4458d1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "oral-trails.bCorrection.you-were-at-12-l-carry-on-from-there",
+      "kind": "line",
+      "text": "You were at 12, L. Carry on from there.",
+      "file": "oral-trails.bCorrection.you-were-at-12-l-carry-on-from-there.wav",
+      "durationMs": 2370,
+      "sha256": "eadb99f26cdadafcfa5a95b75a96adaf1e3c06fcd95b4601ae55a1a709f4087a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.intro",
+      "kind": "line",
+      "text": "In this activity, I'll give you a letter. When I say go, name as many words as you can that start with that letter. You'll have one minute, and I'll tell you when to stop. Please don't use numbers, or the names of people or places. For example, for the letter tee you could say table, tiny, or tomorrow, but not Tom, Texas, or twenty. And please don't give the same word with a different ending: if you say talk, don't also say talks or talked, and if you say tall, don't also say taller or tallest.",
+      "file": "phonemic-fluency.intro.wav",
+      "durationMs": 29957,
+      "sha256": "4796204d64648613483fb868a1b9770a09ff693fdf126d5b546b15475a3648b2",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.firstGo.your-first-letter-is-eff-as-in-fox-ready-go",
+      "kind": "line",
+      "text": "Your first letter is eff, as in fox. Ready? Go.",
+      "file": "phonemic-fluency.firstGo.your-first-letter-is-eff-as-in-fox-ready-go.wav",
+      "durationMs": 3545,
+      "sha256": "995c7e3fbe024ed6a82eaca6ecf9e81e078aee3e160835cd6557dd4cd4241644",
+      "lufs": -16.9,
+      "peakLimited": true
+    },
+    {
+      "clipId": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-ell-1v7jg32",
+      "kind": "line",
+      "text": "Now a new letter. Your next letter is ell, as in lamp. Ready? Go.",
+      "file": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-ell-1v7jg32.wav",
+      "durationMs": 4490,
+      "sha256": "c1757d3c9ce1183ff068a7fd910dd714ddc1705c768499e42483d1ef78818df8",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.keepGoing",
+      "kind": "line",
+      "text": "Keep going.",
+      "file": "phonemic-fluency.keepGoing.wav",
+      "durationMs": 692,
+      "sha256": "2bfef47872c75ad0e35ce31b65c342da0a0a2cefc98b9d3b52fabbdb1ad33ded",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-1z0bpso",
+      "kind": "line",
+      "text": "Can you think of any more words that start with eff?",
+      "file": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-1z0bpso.wav",
+      "durationMs": 2522,
+      "sha256": "d83abd89df5563758b1d0282de72ae70e8b60a9abaace28049be47cdda3a964a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-1v9ufio",
+      "kind": "line",
+      "text": "Can you think of any more words that start with ell?",
+      "file": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-1v9ufio.wav",
+      "durationMs": 2551,
+      "sha256": "76af5be431e9d1467b02dafa08cec9bcab81394fc729c8e23c74ee3442f8f220",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingFirst.remember-the-letter-is-eff",
+      "kind": "line",
+      "text": "Remember, the letter is eff.",
+      "file": "phonemic-fluency.usingFirst.remember-the-letter-is-eff.wav",
+      "durationMs": 1605,
+      "sha256": "7a94c743b19b5f1458db52357342c4715771e3608aa85f4488ee12e75c6f3ce7",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingSecond.remember-the-letter-is-ell",
+      "kind": "line",
+      "text": "Remember, the letter is ell.",
+      "file": "phonemic-fluency.usingSecond.remember-the-letter-is-ell.wav",
+      "durationMs": 1639,
+      "sha256": "9cf32be8996c5973c6c501810079aabcd4cdfca7e8628adbb8ad64b841560c80",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.remindNames",
+      "kind": "line",
+      "text": "Remember, no names of people or places.",
+      "file": "phonemic-fluency.remindNames.wav",
+      "durationMs": 2583,
+      "sha256": "10dace47fbcdc990d29659ba6a82f658decb283ff6100543c97c121a0cc3e7dc",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.remindNumbers",
+      "kind": "line",
+      "text": "Remember, no numbers.",
+      "file": "phonemic-fluency.remindNumbers.wav",
+      "durationMs": 1511,
+      "sha256": "6595537287a0ede4000846642f56aa8213a172b13eec15af16f9d4265415ad8d",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.remindEndings",
+      "kind": "line",
+      "text": "Remember, try not to give me the same word with different endings.",
+      "file": "phonemic-fluency.remindEndings.wav",
+      "durationMs": 3495,
+      "sha256": "12f385c159f4bb2fb20b3fb335bcad38c14581169759428d1aa217c1e79a4295",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.stop",
+      "kind": "line",
+      "text": "Stop.",
+      "file": "phonemic-fluency.stop.wav",
+      "durationMs": 504,
+      "sha256": "ef6030f9d53326f32dcb86c56c2f11cbfbc58c12ba6ddc0e5cd7aae8b652b703",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.firstGo.your-first-letter-is-ess-as-in-sun-ready-go",
+      "kind": "line",
+      "text": "Your first letter is ess, as in sun. Ready? Go.",
+      "file": "phonemic-fluency.firstGo.your-first-letter-is-ess-as-in-sun-ready-go.wav",
+      "durationMs": 3495,
+      "sha256": "e3e1363bce5b3d444d56c7747f84387c858ecbf7cd1037d114991912429c8bb8",
+      "lufs": -16.5,
+      "peakLimited": true
+    },
+    {
+      "clipId": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-dou-35xrg3",
+      "kind": "line",
+      "text": "Now a new letter. Your next letter is double-you, as in water. Ready? Go.",
+      "file": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-dou-35xrg3.wav",
+      "durationMs": 4665,
+      "sha256": "66a209c3cd46cc735c1d5d5dfe832680a1fe8a9ce2cbb9104da3827553172842",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-5yxzn2",
+      "kind": "line",
+      "text": "Can you think of any more words that start with ess?",
+      "file": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-5yxzn2.wav",
+      "durationMs": 2554,
+      "sha256": "d762cdc68b3360cd8610ffeb661e8c895978d45ac0f880504ac321fb449180a2",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-5ufob0",
+      "kind": "line",
+      "text": "Can you think of any more words that start with double-you?",
+      "file": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-5ufob0.wav",
+      "durationMs": 2759,
+      "sha256": "d23bae3584056bb188809456519f5f06332ea1049143b59b771f596e372c9693",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingFirst.remember-the-letter-is-ess",
+      "kind": "line",
+      "text": "Remember, the letter is ess.",
+      "file": "phonemic-fluency.usingFirst.remember-the-letter-is-ess.wav",
+      "durationMs": 1640,
+      "sha256": "25698393ec2b548340c29e0d52983394a1f4024b84e3af4c884ba966f88c8ca8",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingSecond.remember-the-letter-is-double-you",
+      "kind": "line",
+      "text": "Remember, the letter is double-you.",
+      "file": "phonemic-fluency.usingSecond.remember-the-letter-is-double-you.wav",
+      "durationMs": 1852,
+      "sha256": "338d0a3be8323bbd4d39f30fce043ecda87e864c41c1f59e180f2f56e55ea792",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.firstGo.your-first-letter-is-ay-as-in-apple-ready-go",
+      "kind": "line",
+      "text": "Your first letter is ay, as in apple. Ready? Go.",
+      "file": "phonemic-fluency.firstGo.your-first-letter-is-ay-as-in-apple-ready-go.wav",
+      "durationMs": 3435,
+      "sha256": "8787bec7e870e74cf3cf2907cd3402059363bb27e571ed5c8d77b88e5733c2d2",
+      "lufs": -16.2,
+      "peakLimited": true
+    },
+    {
+      "clipId": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-ait-1uj0gu6",
+      "kind": "line",
+      "text": "Now a new letter. Your next letter is aitch, as in house. Ready? Go.",
+      "file": "phonemic-fluency.secondGo.now-a-new-letter-your-next-letter-is-ait-1uj0gu6.wav",
+      "durationMs": 4580,
+      "sha256": "97beb9e490073ff9651ddf75c478e8b8d11796456df87cd639d15d3498f38647",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-c7dcsj",
+      "kind": "line",
+      "text": "Can you think of any more words that start with ay?",
+      "file": "phonemic-fluency.whatOtherFirst.can-you-think-of-any-more-words-that-sta-c7dcsj.wav",
+      "durationMs": 2553,
+      "sha256": "8a6ab1dc2e9b966ddf287238f626c95ab4267e88cbd7fae43a97a58c0427c4ea",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-i46mh2",
+      "kind": "line",
+      "text": "Can you think of any more words that start with aitch?",
+      "file": "phonemic-fluency.whatOtherSecond.can-you-think-of-any-more-words-that-sta-i46mh2.wav",
+      "durationMs": 2633,
+      "sha256": "51775454e79ad4c9e9014a58d14572086af2a42cdd4c8749a9f5604d08ddd633",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingFirst.remember-the-letter-is-ay",
+      "kind": "line",
+      "text": "Remember, the letter is ay.",
+      "file": "phonemic-fluency.usingFirst.remember-the-letter-is-ay.wav",
+      "durationMs": 1640,
+      "sha256": "4520837b9987b1c6c1036e9603255945dcf84d6520a3892f197523a6ce40fcda",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "phonemic-fluency.usingSecond.remember-the-letter-is-aitch",
+      "kind": "line",
+      "text": "Remember, the letter is aitch.",
+      "file": "phonemic-fluency.usingSecond.remember-the-letter-is-aitch.wav",
+      "durationMs": 1717,
+      "sha256": "01aab44722a365e24aba75439256abac5b79819dbeaf8a2c626195d21d850c06",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.intro",
+      "kind": "line",
+      "text": "Now I'm going to tell you a short story. Please listen closely. When I've finished, tell me as much of it as you can remember. You can use my words or your own. Here's the story.",
+      "file": "story-immediate.intro.wav",
+      "durationMs": 10122,
+      "sha256": "fbce2bfeea2b56cbcf9e8a6b85b7bc3f0399f497f2a1dbc698b5978ffbfe0656",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.story.helen-s-son-tommy-flew-kites-every-satur-1rmm00e",
+      "kind": "line",
+      "text": "Helen's son Tommy flew kites every Saturday at noon. He loved running to the field across from their home and meeting his friends. One spring, he pulled the string so fast that the kite drifted into the farmer's barn where four noisy geese nested. The geese's keeper heard sharp honking, ran out, and helped them free the kite.",
+      "file": "story-immediate.story.helen-s-son-tommy-flew-kites-every-satur-1rmm00e.wav",
+      "durationMs": 17605,
+      "sha256": "f81e51d5cb26f58814b2eff66c892b96a267a9e5f8f120a56fbd279fb5ad1ccc",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.recallPrompt",
+      "kind": "line",
+      "text": "Now please tell me the story. Try to remember as much as you can.",
+      "file": "story-immediate.recallPrompt.wav",
+      "durationMs": 3831,
+      "sha256": "487e21a65d269a35568d4812327d5ee29ab710c1b2b8a26abba3a20e6b6e18d0",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.later",
+      "kind": "line",
+      "text": "I'll ask you about this story again a bit later, so try to keep it in mind.",
+      "file": "story-immediate.later.wav",
+      "durationMs": 4265,
+      "sha256": "964fbefab6ae4d70257ba5518caf3830dfae98655386e2f6e15c30d1509ffc7a",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.story.ruth-s-daughter-lily-rode-bikes-every-su-byypp6",
+      "kind": "line",
+      "text": "Ruth's daughter Lily rode bikes every Sunday at nine. She enjoyed cycling to the park beside their flat and racing the other kids. One morning, she waved her hat so fast that it flew under the baker's wagon where two gray cats napped. The cats' owner heard soft hissing, stepped out, and helped her reach the hat.",
+      "file": "story-immediate.story.ruth-s-daughter-lily-rode-bikes-every-su-byypp6.wav",
+      "durationMs": 17165,
+      "sha256": "56512a0543a37dc326876746bd155eb382673c752985b0c61541935039ff7771",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.story.george-s-nephew-danny-swam-laps-every-tu-r3s8su",
+      "kind": "line",
+      "text": "George's nephew Danny swam laps every Tuesday at five. He enjoyed walking to the lake near their cabin and meeting the team. One evening, he threw the frisbee so far that it sailed onto the ranger's dock where six proud swans floated. The swans' caretaker heard angry squawking, rowed out, and helped them fetch the frisbee.",
+      "file": "story-immediate.story.george-s-nephew-danny-swam-laps-every-tu-r3s8su.wav",
+      "durationMs": 17851,
+      "sha256": "f278fb99264f139ee91a38cf378b80e5f3f104ecd83dea2b0b79803c5d63e7a6",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-immediate.story.martha-s-niece-rosie-tossed-horseshoes-e-blt555",
+      "kind": "line",
+      "text": "Martha's niece Rosie tossed horseshoes every Friday at six. She loved skipping to the barn behind their farmhouse and beating her cousins. One summer, she flung a horseshoe so high that it landed inside the vet's pen where five brown goats grazed. The goats' keeper heard loud bleats, rushed in, and helped her grab the horseshoe.",
+      "file": "story-immediate.story.martha-s-niece-rosie-tossed-horseshoes-e-blt555.wav",
+      "durationMs": 17709,
+      "sha256": "fbd5344976194b29bedece1c919f74f6a08129acc800cafb9b426f7c442d5d09",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-delayed.intro",
+      "kind": "line",
+      "text": "A little while ago, I told you a short story. Please tell me what you remember about it now.",
+      "file": "story-delayed.intro.wav",
+      "durationMs": 5277,
+      "sha256": "dca779a561fc36664e3e02d9173b89819b017ad99484a3ab3cb3b4467b3c47d0",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-delayed.cue.it-was-a-story-about-a-young-boy-please--1aqk3rc",
+      "kind": "line",
+      "text": "It was a story about a young boy. Please tell it to me now.",
+      "file": "story-delayed.cue.it-was-a-story-about-a-young-boy-please--1aqk3rc.wav",
+      "durationMs": 3297,
+      "sha256": "d982bb652828b18d83f820011de4393949b3ade6fe6d0915d0a95ad78a4a428d",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-delayed.onlyReply",
+      "kind": "line",
+      "text": "Just tell me as much of the story as you can remember.",
+      "file": "story-delayed.onlyReply.wav",
+      "durationMs": 2610,
+      "sha256": "6fcd2c7fb6133bc7b650fe311d44be2fe35edb2a707bd82c7edd7bf4cf1ee1f1",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "story-delayed.cue.it-was-a-story-about-a-young-girl-please-jwynje",
+      "kind": "line",
+      "text": "It was a story about a young girl. Please tell it to me now.",
+      "file": "story-delayed.cue.it-was-a-story-about-a-young-girl-please-jwynje.wav",
+      "durationMs": 3232,
+      "sha256": "a476224a35011ec98b7171663f0a217d5bf8eb43cf2542e2d2237ae9379a295b",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.intro",
+      "kind": "line",
+      "text": "First, a few quick questions about your hearing, to make sure you can hear me clearly.",
+      "file": "hearing-check.intro.wav",
+      "durationMs": 4951,
+      "sha256": "3fb602f6f1e7cd5bab17de2ee824c9dbf34308c27ba5b71a6129d29653ef6a31",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.qTrouble",
+      "kind": "line",
+      "text": "Do you often have trouble hearing on a phone or computer?",
+      "file": "hearing-check.qTrouble.wav",
+      "durationMs": 2798,
+      "sha256": "dce2a4747c544aae6d91865c37ef945414eef3773df018b9e49461d1cd453090",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.qHearsWell",
+      "kind": "line",
+      "text": "Can you hear me clearly right now?",
+      "file": "hearing-check.qHearsWell.wav",
+      "durationMs": 1827,
+      "sha256": "e22901e80fe7a1327d268fe559cfb90d148c5184dfe7ab2f63e6d414286cc5f3",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.qDevice",
+      "kind": "line",
+      "text": "Do you use a hearing aid?",
+      "file": "hearing-check.qDevice.wav",
+      "durationMs": 1351,
+      "sha256": "ae44353b8e078f243de89605e37e7bc9ce8db203b309ed88d38b0fd00d397759",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.qDeviceIn",
+      "kind": "line",
+      "text": "Is it in and switched on?",
+      "file": "hearing-check.qDeviceIn.wav",
+      "durationMs": 1284,
+      "sha256": "f66571363d1ca96ad93947eb91de23239d338fb4f4477fa59a93fd449fa8cd36",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.repeatAsk",
+      "kind": "line",
+      "text": "Please say this sentence back to me: The blue cup is on the kitchen table.",
+      "file": "hearing-check.repeatAsk.wav",
+      "durationMs": 3918,
+      "sha256": "6595a0186f83f15c45cea498d3093576dba2e2a101e22e818a43f902b89f8c3f",
+      "lufs": -16,
+      "peakLimited": false
+    },
+    {
+      "clipId": "hearing-check.repeatAgain",
+      "kind": "line",
+      "text": "Once more: The blue cup is on the kitchen table.",
+      "file": "hearing-check.repeatAgain.wav",
+      "durationMs": 2785,
+      "sha256": "7339e6c65def8996196ecae7dbc1bd47c1e9031ce53f378a9c2ec28eb367ed5a",
+      "lufs": -16,
+      "peakLimited": false
+    }
+  ]
+}

@@ -5,6 +5,82 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type NormSubmissionChannel = typeof NormSubmissionChannel[keyof typeof NormSubmissionChannel];
+
+
+export const NormSubmissionChannel = {
+  web: 'web',
+  phone: 'phone',
+} as const;
+
+export type NormSubmissionSex = typeof NormSubmissionSex[keyof typeof NormSubmissionSex];
+
+
+export const NormSubmissionSex = {
+  female: 'female',
+  male: 'male',
+  undisclosed: 'undisclosed',
+} as const;
+
+export type NormSubmissionFields = {[key: string]: number | null};
+
+export interface NormSubmission {
+  /**
+     * @minLength 1
+     * @maxLength 128
+     */
+  participantId: string;
+  /** @maxLength 64 */
+  testId: string;
+  /** @maxLength 64 */
+  formId: string;
+  /** @maxLength 32 */
+  specVersion: string;
+  /** @maxLength 32 */
+  scorerVersion: string;
+  equated: boolean;
+  channel: NormSubmissionChannel;
+  /** @minimum 1 */
+  administrationNumber: number;
+  completed: boolean;
+  /**
+     * @minimum 1900
+     * @maximum 2100
+     */
+  birthYear: number;
+  sex: NormSubmissionSex;
+  /**
+     * @minimum 0
+     * @maximum 30
+     */
+  educationYears?: number;
+  fields: NormSubmissionFields;
+}
+
+export interface NormFieldComparison {
+  field: string;
+  label: string;
+  value: number;
+  /** People in the group with this score. */
+  n: number;
+  /**
+     * Percent of the group this result is better than (lower times are better; ties count half); null when the group is too small.
+     * @nullable
+     */
+  percentile: number | null;
+  /** @nullable */
+  median: number | null;
+}
+
+export interface NormComparison {
+  /** True when this result was added to the reference (first completed administration). */
+  stored: boolean;
+  /** Plain-language group, e.g. "women aged 60–69". */
+  cohort: string;
+  minCohort: number;
+  results: NormFieldComparison[];
+}
+
 export interface WaitlistInput {
   /** @maxLength 254 */
   email: string;

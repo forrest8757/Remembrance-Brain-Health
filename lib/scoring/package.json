@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/scoring",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@workspace/test-spec": "workspace:*",
+    "@workspace/forms": "workspace:*",
+    "@workspace/asr": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "word-lists": "node ./scripts/build-word-lists.mjs"
+  }
+}

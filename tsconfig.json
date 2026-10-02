@@ -11,6 +11,33 @@
     },
     {
       "path": "./lib/api-zod"
+    },
+    {
+      "path": "./lib/test-spec"
+    },
+    {
+      "path": "./lib/forms"
+    },
+    {
+      "path": "./lib/battery"
+    },
+    {
+      "path": "./lib/asr"
+    },
+    {
+      "path": "./lib/capture"
+    },
+    {
+      "path": "./lib/audio"
+    },
+    {
+      "path": "./lib/scoring"
+    },
+    {
+      "path": "./lib/engine"
+    },
+    {
+      "path": "./lib/ui"
     }
   ]
 }

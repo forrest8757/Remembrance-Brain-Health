@@ -25,6 +25,9 @@ import VoiceTest from '@/pages/voice';
 import CarePlan from '@/pages/plan';
 import CheckIn from '@/pages/check-in';
 import Progress from '@/pages/progress';
+import AssessRun from '@/pages/assess-run';
+import Settings from '@/pages/settings';
+import SessionPage from '@/pages/session';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,7 @@ function Router() {
         <Route path="/plan" component={CarePlan} />
         <Route path="/check-in" component={CheckIn} />
         <Route path="/progress" component={Progress} />
+        <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
@@ -60,6 +64,20 @@ function AppContent() {
   // mounts the provider that reads and writes session storage.
   if (location === '/') {
     return <RoutedErrorBoundary><Landing /></RoutedErrorBoundary>;
+  }
+
+  // The NACC-derived assessment suite (CLAUDE.md) is separate from the demo
+  // and never touches the demo's simulated state.
+  if (location.startsWith('/assess/')) {
+    return (
+      <RoutedErrorBoundary>
+        <Switch>
+          <Route path="/assess/session" component={SessionPage} />
+          <Route path="/assess/:testId" component={AssessRun} />
+          <Route component={NotFound} />
+        </Switch>
+      </RoutedErrorBoundary>
+    );
   }
 
   return (

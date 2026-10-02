@@ -1,0 +1,34 @@
+{
+  "name": "@workspace/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react/index.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "dependencies": {
+    "xstate": "catalog:",
+    "@xstate/react": "catalog:",
+    "@workspace/test-spec": "workspace:*",
+    "@workspace/forms": "workspace:*",
+    "@workspace/audio": "workspace:*",
+    "@workspace/capture": "workspace:*",
+    "@workspace/asr": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "react": "catalog:",
+    "@types/react": "catalog:",
+    "@workspace/scoring": "workspace:*",
+    "tsx": "catalog:"
+  },
+  "scripts": {
+    "statecharts": "tsx ./scripts/statecharts.ts"
+  }
+}

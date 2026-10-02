@@ -1,0 +1,51 @@
+/* Tokens and keyframes shared by the three assessment directions.
+   WCAG contrast: navy #1E3A5F on cream #F5F1EA 10.2:1, on white 11.5:1,
+   on cream-deep 9.1:1; ink-soft #34495E on cream 8.3:1, on white 9.3:1.
+   Navy on cyan is only 6.0:1, so cyan never sits behind text. */
+.ad-root {
+  --ad-navy: #1E3A5F;
+  --ad-navy-deep: #152B47;
+  --ad-cyan: #1BCEDF;
+  --ad-cyan-soft: #A8EEF4;
+  --ad-cream: #F5F1EA;
+  --ad-cream-deep: #EBE4D8;
+  --ad-ink-soft: #34495E;
+  --ad-white: #FFFFFF;
+  --ad-peach: #F6D9C4;
+  --ad-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color: var(--ad-navy);
+  background: var(--ad-cream);
+  font-size: 20px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Examiner-speaking breathe: slow, even, independent of any response. */
+@keyframes ad-breathe {
+  0%, 100% { transform: scale(0.94); }
+  50% { transform: scale(1.04); }
+}
+.ad-breathe { animation: ad-breathe 4.8s ease-in-out infinite; transform-origin: center; }
+
+/* Break pacer: 4 s in, 6 s out. */
+@keyframes ad-pacer {
+  0% { transform: scale(0.6); }
+  40% { transform: scale(1); }
+  100% { transform: scale(0.6); }
+}
+.ad-pacer { animation: ad-pacer 10s ease-in-out infinite; transform-origin: center; }
+
+@keyframes ad-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.ad-rise { animation: ad-rise 400ms var(--ad-ease, ease-out) both; }
+
+.ad-focus:focus-visible {
+  outline: 4px solid var(--ad-cyan);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-breathe, .ad-pacer, .ad-rise { animation: none; }
+}

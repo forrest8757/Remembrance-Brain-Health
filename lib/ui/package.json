@@ -1,0 +1,37 @@
+{
+  "name": "@workspace/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css"
+  },
+  "scripts": {
+    "ladle": "ladle serve",
+    "ladle:build": "ladle build"
+  },
+  "dependencies": {
+    "framer-motion": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@ladle/react": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "tailwindcss": "catalog:",
+    "@workspace/engine": "workspace:*",
+    "@workspace/test-spec": "workspace:*",
+    "@workspace/forms": "workspace:*",
+    "xstate": "catalog:",
+    "@workspace/scoring": "workspace:*"
+  }
+}

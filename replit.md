@@ -1,6 +1,8 @@
 # Remembrance — project instructions
 
 ## Source of truth
+The NACC-derived cognitive assessment suite (`lib/test-spec`, `lib/engine` and related packages, plus the `/assess/*` routes) is governed by `CLAUDE.md` at the repo root. Its real voice capture, ASR, telephony and scoring scope supersedes the out-of-scope list below for that suite only.
+
 Before every change, revisit the relevant sections of the supplied documents and check the result against them. Current direct user instructions take precedence over document conflicts.
 
 - `attached_assets/Pasted--Remembrance-Interactive-Landing-Page-Build-Prompt-for-_1789581073283.txt`: current landing-page interaction and visual specification, superseding the earlier landing specification. Landing interactions use React state only; the 15-second marketing preview is separate from substantive product assessments. Keep sample scores illustrative and omit partnership logos until approved assets are supplied.

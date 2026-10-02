@@ -1,0 +1,223 @@
+{
+ "rm.profile": {
+  "firstName": "Margaret",
+  "city": "Provo",
+  "location": "home",
+  "educationYears": 16,
+  "birthYear": 1950,
+  "sex": "female"
+ },
+ "rm.session": {
+  "version": 1,
+  "batteryId": "lean",
+  "title": "Weekly check-in",
+  "startedAt": 1790961400401,
+  "items": [
+   {
+    "testId": "story-immediate",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "number-span",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "category-fluency",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "oral-trails",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "phonemic-fluency",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   },
+   {
+    "testId": "story-delayed",
+    "visit": 0,
+    "status": "pending",
+    "startedAt": null,
+    "endedAt": null,
+    "flags": [],
+    "delayMinutes": null
+   }
+  ],
+  "clocks": {},
+  "filler": null,
+  "visit": 0,
+  "visitEndedAt": null,
+  "interruptions": [],
+  "log": [
+   {
+    "at": 1790961400401,
+    "type": "session_started"
+   }
+  ]
+ },
+ "rm.shell": {
+  "version": 1,
+  "stage": "battery",
+  "returning": false,
+  "hearing": {
+   "troubleUsually": false,
+   "hearsWell": true,
+   "usesDevice": false,
+   "deviceInPlace": null,
+   "rounds": 1,
+   "passed": true,
+   "boosted": false
+  },
+  "environment": {
+   "quiet": {
+    "issue": false,
+    "resolved": true
+   },
+   "pets": {
+    "issue": false,
+    "resolved": true
+   },
+   "devices": {
+    "issue": false,
+    "resolved": true
+   },
+   "people": {
+    "issue": false,
+    "resolved": true
+   },
+   "break": {
+    "issue": false,
+    "resolved": true
+   },
+   "paper": {
+    "issue": false,
+    "resolved": true
+   },
+   "dates": {
+    "issue": false,
+    "resolved": true
+   }
+  },
+  "caregiverHandoff": false,
+  "consent": "given",
+  "integrityVersion": "soft-v1",
+  "selfReport": null,
+  "ended": null,
+  "log": [
+   {
+    "at": 1790961400401,
+    "type": "shell_started",
+    "detail": "first visit"
+   },
+   {
+    "at": 1790961400401,
+    "type": "identity"
+   },
+   {
+    "at": 1790961400401,
+    "type": "continue"
+   },
+   {
+    "at": 1790961400401,
+    "type": "continue"
+   },
+   {
+    "at": 1790961400401,
+    "type": "hearing_answer",
+    "detail": "troubleUsually=false"
+   },
+   {
+    "at": 1790961400401,
+    "type": "hearing_answer",
+    "detail": "hearsWell=true"
+   },
+   {
+    "at": 1790961400401,
+    "type": "hearing_answer",
+    "detail": "usesDevice=false"
+   },
+   {
+    "at": 1790961400401,
+    "type": "hearing_repeat_result"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "quiet"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "pets"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "quiet"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "pets"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "devices"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "people"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "break"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "paper"
+   },
+   {
+    "at": 1790961400401,
+    "type": "environment",
+    "detail": "dates"
+   },
+   {
+    "at": 1790961400401,
+    "type": "consent"
+   },
+   {
+    "at": 1790961400401,
+    "type": "ready"
+   }
+  ]
+ }
+}
