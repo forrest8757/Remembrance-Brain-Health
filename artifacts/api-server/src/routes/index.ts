@@ -1,9 +1,9 @@
-import { Router, type IRouter } from "express";
-import healthRouter from "./health";
-import waitlistRouter from "./waitlist";
-import normsRouter from "./norms";
+import { Router } from "express";
+import healthRouter from "./health.js";
+import waitlistRouter from "./waitlist.js";
+import normsRouter from "./norms.js";
 
-const router: IRouter = Router();
+const router = Router();
 
 router.use(healthRouter);
 router.use(waitlistRouter);

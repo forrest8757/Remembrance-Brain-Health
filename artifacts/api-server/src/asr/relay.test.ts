@@ -4,7 +4,7 @@ import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AsrUnavailableError, RelayAsrProvider, type AsrProvider, type AsrToken } from '@workspace/asr';
-import { attachAsrRelay } from './relay';
+import { attachAsrRelay } from './relay.js';
 
 /** Fake vendor: one token per audio chunk received, streamed as partials. */
 function fakeVendor(opts: { failOnFinish?: boolean } = {}): AsrProvider & { bytes: number; aborted: number } {

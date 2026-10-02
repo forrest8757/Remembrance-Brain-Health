@@ -1,7 +1,7 @@
-import app from "./app";
-import { logger } from "./lib/logger";
+import app from "./app.js";
+import { logger } from "./lib/logger.js";
 import { DeepgramAsrProvider } from "@workspace/asr";
-import { attachAsrRelay } from "./asr/relay";
+import { attachAsrRelay } from "./asr/relay.js";
 
 const rawPort = process.env["PORT"];
 
@@ -17,7 +17,7 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const server = app.listen(port, (err) => {
+const server = app.listen(port, (err?: Error) => {
   if (err) {
     logger.error({ err }, "Error listening on port");
     process.exit(1);

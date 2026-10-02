@@ -52,6 +52,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+.vercel
 
 # Redesign screenshot runs: every variant stays local (hundreds of MB). The
 # evidence set in git (before shots + latest dark/light 390/1280 captures) is
