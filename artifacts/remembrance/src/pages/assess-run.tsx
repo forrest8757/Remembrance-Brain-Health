@@ -553,6 +553,9 @@ function ResultScreen({
         <ComparisonSection comparison={comparison} firstTime={firstTime} />
 
         <Button onClick={onDone}>Back to home</Button>
+        <Button variant="quiet" onClick={() => (window.location.href = `${import.meta.env.BASE_URL}assess/results`)}>
+          See all your saved results
+        </Button>
         <p className="text-rm-eyebrow text-rm-ink-soft">Wellness activity preview. Not a medical test.</p>
       </div>
     </main>

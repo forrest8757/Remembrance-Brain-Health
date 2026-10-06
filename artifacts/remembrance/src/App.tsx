@@ -26,6 +26,7 @@ import CarePlan from '@/pages/plan';
 import CheckIn from '@/pages/check-in';
 import Progress from '@/pages/progress';
 import AssessRun from '@/pages/assess-run';
+import AssessResults from '@/pages/assess-results';
 import Settings from '@/pages/settings';
 import SessionPage from '@/pages/session';
 
@@ -73,6 +74,7 @@ function AppContent() {
       <RoutedErrorBoundary>
         <Switch>
           <Route path="/assess/session" component={SessionPage} />
+          <Route path="/assess/results" component={AssessResults} />
           <Route path="/assess/:testId" component={AssessRun} />
           <Route component={NotFound} />
         </Switch>
