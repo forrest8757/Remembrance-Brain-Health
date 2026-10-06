@@ -11,7 +11,7 @@ import { useParams } from 'wouter';
 import { loadClipLibrary, type ClipLibrary } from '@workspace/audio';
 import { detectMicSupport, openMicSession, type MicSession } from '@workspace/capture';
 import { RelayAsrProvider } from '@workspace/asr';
-import { compareWithNorms, type NormComparison } from '@workspace/api-client-react';
+import { compareWithNorms, saveScore, type NormComparison } from '@workspace/api-client-react';
 import { toReviewQueueEntry, type ScoreResult } from '@workspace/scoring';
 import { useAdministration, createWebChannel, type WebChannel } from '@workspace/engine/react';
 import type { AdministrationRecord } from '@workspace/engine';
@@ -32,6 +32,7 @@ import {
 } from '@workspace/ui';
 import NotFound from '@/pages/not-found';
 import { DEMO_USER, pushHistory, readHistory, setLatestFields } from '@/assess/history';
+import { getOrCreateUserId } from '@/assess/remote-user';
 import { ASSESSMENTS, clipIdsFor, isAvailable, type AssessmentEntry, type FormPick, type ResultReport } from '@/assess/registry';
 
 export { DEMO_USER, readHistory } from '@/assess/history';
@@ -289,6 +290,19 @@ export function Runner({ entry, session }: { entry: AssessmentEntry; session?: S
       needsReview: result.score.needsReview,
       reviewReasons: result.score.reviewReasons,
     });
+  }, [result, entry.id]);
+
+  // Best-effort server-side save (POC: no auth, see @/assess/remote-user).
+  // The result is already kept locally above, so a failure here is silent.
+  const savedRemote = useRef(false);
+  useEffect(() => {
+    if (!result || savedRemote.current) return;
+    savedRemote.current = true;
+    getOrCreateUserId()
+      .then((userId) => (userId === null ? null : saveScore(userId, { testId: entry.id, fields: result.score.fields, composite: null })))
+      .catch(() => {
+        // Best-effort; nothing to show the participant.
+      });
   }, [result, entry.id]);
 
   useEffect(() => {

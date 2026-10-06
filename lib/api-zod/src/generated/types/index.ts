@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './createUserInput';
 export * from './healthStatus';
 export * from './normComparison';
 export * from './normFieldComparison';
@@ -13,5 +14,10 @@ export * from './normSubmission';
 export * from './normSubmissionChannel';
 export * from './normSubmissionFields';
 export * from './normSubmissionSex';
+export * from './saveScoreInput';
+export * from './saveScoreInputFields';
+export * from './scoreResult';
+export * from './scoreResultFields';
+export * from './userResult';
 export * from './waitlistInput';
 export * from './waitlistResult';

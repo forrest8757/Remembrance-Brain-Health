@@ -59,3 +59,4 @@ Thumbs.db
 # force-added; see design/rollout/README.md.
 design/rollout/**/*.png
 !design/rollout/**/before-*.png
+.env*

@@ -79,6 +79,91 @@ export const CompareWithNormsResponse = zod.object({
 
 
 /**
+ * @summary Create a user, or return the existing one for that email
+ */
+export const createUserBodyEmailMax = 254;
+
+export const createUserBodyNameMax = 128;
+
+
+
+export const CreateUserBody = zod.object({
+  "email": zod.string().email().max(createUserBodyEmailMax),
+  "name": zod.string().max(createUserBodyNameMax).optional()
+})
+
+export const CreateUserResponse = zod.object({
+  "id": zod.number().int(),
+  "email": zod.string(),
+  "name": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Get a user by id
+ */
+export const GetUserParams = zod.object({
+  "id": zod.coerce.number().int()
+})
+
+export const GetUserResponse = zod.object({
+  "id": zod.number().int(),
+  "email": zod.string(),
+  "name": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Save a score snapshot for a user
+ */
+export const SaveScoreParams = zod.object({
+  "id": zod.coerce.number().int()
+})
+
+export const saveScoreBodyTestIdMax = 64;
+
+export const saveScoreBodyCompositeMin = 0;
+export const saveScoreBodyCompositeMax = 100;
+
+
+
+export const SaveScoreBody = zod.object({
+  "testId": zod.string().max(saveScoreBodyTestIdMax),
+  "composite": zod.number().int().min(saveScoreBodyCompositeMin).max(saveScoreBodyCompositeMax).nullish(),
+  "fields": zod.record(zod.string(), zod.number().nullable())
+})
+
+export const SaveScoreResponse = zod.object({
+  "id": zod.number().int(),
+  "userId": zod.number().int(),
+  "testId": zod.string(),
+  "composite": zod.number().int().nullish(),
+  "fields": zod.record(zod.string(), zod.number().nullable()),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary List a user's saved scores, newest first
+ */
+export const ListScoresParams = zod.object({
+  "id": zod.coerce.number().int()
+})
+
+export const ListScoresResponseItem = zod.object({
+  "id": zod.number().int(),
+  "userId": zod.number().int(),
+  "testId": zod.string(),
+  "composite": zod.number().int().nullish(),
+  "fields": zod.record(zod.string(), zod.number().nullable()),
+  "createdAt": zod.coerce.date()
+})
+export const ListScoresResponse = zod.array(ListScoresResponseItem)
+
+
+/**
  * Returns server health status
  * @summary Health check
  */

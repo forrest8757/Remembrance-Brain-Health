@@ -12,6 +12,10 @@ tags:
     description: Health operations
   - name: norms
     description: Comparison with other participants (Remembrance-internal norms)
+  - name: users
+    description: POC users (no auth; identified by email)
+  - name: scores
+    description: Saved score snapshots for a user
 paths:
   /waitlist:
     post:
@@ -65,6 +69,97 @@ paths:
           description: Please wait before retrying
         "503":
           description: Comparison unavailable (no database configured)
+  /users:
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user, or return the existing one for that email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserInput"
+      responses:
+        "200":
+          description: User created or already existed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResult"
+        "400":
+          description: Invalid input
+        "503":
+          description: Temporarily unavailable
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get a user by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResult"
+        "404":
+          description: No user with that id
+  /users/{id}/scores:
+    post:
+      operationId: saveScore
+      tags: [scores]
+      summary: Save a score snapshot for a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveScoreInput"
+      responses:
+        "200":
+          description: Score saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScoreResult"
+        "400":
+          description: Invalid input
+        "404":
+          description: No user with that id
+    get:
+      operationId: listScores
+      tags: [scores]
+      summary: List a user's saved scores, newest first
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Score history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScoreResult"
+        "404":
+          description: No user with that id
   /healthz:
     get:
       operationId: healthCheck
@@ -173,6 +268,64 @@ components:
       properties:
         message:
           type: string
+    CreateUserInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        name:
+          type: string
+          maxLength: 128
+    UserResult:
+      type: object
+      required: [id, email, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: [string, "null"]
+        createdAt:
+          type: string
+          format: date-time
+    SaveScoreInput:
+      type: object
+      required: [testId, fields]
+      properties:
+        testId:
+          type: string
+          maxLength: 64
+        composite:
+          type: [integer, "null"]
+          minimum: 0
+          maximum: 100
+        fields:
+          type: object
+          additionalProperties:
+            type: [number, "null"]
+    ScoreResult:
+      type: object
+      required: [id, userId, testId, fields, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        testId:
+          type: string
+        composite:
+          type: [integer, "null"]
+        fields:
+          type: object
+          additionalProperties:
+            type: [number, "null"]
+        createdAt:
+          type: string
+          format: date-time
     HealthStatus:
       type: object
       properties:

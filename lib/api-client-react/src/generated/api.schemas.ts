@@ -90,6 +90,47 @@ export interface WaitlistResult {
   message: string;
 }
 
+export interface CreateUserInput {
+  /** @maxLength 254 */
+  email: string;
+  /** @maxLength 128 */
+  name?: string;
+}
+
+export interface UserResult {
+  id: number;
+  email: string;
+  /** @nullable */
+  name?: string | null;
+  createdAt: string;
+}
+
+export type SaveScoreInputFields = {[key: string]: number | null};
+
+export interface SaveScoreInput {
+  /** @maxLength 64 */
+  testId: string;
+  /**
+     * @minimum 0
+     * @maximum 100
+     * @nullable
+     */
+  composite?: number | null;
+  fields: SaveScoreInputFields;
+}
+
+export type ScoreResultFields = {[key: string]: number | null};
+
+export interface ScoreResult {
+  id: number;
+  userId: number;
+  testId: string;
+  /** @nullable */
+  composite?: number | null;
+  fields: ScoreResultFields;
+  createdAt: string;
+}
+
 export interface HealthStatus {
   status: string;
 }

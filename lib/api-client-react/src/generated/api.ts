@@ -20,9 +20,13 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CreateUserInput,
   HealthStatus,
   NormComparison,
   NormSubmission,
+  SaveScoreInput,
+  ScoreResult,
+  UserResult,
   WaitlistInput,
   WaitlistResult
 } from './api.schemas';
@@ -230,6 +234,337 @@ export const useCompareWithNorms = <TError = ErrorType<void>,
       > => {
       return useMutation(getCompareWithNormsMutationOptions(options));
     }
+
+export const getCreateUserUrl = () => {
+
+
+
+
+  return `/api/users`
+}
+
+/**
+ * @summary Create a user, or return the existing one for that email
+ */
+export const createUser = async (createUserInput: CreateUserInput, options?: Parameters<typeof customFetch>[1]): Promise<UserResult> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<UserResult>(getCreateUserUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(createUserInput)
+  }
+);}
+
+
+
+
+
+export const getCreateUserMutationKey = () => ['createUser'] as const;
+
+export const getCreateUserMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext> => {
+
+const mutationKey = getCreateUserMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, CreateUserMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createUser(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
+    export type CreateUserMutationBody = BodyType<CreateUserInput>
+    export type CreateUserMutationError = ErrorType<void>
+    export type CreateUserMutationVariables = {data: BodyType<CreateUserInput>}
+
+    /**
+ * @summary Create a user, or return the existing one for that email
+ */
+export const useCreateUser = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createUser>>,
+        TError,
+        CreateUserMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateUserMutationOptions(options));
+    }
+
+export const getGetUserUrl = (id: number,) => {
+
+
+
+
+  return `/api/users/${id}`
+}
+
+/**
+ * @summary Get a user by id
+ */
+export const getUser = async (id: number, options?: Parameters<typeof customFetch>[1]): Promise<UserResult> => {
+
+  return customFetch<UserResult>(getGetUserUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUserQueryKey = (id: number,) => {
+    return [
+    `/api/users/${id}`
+    ] as const;
+    }
+
+
+export const getGetUserQueryOptions = <TData = Awaited<ReturnType<typeof getUser>>, TError = ErrorType<void>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUser>>> = ({ signal }) => getUser(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUserQueryResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
+export type GetUserQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get a user by id
+ */
+
+export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError = ErrorType<void>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetUserQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSaveScoreUrl = (id: number,) => {
+
+
+
+
+  return `/api/users/${id}/scores`
+}
+
+/**
+ * @summary Save a score snapshot for a user
+ */
+export const saveScore = async (id: number,
+    saveScoreInput: SaveScoreInput, options?: Parameters<typeof customFetch>[1]): Promise<ScoreResult> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ScoreResult>(getSaveScoreUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(saveScoreInput)
+  }
+);}
+
+
+
+
+
+export const getSaveScoreMutationKey = () => ['saveScore'] as const;
+
+export const getSaveScoreMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveScore>>, TError,SaveScoreMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveScore>>, TError,SaveScoreMutationVariables, TContext> => {
+
+const mutationKey = getSaveScoreMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveScore>>, SaveScoreMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  saveScore(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveScoreMutationResult = NonNullable<Awaited<ReturnType<typeof saveScore>>>
+    export type SaveScoreMutationBody = BodyType<SaveScoreInput>
+    export type SaveScoreMutationError = ErrorType<void>
+    export type SaveScoreMutationVariables = {id: number;data: BodyType<SaveScoreInput>}
+
+    /**
+ * @summary Save a score snapshot for a user
+ */
+export const useSaveScore = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveScore>>, TError,SaveScoreMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof saveScore>>,
+        TError,
+        SaveScoreMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSaveScoreMutationOptions(options));
+    }
+
+export const getListScoresUrl = (id: number,) => {
+
+
+
+
+  return `/api/users/${id}/scores`
+}
+
+/**
+ * @summary List a user's saved scores, newest first
+ */
+export const listScores = async (id: number, options?: Parameters<typeof customFetch>[1]): Promise<ScoreResult[]> => {
+
+  return customFetch<ScoreResult[]>(getListScoresUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListScoresQueryKey = (id: number,) => {
+    return [
+    `/api/users/${id}/scores`
+    ] as const;
+    }
+
+
+export const getListScoresQueryOptions = <TData = Awaited<ReturnType<typeof listScores>>, TError = ErrorType<void>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListScoresQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listScores>>> = ({ signal }) => listScores(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListScoresQueryResult = NonNullable<Awaited<ReturnType<typeof listScores>>>
+export type ListScoresQueryError = ErrorType<void>
+
+
+/**
+ * @summary List a user's saved scores, newest first
+ */
+
+export function useListScores<TData = Awaited<ReturnType<typeof listScores>>, TError = ErrorType<void>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listScores>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListScoresQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getHealthCheckUrl = () => {
 
